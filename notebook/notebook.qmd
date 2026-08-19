@@ -249,7 +249,61 @@ b1 <- brm(bform,
 summary(b1)
 ```
 
-## Figure 2a
+## Research question 1 (direction): measurement-error model on raw DOC
+
+Instead of pre-computing $\Delta$DOC and attaching a propagated error, we model the **raw upstream and downstream DOC measurements** with their instrument error (0.2 mg/L, `mi(0.2)`), and let the site structure do the pairing; $\Delta$DOC is then *derived* from the posterior (see the Stan forum thread [Propagation of measurement error on the outcome within mi()](https://discourse.mc-stan.org/t/propagation-of-measurement-error-on-the-outcome-within-mi/36783)).
+
+```{r q1_raw_doc_model}
+long <- m6 |> select(site, season, DOC_input, DOC_out) |>
+  pivot_longer(c(DOC_input, DOC_out), names_to = "location", values_to = "DOC") |>
+  mutate(location = factor(ifelse(location == "DOC_input", "up", "down"), levels = c("up", "down")),
+         season = factor(season), site = factor(site)) |>
+  filter(!is.na(DOC))
+
+fit_q1 <- brm(bf(DOC | mi(0.2) ~ 0 + season:location + (1 | site) + (1 | site:season)),
+              family = student(), data = long,
+              prior = c(prior(normal(3, 3), class = "b"),
+                        prior(student_t(3, 0, 2.5), class = "sd"),
+                        prior(student_t(3, 0, 2.5), class = "sigma"),
+                        prior(gamma(2, 0.1), class = "nu")),
+              chains = 4, cores = 4, iter = 3000, warmup = 1000, seed = 7,
+              backend = "cmdstanr", file = here("results", "models_fit", "doc_raw_student"))
+summary(fit_q1)
+```
+
+Derived quantities: (i) the **average** $\Delta$DOC per season = `b[season:down] - b[season:up]` (site and site:season intercepts cancel in the difference, so the pairing is exact); (ii) the **posterior predictive** $\Delta$DOC of a single sampling = average + difference of two Student-*t* residuals.
+
+```{r q1_derived}
+d <- as_draws_df(fit_q1); set.seed(7); n <- nrow(d)
+eps <- d$sigma * (rt(n, d$nu) - rt(n, d$nu))
+df_q1 <- bind_rows(lapply(c("summer", "winter"), function(s) {
+  fd <- d[[paste0("b_season", s, ":locationdown")]] - d[[paste0("b_season", s, ":locationup")]]
+  tibble(season = s, .draw = 1:n, avg = fd, pred = fd + eps) }))
+df_q1 |> group_by(season) |>
+  summarise(avg_mean = mean(avg), avg_lo = quantile(avg, .025), avg_hi = quantile(avg, .975), p_avg_pos = mean(avg > 0),
+            pred_med = median(pred), pred_lo = quantile(pred, .025), pred_hi = quantile(pred, .975),
+            sink = 100 * mean(pred < -0.5), rope = 100 * mean(abs(pred) <= 0.5), source = 100 * mean(pred > 0.5))
+```
+
+```{r fig-q1, fig.width=10, fig.height=6}
+#| fig-cap: "Figure 2a. Posterior predictive distribution of the beaver-mediated DOC change for a single sampling, by season. Shaded areas: posterior predictive probability of a sink (<-0.5 mg/L), negligible (ROPE) and source (>0.5 mg/L) response. Point: median; bars: 66% and 95% intervals."
+lab <- df_q1 |> group_by(season) |> summarise(l_sink = paste0(round(100*mean(pred < -0.5),1), " %: sink"),
+  l_rope = paste0(round(100*mean(abs(pred) <= 0.5),1), " %: ROPE"), l_src = paste0(round(100*mean(pred > 0.5),1), " %: source"))
+fill_colors <- c(sink = "coral", ROPE = "lightgrey", source = "skyblue")
+df_q1$season <- factor(df_q1$season, levels = c("winter", "summer")); lab$season <- factor(lab$season, levels = levels(df_q1$season))
+(p_q1 <- ggplot(df_q1, aes(x = pred, y = season)) +
+  stat_halfeye(aes(fill = after_stat(case_when(x < -0.5 ~ "sink", x > 0.5 ~ "source", TRUE ~ "ROPE"))),
+               adjust = 0.8, slab_alpha = 0.8, .width = c(.66, .95), show.legend = FALSE) +
+  geom_vline(xintercept = c(-0.5, 0.5), linetype = "dashed") + scale_fill_manual(values = fill_colors) +
+  scale_x_continuous(limits = c(-3, 3), breaks = seq(-3, 3, 0.5)) +
+  geom_text(data = lab, aes(x = -1.6, y = season, label = l_sink), vjust = -1.2, hjust = 0, size = 4.2, inherit.aes = FALSE) +
+  geom_text(data = lab, aes(x = 0, y = season, label = l_rope), vjust = -1.2, hjust = 0.5, size = 4.2, inherit.aes = FALSE) +
+  geom_text(data = lab, aes(x = 1.0, y = season, label = l_src), vjust = -1.2, hjust = 0, size = 4.2, inherit.aes = FALSE) +
+  theme_bw(base_size = 14) + theme(panel.grid = element_blank()) + labs(x = expression(Delta*"DOC (mg/L)"), y = NULL))
+ggsave(here("results", "figures", "Figure_2a.png"), p_q1, width = 10, height = 6, dpi = 300)
+```
+
+## Figure 2a (SCM-based, previous version — kept for comparison)
 
 ```{r first_question}
 newavg <- as.data.frame(m6 |> 
@@ -352,7 +406,7 @@ fill_colors <- c(
   annotate("text", x =  0.0, y = 0.12, label = null,  hjust = 0.5, size = 4.5) +
   annotate("text", x =  1.0, y = 0.1, label = above, hjust = 0, size = 4.5)
 )
-ggsave(here("results","figures","Figure_2a.png"), p1, width = 10, height = 6, dpi = 300)
+ggsave(here("results","figures","Figure_2a_SCM.png"), p1, width = 10, height = 6, dpi = 300)
 ```
 
 ## Stream-level classification of ΔDOC (Appendix S1: Figure S7)
