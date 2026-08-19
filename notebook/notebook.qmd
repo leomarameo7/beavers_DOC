@@ -28,7 +28,6 @@ code-annotations: select
 editor_options: 
   chunk_output_type: console
 bibliography: references.bib
-csl: "frontiers-in-ecology-and-the-environment.csl"
 ---
 
 This notebook is intended to be used for reviewers and general public that is interested to chek the R code and reproduce the results presented in the study: **Beaver-engineering amplifies dissolved organic carbon concentration in streams.**

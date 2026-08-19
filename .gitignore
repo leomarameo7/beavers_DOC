@@ -54,4 +54,11 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
->>>>>>> 541e83e521f6de1a1e9f1ecde8fe161ae02ee761
+
+# LaTeX build files
+overleaf/**/*.aux
+overleaf/**/*.log
+overleaf/**/*.out
+overleaf/**/*.bbl
+overleaf/**/*.blg
+overleaf/**/*.synctex.gz

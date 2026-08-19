@@ -1,0 +1,220 @@
+%% Scientific Reports submission -- Springer Nature template (sn-jnl.cls)
+%% Compile: pdflatex -> bibtex -> pdflatex x2   (Overleaf: set this file as Main document)
+\documentclass[sn-nature]{sn-jnl}   % Nature Portfolio reference style
+
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage{soul}      % \hl{} highlights kept from the Word draft -- remove before submission
+\usepackage{lineno}
+%\linenumbers
+
+\raggedbottom
+
+\begin{document}
+
+\title[Pathways and magnitude of beaver-mediated DOC]{Beaver-engineering amplifies dissolved organic carbon concentration}
+
+\author*[1,2]{\fnm{Leonardo} \sur{Capitani}}\email{leocapi07@gmail.com}
+\author[3,4]{\fnm{Annegret} \sur{Larsen}}
+\author[5]{\fnm{Joshua R.} \sur{Larsen}}
+\author[6]{\fnm{Matthew} \sur{Dennis}}
+\author[4,5]{\fnm{Lukas} \sur{Hallberg}}
+\author[1,2]{\fnm{Valentin} \sur{Moser}}
+\author[7]{\fnm{Christof} \sur{Angst}}
+\author[8]{\fnm{Silvan} \sur{Minnig}}
+\author[9]{\fnm{Kaspar} \sur{Berger}}
+\author[1]{\fnm{Steffen} \sur{Boch}}
+\author[1]{\fnm{Massimiliano} \sur{Zappa}}
+\author[2]{\fnm{Francesco} \sur{Pomati}}
+\author[1]{\fnm{Anita C.} \sur{Risch}}
+
+\affil[1]{\orgname{WSL - Swiss Federal Institute for Forest, Snow and Landscape Research}, \orgaddress{\city{Birmensdorf}, \country{Switzerland}}}
+\affil[2]{\orgdiv{Department of Aquatic Ecology}, \orgname{Eawag - Swiss Federal Institute of Water Science and Technology}, \orgaddress{\city{D\"ubendorf}, \country{Switzerland}}}
+\affil[3]{\orgdiv{Soil Geography and Landscape Group}, \orgname{Wageningen University \& Research}, \orgaddress{\country{The Netherlands}}}
+\affil[4]{\orgdiv{River Ecosystems Laboratory, Alpine and Polar Environmental Research Center}, \orgname{Ecole Polytechnique F\'ed\'erale de Lausanne}, \orgaddress{\city{Sion}, \country{Switzerland}}}
+\affil[5]{\orgdiv{School of Geography, Earth and Environmental Sciences}, \orgname{University of Birmingham}, \orgaddress{\country{UK}}}
+\affil[6]{\orgdiv{CIRCLE, Department of Geography, School of Environment and Life Sciences}, \orgname{The University of Manchester}, \orgaddress{\country{UK}}}
+\affil[7]{\orgname{Info fauna Nationale Biberfachstelle}, \orgaddress{\city{Neuch\^atel}, \country{Switzerland}}}
+\affil[8]{\orgname{umweltbildner.ch}, \orgaddress{\city{Bern}, \country{Switzerland}}}
+\affil[9]{\orgdiv{Institute of Geography}, \orgname{University of Bern}, \orgaddress{\country{Switzerland}}}
+
+\abstract{Despite recolonization across Europe, the effects of beavers on freshwater dissolved organic carbon (DOC) concentrations remain understudied. DOC influences microbial activity and energy flow in aquatic food webs. Understanding how and when beaver-engineering alters DOC is therefore critical for predicting its ecosystem consequences. Using a national-scale dataset we quantified the magnitude and drivers of DOC concentration changes associated with beaver-engineering. We found that beaver-engineering exerted negligible influences on DOC in 44\% of streams, but also promoted DOC source (26\%), and sink (30\%) responses. Dams modified stream hydrology, which influenced DOC indirectly via changes in primary producer abundance. Compared to floodplain-scale DOC variation, beaver-engineering amplified DOC concentrations 140 times in summer and 32 times in winter. These findings are crucial as they enable stakeholders to predict whether beaver-engineering will increase or decrease DOC concentrations, guiding decisions on where and when beaver presence will affect water quality and ecosystem functioning.}
+
+\keywords{Castor, dam, freshwater, DOC, causal inference, abundance, primary producers, hydrology}
+
+\maketitle
+
+\section{Introduction}
+
+Dissolved organic carbon (DOC) is key to the carbon (C) cycle, and plays an important role in safeguarding freshwater biodiversity and maintaining water quality \cite{allan2021}. DOC is a major energy source of C for microorganisms, influencing microbial respiration, nutrient cycling, and overall ecosystem functioning in streams and rivers \cite{raza2023}. The dynamics of DOC in water can influence water quality; for instance, elevated DOC can lead to hypoxia or other unfavourable conditions for aquatic life \cite{stanley2012}. Additionally, DOC contributes to the formation of disinfection byproducts in drinking water treatment processes, making its monitoring and management important for human health \cite{leonard2022}.
+
+Ecosystem engineers can profoundly alter ecosystem function without necessarily shifting ecosystem properties in a consistent direction across landscapes. By restructuring habitat, hydrology and resource availability, they can instead create localized control points where biogeochemical processing becomes disproportionately intense. Beavers offer a very powerful and increasingly widespread example of this ecosystem engineering, with assistance from rewilding and restoration, they can profoundly influence riparian system hydrology, ecosystems and biogeochemistry. (why do we care about DOC though?)
+
+Beaver damming can promote DOC enrichment through combinations of aquatic production and exudation, vegetation turnover and litter inputs, inundation and leaching and increased interaction with organic-rich soils, however, they may also promote depletion via longer processing times, microbial mineralization, photochemical processing, retention, and sediment and subsurface pathways. Thus, there is no strong theoretical reason to expect beaver ponds consistently to be DOC sources or always to be DOC sinks. Yet, compilations find majority increase DOC, but it is not consistent. This suggests perhaps contradictions in DOC response to beaver engineering can be expected when beaver engineering itself alters the rate and configuration of processing, while the direction is controlled by ecosystem state (also partly beaver dependent though\ldots).
+
+DOC is important ecologically because it links terrestrial and aquatic carbon pathways and provides substrate for heterotrophic metabolism. It is therefore a critical pathway by which physical ecosystem engineering can be transmitted into food webs.
+
+Yet, despite the potential impact of beavers on DOC transformations, it is unclear whether inconsistent responses among sites represent noise around a common average effect, or whether context-dependent positive and negative responses are themselves a characteristic feature of beaver ecosystem engineering.
+
+In order to address this, we established a landscape-scale and seasonal (winter and summer) distribution of DOC responses across 176 beaver influenced reaches in Switzerland. A further 16 of these were intensively characterized to investigate plausible hydrological and biological pathways (statistics approach). In order ask whether the magnitude of any local scale beaver DOC perturbation is large or small relative to a seasonal floodplain benchmark we further constructed a novel area-normalized comparison.
+
+The recovery of beaver (\emph{Castor fiber} L. and \emph{C. canadensis} Kuhl) populations across Europe and North America has renewed the interest in how their dam-engineering influences C cycling and water quality in streams. By creating ponds and wetlands, beavers reduce water velocity and flow and increase lateral river-floodplain connectivity, which can alter local C dynamics \cite{johnston2017}. Although these wetlands can trap high quantities of organic matter (OM), the concomitant promotion of anaerobic conditions reduces OM decomposition \cite{nummi2018}. Beavers also increase light availability by favouring the growth of macrophytes over woody vegetation with closed canopies, enhancing aquatic primary productivity \cite{ray2001}. However, the effects of beaver-engineering on DOC have been shown to vary widely depending on site-specific factors such as vegetation, soil, hydrology, and climate \cite{larsen2021,grudzinski2022}. While DOC dynamics have been studied at individual sites \cite{bedzki2010,ciuldiene2020,ledford2023}, the regional patterns and drivers of DOC associated with beaver-engineering remain poorly understood. Specifically, no large-scale analyses have been available so far to examine how beaver-induced hydrological and biogeochemical modifications influence the timing and magnitude of DOC changes across diverse landscapes.
+
+DOC concentrations in streams are hypothesized to be primarily influenced by the land use within the catchment, the diversity and abundance of primary producers, climatic conditions, river-floodplain connectitvity, and stream hydrology \cite{wilson2008,allan2021}. DOC concentrations vary seasonally, peaking in summer due to higher contributions of lateral and in-stream inputs from aquatic vegetation and lower water flow \cite{mulholland1997}. It has also been shown that forested catchments exhibit higher DOC concentrations due to more abundant OM input compared to non-forested catchments \cite{laudon2011}. Further, land-use change, such as urbanization and agriculture can alter the quantity and quality of DOC through increased water runoff, reduced extent of riparian buffers, or the introduction of pollutants like fertilizers and wastewater \cite{lemaire2022}. Finally, the combined effect of river-floodplain connectivity and stream hydrology, particularly waterflow regimes, can cause rapid fluctuations in DOC concentrations (Laudon \emph{et al.} 2011; Demars 2019, Wegener et al., 2017 ).
+
+In this study, we used a national-scale dataset to assess how beaver-engineering and its effect on stream hydrology and primary producer abundance influenced net changes in DOC concentrations (\(\Delta\)DOC) under contrasting levels of river--floodplain connectivity. We proposed the beaver amplification factor (M) to compare how strongly beaver-engineering amplifies DOC concentrations relative to background floodplain DOC changes across the landscape. This approach allowed us to directly contrast beaver-mediated DOC changes with the seasonal floodplain-scale variability in DOC and quantify the degree to which beaver engineering amplified or buffered C fluxes. We posed the following research questions:
+
+\begin{enumerate}
+
+\def\labelenumi{\arabic{enumi}.}
+
+\item
+
+Does beaver-engineering influence downstream DOC concentrations compared to upstream?
+
+\item
+
+Which abiotic and biotic drivers influence DOC concentrations in beaver-engineered streams?
+
+\item
+
+\hl{By how much does beaver-engineering amplify DOC concentrations relative to background floodplain DOC changes without beaver-engineering?}
+
+\end{enumerate}
+
+Our dataset included a broad set of abiotic and biotic variables that are hypothesized to influence DOC concentrations in freshwater ecosystems (Figure~\ref{fig:1}). We hypothesized that beaver-engineering influences DOC concentrations indirectly by increasing water residence time and enhancing aquatic primary productivity. We expected that this effect is stronger in summer than in winter due to seasonally increased biological activity. Because our study directly compares beaver-mediated DOC changes with background floodplain-scale DOC variation, it allows us to quantify how much and when beaver-engineering alters DOC concentrations in freshwater ecosystems. This work is therefore essential for identifying which drivers shape DOC responses to beaver-engineering and for understanding the implications of beaver-engineering for water quality and ecosystem functioning across landscapes.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figures/media/image2.jpg}
+\caption{a) Sampling locations across Switzerland. Red dots (n = 176) denote sites where water samples were collected, back dots (n = 16) denote sites where water samples and primary producer abundance were sampled. b) The hypothesized drivers of beaver-mediated changes in \(\Delta\)DOC (magenta ellipse, outcome variable). The blue box represents the stream hydrology variable. Orange boxes represent beaver-engineering variables. Green boxes represent primary producer variables. Black boxes represent parent drivers not influenced by other variables. The numbers on the edges represent potential causal paths and associated linear regression coefficients. We motivated the causal path existence through science-based hypotheses presented in Appendix S1: Table S1. Beaver illustration credits to \hl{©} \href{https://sarahedmondsshop.com/?srsltid=AfmBOopyBMXHp8BJPr6ydfGBOFsEuuVXpWoY5a-G9ZjWotzPDes8y7ia}{Sarah Edmonds Illustration}.}\label{fig:1}
+\end{figure}
+
+\section{Results}
+
+\subsection{Beaver-engineering effects on DOC}
+
+Beaver-engineering exerted negligible influence on \(\Delta\)DOC in 44\% of our 176 stream ecosystems, acted as a source in 26\%, and as a sink in 30\% (Figure~\ref{fig:2}a). We estimated the average \(\Delta\)DOC to be 0.09 mg/L (95\% Bayesian credible interval {[}BCI{]}: -1.81 ; 2.16 mg/L) across all 176 streams (Figure~\ref{fig:2}a).
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figures/media/image1.jpg}
+\caption{a) Posterior distribution of \(\Delta\)DOC. The orange shaded area represents the proportion of the posterior distribution in favour of the hypothesis that beaver ponds act as DOC sinks. The light blue shaded area represents the proportion of the posterior distribution in favour of the hypothesis that beaver ponds act as DOC sources. The grey shaded area represents the Region Of Practical Equivalence (ROPE) and it defines an interval around zero where effects are too small to be of practical importance. The central dot indicates the median of the distribution, while the thick and thin horizontal lines represent the 66\% and 95\% credible intervals. b) Drivers of beaver-mediated DOC change. Solid edges (red = negative, blue = positive) represent ≥90\% probability evidence of causal effects; dashed edges represent inconclusive evidence. Standardized average effects are shown. Full posterior parameter distributions in Appendix S1: Figure S4.}\label{fig:2}
+\end{figure}
+
+\subsection{Abiotic and biotic drivers of DOC in beaver-engineered systems}
+
+We found evidence that aquatic primary producers and soil litter cover positively influence \(\Delta\)DOC (Figure~\ref{fig:2}b). Our model indicated that beaver-engineering had a positive influence on \(\Delta\)DOC via an indirect path that is defined as: number of dams → water residence time → phytoplankton abundance → \(\Delta\)DOC (Figure~\ref{fig:2}b). Solar radiation also had a positive influence on \(\Delta\)DOC via an indirect path macrophytes \& phytoplankton → \(\Delta\)DOC (Figure~\ref{fig:2}b). We found that the stream channel gradient had a negative influence on \(\Delta\)DOC by decreasing water residence time. Notably, upstream DOC concentrations exerted a negative influence on downstream DOC concentrations (Figure~\ref{fig:2}b). By contrast, we found no clear evidence that maximum dam height affected water residence time or that water residence time directly altered DOC concentrations (Figure~\ref{fig:2}b).
+
+\subsection{Magnitude of beaver-induced DOC amplification}
+
+We found that beaver-engineering increased DOC concentrations by an average factor M of 140 times in summer and 32 times in winter compared to the seasonal floodplain DOC change (Figure~\ref{fig:3}). Since the entire 95\% CIs of both winter and summer are right of the equivalence line, this result provides strong evidence of beaver amplification effects (M\textgreater1) in both seasons.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figures/media/image3.jpg}
+\caption{Posterior distribution of the beaver amplification factor M, comparing the beaver mediated change in DOC to the seasonal floodplain-scale DOC change per unit area. The vertical dashed line at 0 represents the line of equivalence, where the magnitudes are equal. The central dot marks the posterior mean. The thick inner segment shows the 66\% credible interval, and the thinner outer segment shows the 95\% CI. Green represents winter, and orange represents summer.}\label{fig:3}
+\end{figure}
+
+\section{Discussion}
+
+We found that beaver-engineering exerted a strong, yet spatially and temporal variable, influence on DOC concentrations. Contrary to a uniform effect, our findings revealed a site-dependent response where beaver ponds functioned as sources, sinks, or neutral elements of DOC, confirming that the impact of beaver-engineering on biogeochemical processes is not universal but highly modulated by local environmental drivers. This site-dependent nature of our findings resolves conflicting results presented in prior site-specific literature \cite{larsen2021,grudzinski2022}. We found that the primary drivers influencing DOC concentrations are both biotic and abiotic. The biotic drivers were tied to the abundance of phytoplankton, macrophytes, and soil litter. Crucially, by directly comparing beaver-engineered changes to the floodplain seasonal variation, we demonstrated that when beaver-engineering does amplify DOC, it does so overwhelmingly: it increases DOC concentrations by factors up to 140 times in summer and 32 times in winter. This high magnitude suggests that under favorable conditions, beaver-engineering fundamentally alters water biogeochemistry, shifting stream sections into biogeochemical hot spots that significantly exceed background floodplain levels.
+
+We also found that beaver-engineering influenced DOC concentrations indirectly by increasing water residence time, which, in turn, enhanced aquatic primary productivity. Beaver dams are known to slow water flow and increase light penetration, creating stable habitats for phytoplankton and macrophytes \cite{johnston2017,nummi2018}. These primary producers were shown to release organic compounds and detritus and to increase DOC concentrations in dammed streams \cite{bedzki2010}. Although our estimate of the primary-producers effect on DOC was based on a relatively limited number of samples, the positive influence we detected aligns with previously documented relationships between aquatic primary productivity and DOC in lotic ecosystems \cite{allan2021}. Similar indirect effects between water flow alteration, aquatic primary productivity, and DOC were observed in other temperate and boreal streams \cite{larsen2021,grudzinski2022}.
+
+We hypothesised that the influence of beaver-engineering on DOC concentrations would be stronger in summer than in winter, owing to higher primary productivity and warmer water temperatures during the growing season. Our results supported this expectation: beaver activity amplified DOC concentrations by roughly 140-fold in summer and 32-fold in winter relative to background floodplain-scale DOC change (Figure~\ref{fig:3}). Seasonally intensified effects of beaver-engineering on DOC mirror patterns described for nutrient cycling in other aquatic ecosystems \cite{larsen2021,grudzinski2022}. The stronger DOC amplification in summer likely reflects elevated primary productivity and accelerated microbial turnover \cite{mulholland1997,raza2023}, both of which are driven by increased solar radiation and warmer temperatures \cite{battin2023}. Taken together, these patterns indicate that seasonality intensifies the effects of beaver-engineering on DOC dynamics by amplifying biologically mediated C fluxes.
+
+Beaver-mediated impacts on DOC concentrations have major implications for aquatic biogeochemistry and food-web dynamics. Elevated DOC concentrations exported during summer can enhance microbial respiration and redirect energy flow from autotrophic to heterotrophic pathways \cite{stanley2012,xenopoulos2017}. Such shifts can reduce primary production and alter consumer communities by favouring detritus-based food webs \cite{allan2021}. In winter, DOC retention and sediment C storage may support benthic microbial processes that stabilize nutrient availability and sustain overwintering invertebrates \cite{leonard2022,meyer1988}. In low-DOC ecosystems, higher beaver-induced DOC concentrations could challenge drinking-water quality, whereas in high-DOC systems, ponds may instead function as C sinks that enhance habitat complexity and energy support \cite{lemaire2022,larsen2021}.
+
+Quantifying the magnitude of DOC amplification also revealed how and when beaver-engineering influenced DOC dynamics in our study. Previous studies have demonstrated spatial and temporal variability in beaver influence on DOC, but seldom expressed them relative to background seasonal variation \cite{johnston2017,ledford2023}. By normalizing beaver-mediated DOC change against seasonal floodplain-scale change, we could provide a comparable metric across climatic and ecological settings \cite{larsen2021,nummi2018}. This approach emphasizes that beaver-engineering not only modified in situ DOC concentration but also amplified DOC processing far beyond seasonal floodplain baselines.
+
+In conclusion, by using a national-scale dataset, this study provides a comprehensive understanding of which beaver-mediated drivers influence DOC concentrations in streams. It also quantifies how much this beaver-mediated influence exceeds the seasonal floodplain-scale DOC variation. This knowledge is paramount to understand and predict when, where and to what extent beaver-engineering will amplify DOC concentrations. By identifying the environmental contexts in which beaver-engineering results in DOC sources or sinks, this work offers a predictive basis for integrating beaver presence into water-quality management and conservation planning.
+
+\section{Methods}
+
+\subsection{Study sites}
+
+We chose 176 beaver-dammed sites in Switzerland (Figure~\ref{fig:1}a). We collected water samples at upstream and downstream locations of the beaver ponds. For each stream, we collected one sample in winter (December, January or February 2021/2022) and one sample in summer (June or July 2022). We collected the upstream sample where the water was still flowing before being dammed. Since, in some cases, there was more than one dam and pond, we took the downstream sample after the last beaver dam in each sampled stream where river flow was not anymore impacted by the dam.
+
+\subsection{Data collection and processing}
+
+\subsection{Dissolved organic carbon net change}
+
+In each stream, we collected water samples and filtered (0.22 \(\mu m\)) them for analysis of DOC concentration with high-temperature combustion with infrared detection of the \(CO_{2}\) produced (Shimadzu TOC-L CSH analyzer; detection limit 0.5 \(mg\mspace{6mu} C\mspace{6mu} L^{- 1}\); error measurement 0.2 \(mg\mspace{6mu} C\mspace{6mu} L^{- 1}\)). Across all sites, we calculated the net DOC concentration change (\(\Delta DOC\); as our primary response variable), by subtracting DOC concentration at downstream locations with the upstream locations.
+
+\subsection{Beaver-engineering variables}
+
+We defined the number of dams as the integer number of dams that we counted upstream of the downstream location. We defined the dam height (\(m\)) for each site as the maximum dam height observed upstream of the downstream location. Site persistence was defined as the number of years that beavers have inhabited the site. Because several variables involve multi-stage measurements and derived calculations, we document the full data collection and processing details in Appendix S1.
+
+\subsection{Statistical analyses}
+
+To answer the first and second research questions, we used a two-step analytical approach combining causal modeling and Bayesian inference to integrate prior knowledge and account for uncertainty in our parameter estimates. First we described the set of possible data-generating processes that we hypothesized to be causing \(\Delta DOC\) variation (i.e., Structural Causal Model, SCM, Figure~\ref{fig:1}b) (\emph{sensu} Arif and MacNeil 2023). Second, we proceeded to infer the relationships between variables using a multivariate linear model within a Bayesian framework. Please see the full model specification, residuals and posterior predictive checks in Appendix S1: Figure S1, Figure S2, Figure S3. We considered a net change in DOC (\(\Delta DOC\)) larger than \(0.5\ mg/L\) as ecologically relevant: when \(\Delta DOC > 0.5\ mg/L\), the pond is a DOC source within the ecosystem; when \(\Delta DOC < - 0.5\ mg/L\), the pond is a DOC sink. We applied the Bayesian Region of Practical Equivalence (ROPE) to values between \(- 0.5\ and\ 0.5\ mg/L\). The ROPE defines an interval around zero where effects are too small to be of importance \cite{pan2025}. This \(\pm 0.5\ mg/L\) threshold is justified because changes of this magnitude are near levels at which DOC concentrations begin to affect light penetration, nutrient dynamics, and the balance between autotrophy and heterotrophy in freshwater ecosystems \cite{thrane2014,seekell2015}.
+
+\subsection{The beaver amplification factor (M)}
+
+We defined the beaver amplification factor (M; unitless), which compares the seasonal DOC change of the upstream floodplain area with the DOC change between upstream and downstream of beaver sites on a standardized, per-unit-area basis. We refer the reader to Appendix S1 for computation of the catchment area for each site and the associated floodplain area. We estimated the DOC change in the upstream floodplain area (\(D_{floodplain}^{seasonal};\ mg\ L_{}^{- 1}m_{}^{- 2}\ \)) as in Equation~\ref{eq:1}:
+
+\begin{equation}
+D_{floodplain}^{seasonal} = \frac{DOC_{upstream}^{summer} - DOC_{upstream}^{winter}}{A_{floodplain}}
+\label{eq:1}
+\end{equation}
+
+We estimated the DOC change along the beaver-engineered sites (\(D_{beaver}^{season}\); \(mg\ L_{}^{- 1}m_{}^{- 2}\)) as in Equation~\ref{eq:2}:
+
+\begin{equation}
+D_{beaver}^{season} = \frac{DOC_{down}^{season} - DOC_{up}^{season}}{A_{beaver}}
+\label{eq:2}
+\end{equation}
+
+We defined the beaver amplification factor (M) as in Equation~\ref{eq:3}:
+
+\begin{equation}
+M = \frac{\left| D_{beaver}^{season} \right|}{\left| D_{floodplain}^{seasonal} \right|}
+\label{eq:3}
+\end{equation}
+
+and its logarithm with Equation~\ref{eq:4}:
+
+\begin{equation}
+Y_{logM} = \log_{10}\left( \left| D_{beaver}^{season} \right| + c \right) - \log_{10}\left( \left| D_{floodplain}^{seasonal} \right| + c \right).
+\label{eq:4}
+\end{equation}
+
+where \(c\) prevents \(\log_{10}(0)\).
+
+We defined a linear hierarchical model to estimate the average of \(Y_{logM}\), allowing the mean to vary by season and accounting for site-level heterogeneity:
+
+\begin{equation}
+Y_{logM} \sim \mu_{logM,season} + u_{site} + \epsilon
+\label{eq:5}
+\end{equation}
+
+where \(u_{site}\) represents site-specific deviations and \(\epsilon\) the residual error of the beaver amplification factor (M). The coefficients \(\mu_{logM,season}\) represent the average orders-of-magnitude difference between beaver and floodplain-scale DOC change in summer and winter. For example, \(\mu = 5\) indicates the beaver-mediated DOC change is, on average, \(10^{5}\) times greater per unit area than the seasonal floodplain-scale DOC change, \(\mu = 0\) indicates equal magnitude, and \(\mu = - 2\) indicates the beaver DOC change is 1/100 of the seasonal floodplain-scale DOC change. With this approach, we were able to directly compare beaver-mediated DOC changes with seasonal floodplain DOC variability and quantify how strongly beaver-engineering amplified or buffered DOC concentrations.
+
+\backmatter
+
+\bmhead{Data and code availability}
+
+We confirm that all codes for data processing, including the processed data, main analyses, and supplemental analyses, are available on Zenodo repository (\href{https://doi.org/10.5281/zenodo.17737948}{\ul{10.5281/zenodo.17737948}}).
+
+\bmhead{Acknowledgments}
+
+We thank all the volunteers and Master students who collected water samples and ecological data. We thank Marta Reyes, Denise Freudemann and the central laboratory of the Swiss Federal Institute for Aquatic Ecology (Eawag) for subsequent laboratory analysis of DOC concentrations. We thank the ETH Board for financing the study as part of the Blue-\-Green Initiative. Finally, we would like to thank the Federal Office for the Environment FOEN for the financial support of the research project, which was the basis for the selection of beaver territories for this study.
+
+\bmhead{Author contributions}
+ conceptualization: Leonardo Capitani, Matthew Dennis, Lukas Hallberg, Annegret Larsen, Joshua R. Larsen, Valentin Moser, Francesco Pomati, Anita C. Risch; data collection and curation: Christof Angst, Kaspar Berger, Steffen Boch, Matthew Dennis, Annegret Larsen, Joshua Larsen, Silvan Minnig, Valentin Moser, Massimiliano Zappa, Francesco Pomati, Anita C. Risch; formal and statistical analysis: Leonardo Capitani; visualization: Leonardo Capitani; writing---original draft: Leonardo Capitani; writing---review and editing: all authors.
+
+\bmhead{Funding information}
+
+The study was funded by ETH Board through the Blue-Green Biodiversity (BGB) Initiative (2021--2024) and by the Swiss Federal Office for the Environment (FOEN).
+
+\bmhead{Conflict of interest statement}
+
+We declare no conflict of interest.
+
+\bmhead{Supplementary information}
+Appendix S1 (Supplementary Methods, Table S1, Figures S1--S3) is provided as a separate file: \texttt{supplementary/appendix\_S1.pdf}.
+
+\bibliography{references}
+
+\end{document}
