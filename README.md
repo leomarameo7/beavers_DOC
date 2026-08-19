@@ -1,6 +1,6 @@
 # Pathways and magnitude of beaver-mediated DOC change in streams
 
-Code and data for the manuscript **"Beaver-engineering amplifies dissolved organic carbon concentration"**
+Code and data for the manuscript **"Beaver engineering creates intense but bidirectional dissolved organic carbon hotspots in streams"**
 (Capitani L. *et al.*, in preparation for *Scientific Reports*).
 Contact: Leonardo Capitani (leocapi07@gmail.com), WSL & Eawag, Switzerland.
 
