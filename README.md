@@ -1,4 +1,4 @@
-# beavers_DOC — Pathways and magnitude of beaver-mediated DOC change in streams
+# Pathways and magnitude of beaver-mediated DOC change in streams
 
 Code and data for the manuscript **"Beaver-engineering amplifies dissolved organic carbon concentration"**
 (Capitani L. *et al.*, in preparation for *Scientific Reports*).
