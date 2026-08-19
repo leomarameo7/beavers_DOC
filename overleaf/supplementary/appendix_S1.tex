@@ -14,7 +14,7 @@
 \maketitle
 \begin{center}\textbf{Beaver-engineering amplifies dissolved organic carbon concentration}\end{center}
 
-This document contains the material supporting the main findings of the manuscript (tested hypotheses of the structural causal model, priors, residuals, posterior predictive checks, posterior parameter distributions, and an alternative SCM including lateral stream--wetland connectivity). The full description of data collection, variable derivation and model specification is given in the Methods of the main manuscript.
+This document contains the material supporting the main findings of the manuscript (tested hypotheses of the structural causal model, priors, residuals, posterior predictive checks, posterior parameter distributions, a stream-level classification of $\Delta$DOC, and an alternative SCM including lateral stream--wetland connectivity). The full description of data collection, variable derivation and model specification is given in the Methods of the main manuscript.
 
 \section*{SCM: tested hypothesis}
 
@@ -96,6 +96,17 @@ Posterior predictive checks assess how well the fitted SCM model reproduces obse
 \end{figure}
 
 
+
+
+\section*{Structural Causal Model: stream-level classification of $\Delta$DOC}
+
+To avoid conflating the posterior predictive probability of a response (Figure 2a, main document) with the proportion of streams showing that response, we classified each stream individually. For each of the 179 streams we computed the posterior distribution of the expected $\Delta$DOC (population-level effects plus the stream-level intercept, averaged over the stream's observations; 2,000 posterior draws) and assigned the stream to the region (sink $< -0.5$ mg L$^{-1}$, ROPE $\pm 0.5$ mg L$^{-1}$, source $> 0.5$ mg L$^{-1}$) that held the majority of its posterior mass. The expected $\Delta$DOC of all 179 streams fell within the ROPE (posterior medians from $-0.40$ to $0.38$ mg L$^{-1}$; median width of the 90\% credible interval 0.41 mg L$^{-1}$; Figure~\ref{fig:S7}), reflecting the small average effect (intercept 0.00 mg L$^{-1}$; 95\% BCI $-0.12$; 0.12) and the small between-stream standard deviation (0.05 mg L$^{-1}$; 95\% BCI 0.00; 0.14). The posterior expected numbers of streams in each region were 0.7 (sink), 177.1 (ROPE) and 1.2 (source). By contrast, the observed stream-averaged $\Delta$DOC (mean of the winter and summer samplings) was within the ROPE for 74\% of streams, above it for 20\% and below it for 6\%. The heavy-tailed posterior predictive distribution of Figure 2a (Student-$t$ residual with $\nu \approx 2$) thus captures the variability of individual samplings around a null average rather than consistent stream-level differences.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figures/media/figS7_site_level.png}
+\caption{Stream-level $\Delta$DOC. Blue points and bars: posterior median and 90\% credible interval of the model-based expected $\Delta$DOC of each stream (ranked by posterior median). Orange crosses: observed stream-averaged $\Delta$DOC (one value of 29.9 mg L$^{-1}$ is clipped at 5 mg L$^{-1}$). The grey band is the region of practical equivalence ($\pm 0.5$ mg L$^{-1}$).}\label{fig:S7}
+\end{figure}
 
 \FloatBarrier
 \section*{Alternative structural causal model: lateral stream--wetland connectivity}

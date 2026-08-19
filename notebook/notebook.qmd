@@ -350,6 +350,45 @@ fill_colors <- c(
 
 ```
 
+## Stream-level classification of ΔDOC (Appendix S1: Figure S7)
+
+The percentages in Figure 2a are posterior *predictive* probabilities for a single sampling of a typical stream, not percentages of streams. Here we classify each stream by the posterior of its expected ΔDOC (fixed effects + stream-level intercept, averaged over its observations).
+
+```{r site_level_classification}
+m6_fit <- b1$data
+E <- posterior_epred(b1, resp = "deltaDOC", ndraws = 2000)   # draws x observations (site effects included, mi() values imputed)
+sites <- m6_fit$site; us <- unique(sites)
+M <- sapply(us, function(s) rowMeans(E[, sites == s, drop = FALSE]))  # draws x streams
+
+cls <- data.frame(site = us,
+                  p_sink = colMeans(M < -0.5),
+                  p_rope = colMeans(M >= -0.5 & M <= 0.5),
+                  p_source = colMeans(M > 0.5),
+                  med = apply(M, 2, median),
+                  lo = apply(M, 2, quantile, .05),
+                  hi = apply(M, 2, quantile, .95)) |>
+  mutate(class = case_when(p_sink > 0.5 ~ "sink", p_source > 0.5 ~ "source",
+                           p_rope > 0.5 ~ "negligible", TRUE ~ "undetermined"))
+table(cls$class)
+c(sink = sum(cls$p_sink), rope = sum(cls$p_rope), source = sum(cls$p_source))  # posterior expected counts
+
+# observed stream means for comparison
+obs <- m6_fit |> group_by(site) |> summarise(d = mean(delta_DOC, na.rm = TRUE))
+round(100 * prop.table(table(cut(obs$d, c(-Inf, -0.5, 0.5, Inf), labels = c("sink", "negligible", "source")))), 1)
+
+cls <- left_join(cls, obs, by = "site") |> arrange(med) |> mutate(rank = row_number(), dc = pmin(d, 5))
+ggplot(cls, aes(x = rank)) +
+  annotate("rect", xmin = -Inf, xmax = Inf, ymin = -0.5, ymax = 0.5, fill = "grey85", alpha = .7) +
+  geom_hline(yintercept = 0, linetype = 2, colour = "grey40") +
+  geom_point(aes(y = dc, colour = "Observed site mean"), size = 1.3, shape = 4) +
+  geom_linerange(aes(ymin = lo, ymax = hi, colour = "Model-based site estimate"), alpha = .6) +
+  geom_point(aes(y = med, colour = "Model-based site estimate"), size = 1.2) +
+  scale_colour_manual(values = c("Model-based site estimate" = "steelblue4", "Observed site mean" = "coral"), name = NULL) +
+  coord_cartesian(ylim = c(-2.5, 5)) +
+  labs(x = "Stream (ranked by posterior median)", y = expression(paste(Delta, "DOC (mg/L)"))) +
+  theme_classic(base_size = 13) + theme(legend.position = "top")
+```
+
 ## The beaver amplification factor (M)
 
 Let:
