@@ -269,7 +269,12 @@ draws <- b1 |> add_predicted_draws(newdata = newavg,
                                    seed = 7, 
                                    category = "deltaDOC", 
                                    re_formula = NA # exclude Site as grouping factor
-                                   )
+                                   ) |> 
+  # IMPORTANT: for a multivariate brms model, add_predicted_draws() returns predictions for
+  # ALL response variables (deltaDOC and the z-scored mi() predictors), stacked in the column
+  # named by `category`. Keep only the deltaDOC predictions.
+  ungroup() |> 
+  filter(deltaDOC == "deltaDOC")
 ```
 
 ```{r estimate_probabilities_and_HDI}
@@ -307,7 +312,7 @@ fill_colors <- c(
 
 ```{r }
 #| label: fig-mainresults2a
-#| fig-cap: "Posterior distribution of beaver-mediated DOC change. The red shaded area represents the proportion of the posterior distribution in favour of the hypothesis that beaver ponds act as DOC sinks. The light blue shaded area represents the proportion of the posterior distribution in favour of the hypothesis that beaver ponds act as DOC sources. The grey shaded area represents the Region Of Practical Equivalence (ROPE) and it defines an interval around zero where effects are too small to be of practical importance. The central dot indicates the median of the distribution, while the thick and thin horizontal lines represent the 66% and 95% credible intervals, respectively."
+#| fig-cap: "Posterior predictive distribution of beaver-mediated DOC change for a typical stream (predictors at their mean, site effects excluded). The red shaded area represents the posterior predictive probability that a single sampling shows a DOC sink response. The light blue shaded area represents the proportion of the posterior distribution in favour of the hypothesis that beaver ponds act as DOC sources. The grey shaded area represents the Region Of Practical Equivalence (ROPE) and it defines an interval around zero where effects are too small to be of practical importance. The central dot indicates the median of the distribution, while the thick and thin horizontal lines represent the 66% and 95% credible intervals, respectively."
 #| fig-width: 10
 #| fig-height: 6
 # Plot
@@ -347,7 +352,7 @@ fill_colors <- c(
   annotate("text", x =  0.0, y = 0.12, label = null,  hjust = 0.5, size = 4.5) +
   annotate("text", x =  1.0, y = 0.1, label = above, hjust = 0, size = 4.5)
 )
-
+ggsave(here("results","figures","Figure_2a.png"), p1, width = 10, height = 6, dpi = 300)
 ```
 
 ## Stream-level classification of ΔDOC (Appendix S1: Figure S7)
