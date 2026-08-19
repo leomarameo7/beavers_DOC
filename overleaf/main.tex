@@ -4,7 +4,7 @@
 
 \usepackage{graphicx}
 \usepackage{amsmath,amssymb}
-\usepackage{soul}      % \hl{} highlights kept from the Word draft -- remove before submission
+\usepackage{soul}\usepackage{url}      % \hl{} highlights kept from the Word draft -- remove before submission
 \usepackage{lineno}
 %\linenumbers
 
@@ -38,7 +38,7 @@
 \affil[8]{\orgname{umweltbildner.ch}, \orgaddress{\city{Bern}, \country{Switzerland}}}
 \affil[9]{\orgdiv{Institute of Geography}, \orgname{University of Bern}, \orgaddress{\country{Switzerland}}}
 
-\abstract{Despite recolonization across Europe, the effects of beavers on freshwater dissolved organic carbon (DOC) concentrations remain understudied. DOC influences microbial activity and energy flow in aquatic food webs. Understanding how and when beaver-engineering alters DOC is therefore critical for predicting its ecosystem consequences. Using a national-scale dataset we quantified the magnitude and drivers of DOC concentration changes associated with beaver-engineering. We found that beaver-engineering exerted negligible influences on DOC in 44\% of streams, but also promoted DOC source (26\%), and sink (30\%) responses. Dams modified stream hydrology, which influenced DOC indirectly via changes in primary producer abundance. Compared to floodplain-scale DOC variation, beaver-engineering amplified DOC concentrations 140 times in summer and 32 times in winter. These findings are crucial as they enable stakeholders to predict whether beaver-engineering will increase or decrease DOC concentrations, guiding decisions on where and when beaver presence will affect water quality and ecosystem functioning.}
+\abstract{Despite recolonization across Europe, the effects of beavers on freshwater dissolved organic carbon (DOC) concentrations remain understudied. DOC influences microbial activity and energy flow in aquatic food webs. Understanding how and when beaver-engineering alters DOC is therefore critical for predicting its ecosystem consequences. Using a national-scale dataset we quantified the magnitude and drivers of DOC concentration changes associated with beaver-engineering. We found that beaver-engineering exerted negligible influences on DOC in 44\% of streams, but also promoted DOC source (30\%) and sink (26\%) responses. Dams modified stream hydrology, which influenced DOC indirectly via changes in primary producer abundance. Compared to floodplain-scale DOC variation, beaver-engineering amplified DOC concentrations 140 times in summer and 32 times in winter. These findings are crucial as they enable stakeholders to predict whether beaver-engineering will increase or decrease DOC concentrations, guiding decisions on where and when beaver presence will affect water quality and ecosystem functioning.}
 
 \keywords{Castor, dam, freshwater, DOC, causal inference, abundance, primary producers, hydrology}
 
@@ -94,7 +94,7 @@ Our dataset included a broad set of abiotic and biotic variables that are hypoth
 
 \subsection{Beaver-engineering effects on DOC}
 
-Beaver-engineering exerted negligible influence on \(\Delta\)DOC in 44\% of our 176 stream ecosystems, acted as a source in 26\%, and as a sink in 30\% (Figure~\ref{fig:2}a). We estimated the average \(\Delta\)DOC to be 0.09 mg/L (95\% Bayesian credible interval {[}BCI{]}: -1.81 ; 2.16 mg/L) across all 176 streams (Figure~\ref{fig:2}a).
+Beaver-engineering exerted negligible influence on \(\Delta\)DOC in 44\% of our 176 stream ecosystems, acted as a source in 30\%, and as a sink in 26\% (Figure~\ref{fig:2}a). We estimated the average \(\Delta\)DOC to be 0.09 mg/L (95\% Bayesian credible interval {[}BCI{]}: -1.81 ; 2.16 mg/L) across all 176 streams (Figure~\ref{fig:2}a).
 
 \begin{figure}[htbp]
 \centering
@@ -132,11 +132,9 @@ In conclusion, by using a national-scale dataset, this study provides a comprehe
 
 \section{Methods}
 
-\subsection{Study sites}
+\subsection{Study sites and sampling design}
 
 We chose 176 beaver-dammed sites in Switzerland (Figure~\ref{fig:1}a). We collected water samples at upstream and downstream locations of the beaver ponds. For each stream, we collected one sample in winter (December, January or February 2021/2022) and one sample in summer (June or July 2022). We collected the upstream sample where the water was still flowing before being dammed. Since, in some cases, there was more than one dam and pond, we took the downstream sample after the last beaver dam in each sampled stream where river flow was not anymore impacted by the dam.
-
-\subsection{Data collection and processing}
 
 \subsection{Dissolved organic carbon net change}
 
@@ -144,40 +142,119 @@ In each stream, we collected water samples and filtered (0.22 \(\mu m\)) them fo
 
 \subsection{Beaver-engineering variables}
 
-We defined the number of dams as the integer number of dams that we counted upstream of the downstream location. We defined the dam height (\(m\)) for each site as the maximum dam height observed upstream of the downstream location. Site persistence was defined as the number of years that beavers have inhabited the site. Because several variables involve multi-stage measurements and derived calculations, we document the full data collection and processing details in Appendix S1.
+We defined the number of dams as the integer number of dams that we counted upstream of the downstream location. We defined the dam height (\(m\)) for each site as the maximum dam height observed upstream of the downstream location. Site persistence was defined as the number of years that beavers have inhabited the site.
 
-\subsection{Statistical analyses}
+\subsection{Water residence time}
 
-To answer the first and second research questions, we used a two-step analytical approach combining causal modeling and Bayesian inference to integrate prior knowledge and account for uncertainty in our parameter estimates. First we described the set of possible data-generating processes that we hypothesized to be causing \(\Delta DOC\) variation (i.e., Structural Causal Model, SCM, Figure~\ref{fig:1}b) (\emph{sensu} Arif and MacNeil 2023). Second, we proceeded to infer the relationships between variables using a multivariate linear model within a Bayesian framework. Please see the full model specification, residuals and posterior predictive checks in Appendix S1: Figure S1, Figure S2, Figure S3. We considered a net change in DOC (\(\Delta DOC\)) larger than \(0.5\ mg/L\) as ecologically relevant: when \(\Delta DOC > 0.5\ mg/L\), the pond is a DOC source within the ecosystem; when \(\Delta DOC < - 0.5\ mg/L\), the pond is a DOC sink. We applied the Bayesian Region of Practical Equivalence (ROPE) to values between \(- 0.5\ and\ 0.5\ mg/L\). The ROPE defines an interval around zero where effects are too small to be of importance \cite{pan2025}. This \(\pm 0.5\ mg/L\) threshold is justified because changes of this magnitude are near levels at which DOC concentrations begin to affect light penetration, nutrient dynamics, and the balance between autotrophy and heterotrophy in freshwater ecosystems \cite{thrane2014,seekell2015}.
+We defined the water residence time (i.e., \(\tau\), seconds) using Equation~\ref{eq:wrt}:
+
+\begin{equation}
+\tau = \frac{V}{Q}
+\label{eq:wrt}
+\end{equation}
+
+where \(Q\) is the stream discharge (\(m^{3}/s\)) and \(V\) is the water volume stored within the beaver's pond (\(m^{3}\)). We estimated stream water discharge using a semi-distributed hydrological catchment model (PREVAH; Precipitation-Runoff-Evapotranspiration HRU Model; \citealp{viviroli2009}). We estimated pond water volume (\(V\)) by delineating the beaver pond boundary from aerial imagery and clipping the DEM to this polygon. With the QGIS's Volume Calculation tool we then quantified the volume enclosed within the pond footprint by integrating elevation differences across all DEM cells within the polygon. We validated this method by field surveys of six different beaver ponds.
+
+\subsection{Channel gradient}
+
+We estimated channel gradient between upstream and downstream locations by upstream and downstream elevations from the DEM using the ``Extract values to point'' tool. We then digitized polylines that follow the swisTLM3D \cite{swisstopo2024} river line between each upstream-downstream pair and calculated their lengths (LL) with the QGIS field calculator. We computed slope as the elevation drop per horizontal distance using Equation~\ref{eq:grad}:
+
+\begin{equation}
+\text{channel gradient}\,(\%) = \frac{\text{Upstream}_{altitude} - \text{Downstream}_{altitude}}{LL} \cdot 100
+\label{eq:grad}
+\end{equation}
+
+\subsection{Solar radiation}
+
+We computed the Solar radiation (\(Wh\ m^{-2}\)) of the stream reaches with the Grass r.sun.insoltime algorithm using the \emph{qgisprocess} package in R \cite{muenchow2017}. This algorithm requires a digital surface model (DSM), a slope layer and an aspect layer. We calculated the DSM by combining a 2 m digital elevation model (DEM; \citealp{swisstopo2022}) and a 1m digital model of vegetation height (resampled to the resolution of the DEM) \cite{foen2021}. Slope and aspect were computed from the 2 m DEM using the \emph{terra} package in R \cite{hijmans2025}.
+
+\subsection{Primary producers variables}
+
+We sampled primary producers' abundance, namely phytoplankton, macrophyte and soil litter cover at 16 sites (Figure~\ref{fig:1}a). To estimate phytoplankton abundance, we collected 50L of water from the main beaver pond and concentrated it to a 2 L sample using a 10 μm mesh. In the laboratory, we counted and identified phytoplankton with a dual-magnification dark-field imaging microscope that captured all particles in the size range between \textasciitilde10 μm and \textasciitilde1 cm using a 5.0× magnification objective. We estimated macrophyte abundance by counting each individual plant detected in the beaver ponds. We estimated soil litter percentage cover in a 1x5 m plot located at 0.5 m distance from the edge of the beaver pond in each site. We defined all dead plant material, such as leaves, but also twigs \textless7cm circumference, as soil litter.
+
+\subsection{Statistical analyses: structural causal model}
+
+To answer the first and second research questions, we used a two-step analytical approach combining causal modeling and Bayesian inference to integrate prior knowledge and account for uncertainty in our parameter estimates. First we described the set of possible data-generating processes that we hypothesized to be causing \(\Delta DOC\) variation (i.e., Structural Causal Model, SCM, Figure~\ref{fig:1}b) \cite{arif2023}. Second, we proceeded to infer the relationships between variables using a multivariate linear model within a Bayesian framework. The full model specification is given below (Equation~\ref{eq:scm}); the tested hypotheses for each causal path, the priors, residuals and posterior predictive checks are reported in Appendix S1 (Table S1, Figures S1--S3). We considered a net change in DOC (\(\Delta DOC\)) larger than \(0.5\ mg/L\) as ecologically relevant: when \(\Delta DOC > 0.5\ mg/L\), the pond is a DOC source within the ecosystem; when \(\Delta DOC < - 0.5\ mg/L\), the pond is a DOC sink. We applied the Bayesian Region of Practical Equivalence (ROPE) to values between \(- 0.5\ and\ 0.5\ mg/L\). The ROPE defines an interval around zero where effects are too small to be of importance \cite{pan2025}. This \(\pm 0.5\ mg/L\) threshold is justified because changes of this magnitude are near levels at which DOC concentrations begin to affect light penetration, nutrient dynamics, and the balance between autotrophy and heterotrophy in freshwater ecosystems \cite{thrane2014,seekell2015}.
+
+In this study we used the structural causal model (SCM) framework to answer the research questions (\emph{sensu} \citealp{arif2023}). The SCM can be considered as a directed acyclic graph (DAG) with nodes and edges. The nodes indicate the relevant variables of the ecosystem and the edges indicate direct causal influences. The edges are acyclic because a cause is not at the same time an effect. We fitted the SCM with the Bayesian framework to accommodate the uncertainty inherent in ecological data and to incorporate prior distributions based on previous research and expert opinion \cite{gelman2013}.
+
+We specified the SCM model as a system of linear equations, where each equation represents the relationship between a response variable and its predictors. We statistically defined the full Bayesian SCM as in Equation~\ref{eq:scm}.
+
+Given that the error in both the downstream and upstream DOC measurements was 0.2 \(mg\mspace{6mu} C\mspace{6mu} L^{- 1}\), we estimated the error of \(\Delta DOC\) (i.e., \(E\)) by error propagation using Equation~\ref{eq:err}:
+
+\begin{equation}
+E = \sqrt{0.2^{2} + 0.2^{2}} = \sqrt{0.08} \approx 0.283\ mg\ L^{-1}
+\label{eq:err}
+\end{equation}
+
+Specifically, we treated the measurement error as missing data and imputed it using a normal distribution with a mean of 0 and a standard deviation of 0.283 mg/L. The overall model comprised a measurement model and an outcome multivariate model. First, we accounted for observational uncertainty by specifying a measurement model that links the observed \(\Delta DOC_{i}^{obs/imputed}\)~to a latent (true) DOC change, \(\Delta DOC_{i}^{true}\):
+
+\begin{equation}
+\begin{aligned}
+\textbf{Measurement model:} \quad
+\Delta \text{DOC}_i^{\text{obs}} &\sim \mathcal{N}(\Delta \text{DOC}_i, 0.283^2) \\[1em]
+\textbf{Outcome multivariate model:} \quad
+\Delta \text{DOC}_i &\sim \text{Student-}t(\nu, \mu_i, \sigma_{\Delta \text{DOC}}) \\
+\mu_i &= \beta_1 \cdot \text{DOC}_{\text{upstream}, i} \\
+&\quad + \beta_2 \cdot \text{Macrophytes}_i \\
+&\quad + \beta_3 \cdot \text{Phytoplankton}_i \\
+&\quad + \beta_4 \cdot \text{Litter Cover}_i \\
+&\quad + \beta_5 \cdot \text{WRT}_i \\[1em]
+\textbf{Predictors multivariate model:} \quad
+\text{Macrophytes}_i &\sim f(\text{solar radiation}_i, \text{WRT}_i, \dots) \\
+\text{Phytoplankton}_i &\sim f(\text{Macrophytes}_i, \text{WRT}_i) \\
+\text{Litter Cover}_i &\sim f(\text{solar radiation}_i) \\
+\text{WRT}_i &\sim f(\text{DamHeight}_i, \text{NDams}_i, \dots) \\
+&\ \ \vdots \\[1em]
+\textbf{Priors:} \quad
+\alpha_{\text{summer}} &\sim \mathcal{N}(0, 10) \\
+\alpha_{\text{winter}} &\sim \mathcal{N}(0, 7.5) \\
+\beta_2, \beta_3, \beta_4, \beta_5 &\sim \mathcal{N}(0.05, 0.1) \\
+\beta_6 &\sim \mathcal{N}(0, 0.2) \\
+&\ \ \vdots \\
+\sigma_{\Delta \text{DOC}} &\sim \text{Student-}t(3, 0, 2.5) \\
+\sigma_{\text{upstream}} &\sim \mathcal{N}(0, 0.5) \\
+\nu &\sim \text{Gamma}(2, 0.1)
+\end{aligned}
+\label{eq:scm}
+\end{equation}
+
+We used the mi() function from the R package \emph{brms} (version 2.22) to account for the measurement error of 0.283 mg/L on the response variable \(\Delta DOC\). We imputed missing data during model fitting by treating them as additional parameters. We ensured that missing data in both response and predictor variables were modeled rather than excluded by using the mi() function. This function treats missing values as additional parameters and estimates them jointly with the model.
+
+We generated 20,000 (four chains run for 10,000 iterations discarding the first 3000 as burn-in) Markov chain Monte Carlo (MCMC) samples from the posterior distribution. We visually assessed if the SCM was a reasonably good description of the data by posterior predictive check and residuals (Appendix S1: Figure S2 and Figure S3). All MCMC chains indicated convergence through falling within the threshold (i.e., R-hat \textless{} 1.05) specified by Gelman and Rubin \cite{gelman1992}.
+
+If posterior parameter distributions had more than 90\% probability mass on either side of zero (\(P(\beta > 0)\) or \(P(\beta < 0)\)), then we assumed that there was statistical evidence for the positive or negative effect of the predictor on the response variable.
+
+We did all the data cleaning and statistical analysis within the R environment (version 4.5.1). We conducted data cleaning with the tidyverse (version 1.3.1) package and created figures using ggplot2 (version 3.3.5). We used the R packages \emph{brms} (version 2.16.1), tidybayes (version 3.0.2), and bayesplot (version 1.9.0) for Bayesian inference.
 
 \subsection{The beaver amplification factor (M)}
 
-We defined the beaver amplification factor (M; unitless), which compares the seasonal DOC change of the upstream floodplain area with the DOC change between upstream and downstream of beaver sites on a standardized, per-unit-area basis. We refer the reader to Appendix S1 for computation of the catchment area for each site and the associated floodplain area. We estimated the DOC change in the upstream floodplain area (\(D_{floodplain}^{seasonal};\ mg\ L_{}^{- 1}m_{}^{- 2}\ \)) as in Equation~\ref{eq:1}:
+We defined the beaver amplification factor (M; unitless), which compares the seasonal DOC change of the upstream floodplain area with the DOC change between upstream and downstream of beaver sites on a standardized, per-unit-area basis. The delineation of the catchment and floodplain area of each site is described below. We estimated the DOC change in the upstream floodplain area (\(D_{floodplain}^{seasonal};\ mg\ L_{}^{- 1}m_{}^{- 2}\ \)) as in Equation~\ref{eq:dflood}:
 
 \begin{equation}
 D_{floodplain}^{seasonal} = \frac{DOC_{upstream}^{summer} - DOC_{upstream}^{winter}}{A_{floodplain}}
-\label{eq:1}
+\label{eq:dflood}
 \end{equation}
 
-We estimated the DOC change along the beaver-engineered sites (\(D_{beaver}^{season}\); \(mg\ L_{}^{- 1}m_{}^{- 2}\)) as in Equation~\ref{eq:2}:
+We estimated the DOC change along the beaver-engineered sites (\(D_{beaver}^{season}\); \(mg\ L_{}^{- 1}m_{}^{- 2}\)) as in Equation~\ref{eq:dbeaver}:
 
 \begin{equation}
 D_{beaver}^{season} = \frac{DOC_{down}^{season} - DOC_{up}^{season}}{A_{beaver}}
-\label{eq:2}
+\label{eq:dbeaver}
 \end{equation}
 
-We defined the beaver amplification factor (M) as in Equation~\ref{eq:3}:
+We defined the beaver amplification factor (M) as in Equation~\ref{eq:M}:
 
 \begin{equation}
 M = \frac{\left| D_{beaver}^{season} \right|}{\left| D_{floodplain}^{seasonal} \right|}
-\label{eq:3}
+\label{eq:M}
 \end{equation}
 
-and its logarithm with Equation~\ref{eq:4}:
+and its logarithm with Equation~\ref{eq:logM}:
 
 \begin{equation}
 Y_{logM} = \log_{10}\left( \left| D_{beaver}^{season} \right| + c \right) - \log_{10}\left( \left| D_{floodplain}^{seasonal} \right| + c \right).
-\label{eq:4}
+\label{eq:logM}
 \end{equation}
 
 where \(c\) prevents \(\log_{10}(0)\).
@@ -186,16 +263,20 @@ We defined a linear hierarchical model to estimate the average of \(Y_{logM}\), 
 
 \begin{equation}
 Y_{logM} \sim \mu_{logM,season} + u_{site} + \epsilon
-\label{eq:5}
+\label{eq:Mmodel}
 \end{equation}
 
 where \(u_{site}\) represents site-specific deviations and \(\epsilon\) the residual error of the beaver amplification factor (M). The coefficients \(\mu_{logM,season}\) represent the average orders-of-magnitude difference between beaver and floodplain-scale DOC change in summer and winter. For example, \(\mu = 5\) indicates the beaver-mediated DOC change is, on average, \(10^{5}\) times greater per unit area than the seasonal floodplain-scale DOC change, \(\mu = 0\) indicates equal magnitude, and \(\mu = - 2\) indicates the beaver DOC change is 1/100 of the seasonal floodplain-scale DOC change. With this approach, we were able to directly compare beaver-mediated DOC changes with seasonal floodplain DOC variability and quantify how strongly beaver-engineering amplified or buffered DOC concentrations.
+
+\subsubsection{Definition of catchment and floodplain area}
+
+We delineated the catchment area by automatically assigning pour points to stream outlets at each site and entering these, along with a D8 pointer raster based on a 25 m DEM \cite{swisstopo2004} into the \emph{Watershed} algorithm in Whitebox \cite{lindsay2016} executed using the \emph{Whitebox} package in R \cite{wu2022}. We calculated the floodplain area of each site using a custom-made function in R based on \hl{the elevation differential of the local terrain and the nearest channel,} adapted from a method developed by \citet{clubb2017}.
 
 \backmatter
 
 \bmhead{Data and code availability}
 
-We confirm that all codes for data processing, including the processed data, main analyses, and supplemental analyses, are available on Zenodo repository (\href{https://doi.org/10.5281/zenodo.17737948}{\ul{10.5281/zenodo.17737948}}).
+We confirm that all codes for data processing, including the processed data, main analyses, and supplemental analyses, are available on the GitHub repository \url{https://github.com/leomarameo7/beavers_DOC}.
 
 \bmhead{Acknowledgments}
 

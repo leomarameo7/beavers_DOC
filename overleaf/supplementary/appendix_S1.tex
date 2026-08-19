@@ -12,59 +12,9 @@
 \date{}
 \begin{document}
 \maketitle
-This document contains all the material necessary to support the main findings of the manuscript:
-
 \begin{center}\textbf{Beaver-engineering amplifies dissolved organic carbon concentration}\end{center}
 
-\section*{Data collection and processing}
-
-\section*{Water residence time}
-
-We defined the water residence time (i.e., \(\tau\), seconds) using Equation 1:
-
-\(\tau = \frac{V}{Q}\quad\quad(1)\)
-
-where \(Q\) is the stream discharge (\(m^{3}/s\)) and \(V\) is the water volume stored within the beaver's pond (\(m^{3}\)). We estimated stream water discharge using a semi-distributed hydrological catchment model (PREVAH; Precipitation-Runoff-Evapotranspiration HRU Model; Viviroli \emph{et al.} 2009). We estimated pond water volume (\(V\)) by delineating the beaver pond boundary from aerial imagery and clipping the DEM to this polygon. With the QGIS's Volume Calculation tool we then quantified the volume enclosed within the pond footprint by integrating elevation differences across all DEM cells within the polygon. We validated this method by field surveys of six different beaver ponds.
-
-\section*{Channel gradient}
-
-We estimated channel gradient between upstream and downstream locations by upstream and downstream elevations from the DEM using the ``Extract values to point'' tool. We then digitized polylines that follow the swisTLM3D (SwissTopo 2024) river line between each upstream-downstream pair and calculated their lengths (LL) with the QGIS field calculator. We computed slope as the elevation drop per horizontal distance using Equation 2:
-
-\(channel\ gradient\ (\%)\  = \ \frac{({Upstream}_{} - \ {D{ownstream}_{altitude}}_{})}{LL} \cdot 100\) (2)
-
-\section*{Solar radiation}
-
-We computed the Solar radiation (\(\frac{Wh}{m^{- 2}}\)) of the stream reaches with the Grass r.sun.insoltime algorithm using the \emph{qgisprocess} package in R (Muenchow et al., 2017). This algorithm requires a digital surface model (DSM), a slope layer and an aspect layer. We calculated the DSM by combining a 2 m digital elevation model (DEM, SwissTopo 2022) and a 1m digital model of vegetation height (resampled to the resolution of the DEM) (FOEN, 2021). Slope and aspect were computed from the 2 m DEM using the \emph{terra} package in R (Hijmans, 2025).
-
-\section*{Primary producers variables}
-
-We sampled primary producers' abundance, namely phytoplankton, macrophyte and soil litter cover at 16 sites (Figure~1a, main manuscript). To estimate phytoplankton abundance, we collected 50L of water from the main beaver pond and concentrated it to a 2 L sample using a 10 μm mesh. In the laboratory, we counted and identified phytoplankton with a dual-magnification dark-field imaging microscope that captured all particles in the size range between \textasciitilde10 μm and \textasciitilde1 cm using a 5.0× magnification objective. We estimated macrophyte abundance by counting each individual plant detected in the beaver ponds. We estimated soil litter percentage cover in a 1x5 m plot located at 0.5 m distance from the edge of the beaver pond in each site. We defined all dead plant material, such as leaves, but also twigs \textless7cm circumference, as soil litter.
-
-\section*{Full Structural Causal Model specification}
-
-In this study we used the structural causal model (SCM) framework to answer the research questions (\emph{sensu} Arif and MacNeil 2023. The SCM can be considered as a directed acyclic graph (DAG) with nodes and edges. The nodes indicate the relevant variables of the ecosystem and the edges indicate direct causal influences. The edges are acyclic because a cause is not at the same time an effect. We fitted the SCM with the Bayesian framework to accommodate the uncertainty inherent in ecological data and to incorporate prior distributions based on previous research and expert opinion (Gelman \emph{et al.} 2013).
-
-We specified the SCM model as a system of linear equations, where each equation represents the relationship between a response variable and its predictors. We statistically defined the full bayesian SCM as in Equation~1.
-
-Given that the error in both the downstream and upstream DOC measurements was 0.2 \(mg\mspace{6mu} C\mspace{6mu} L^{- 1}\), we estimated the error (i.e., \(E\) ) using Equation~3:
-
-\(E = = = \approx 0.283\ mg/L\quad\quad(3)\)
-
-Specifically, we treated the measurement error as missing data and imputed it using a normal distribution with a mean of 0 and a standard deviation of 0.283 mg/L. The overall model comprised a measurement model and an outcome multivariate model. First, we accounted for observational uncertainty by specifying a measurement model that links the observed~\(\Delta DOC_{i}^{obs/imputed}\)\hspace{0pt}~to a latent (true) DOC change, \(\Delta DOC_{i}^{true}\)\hspace{0pt}:
-
-\begin{center}\includegraphics[width=0.9\textwidth]{figures/media/image1.png}\end{center}\hfill(4)
-
-We used the mi() function from the R package \emph{brms} (version 2.22) to account for the measurement error of 0.283 mg/L on the response variable \(\Delta DOC\). We imputed missing data during model fitting by treating them as additional parameters. We ensured that missing data in both response and predictor variables were modeled rather than excluded by using the mi() function. This function treats missing values as additional parameters and estimates them jointly with the model.
-
-We generated 20,000 (four chains run for 10,000 iterations discarding the first 3000 as burn-in) Markov chain Monte Carlo (MCMC) samples from the posterior distribution. We visually assessed if the SCM was a reasonably good description of the data by posterior predictive check and residuals (Figure~\ref{fig:S2} and Figure~\ref{fig:S3}). All MCMC chains indicated convergence through falling within the threshold (i.e., R-hat \textless{} 1.05) specified by Gelman and Rubin (Gelman and Rubin 1992).
-
-If posterior parameter distributions had more than 90\% probability mass on either side of zero (\(P(\beta > 0)\) or \(P(\beta < 0)\)), then we assumed that there was statistical evidence for the positive or negative effect of the predictor on the response variable.
-
-We did all the data cleaning and statistical analysis within the R environment (version 4.5.1). We conducted data cleaning with the tidyverse (version 1.3.1) package and created figures using ggplot2 (version 3.3.5).We used the R packages \emph{brms} (version 2.16.1), tidybayes (version 3.0.2), and bayesplot (version 1.9.0) for Bayesian inference.
-
-\section*{The beaver amplification factor (M): definition of floodplain area}
-
-We delineated the catchment area by automatically assigning pour points to stream outlets at each site and entering these, along with a D8 pointer raster based on a 25 m DEM (Swiss Topo, 2004) into the \emph{Watershed} algorithm in Whitebox (Lindsay, 2016) executed using the \emph{Whitebox} package in R (Wu and Brown, 2022). We calculated the floodplain area of each site using a custom-made function in R based on \hl{the elevation differential of the local terrain and the nearest channel,} adapted from a method developed by Clubb et al. (2017).
+This document contains the material supporting the main findings of the manuscript (tested hypotheses of the structural causal model, priors, residuals, posterior predictive checks and posterior parameter distributions). The full description of data collection, variable derivation and model specification is given in the Methods of the main manuscript.
 
 \section*{SCM: tested hypothesis}
 
@@ -113,7 +63,9 @@ To ensure the model was not over-constrained by prior knowledge, we used weakly 
 
 We can evaluate the model fit by looking at the difference between observed data and their predictions. That are the residuals (\(r_{i}\)).
 
-\(r_{i} = y_{i} - y_{i}^{pred}\ .\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (5)\)
+\begin{equation}
+r_{i} = y_{i} - y_{i}^{pred}
+\end{equation}
 
 If the model is a reasonable representation of the observational process that originates the data then the residuals should look roughly randomly scattered in comparison to a horizontal line.
 
