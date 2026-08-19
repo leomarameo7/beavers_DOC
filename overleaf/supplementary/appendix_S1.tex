@@ -2,7 +2,7 @@
 %% Compile separately from main.tex (Overleaf: Menu -> Main document -> supplementary/appendix_S1.tex)
 \documentclass[11pt,a4paper]{article}
 \usepackage[margin=2.5cm]{geometry}
-\usepackage{graphicx,amsmath,amssymb,booktabs,longtable,array,soul,hyperref}
+\usepackage{graphicx,amsmath,amssymb,booktabs,longtable,array,soul,hyperref,placeins}
 \usepackage[T1]{fontenc}\usepackage[utf8]{inputenc}\usepackage{lmodern}
 \renewcommand{\thefigure}{S\arabic{figure}}
 \renewcommand{\thetable}{S\arabic{table}}
@@ -18,35 +18,37 @@ This document contains the material supporting the main findings of the manuscri
 
 \section*{SCM: tested hypothesis}
 
-\subsection*{Table S1}
-\noindent\textbf{Table S1.} Tested hypothesis for the structural causal model (SCM) represented in Figure 1b, main document.
 
 
-\begin{longtable}[]{@{}
-  p{0.1415\linewidth}
-  p{0.1463\linewidth}
-  p{0.1527\linewidth}
-  p{0.4084\linewidth}@{}}
-\toprule\noalign{}
-\textbf{Causal path} & \textbf{Predictor} & \textbf{Response} & \textbf{Hypothesis} \\
-1 & DOC upstream & \(\Delta DOC\) & If DOC upstream increases, then \(\Delta DOC\) decreases because beaver ponds can act as sink, retaining or transforming DOC through processes such as microbial degradation, sedimentation, and photodegradation, thereby reducing downstream DOC concentrations relative to upstream inputs (Larson et al. 2007; Wohl 2013; Johnston 2014). \\
-2 & Macrophytes & \(\Delta DOC\) & If macrophyte abundance increases, we expect \(\Delta DOC\) to increase because the decomposition of macrophyte biomass releases labile dissolved organic carbon, enhancing downstream concentrations (Reitsema et al. 2018). \\
-3 & Phytoplankton & \(\Delta DOC\) & If phytoplankton abundance increases,then \(\Delta DOC\) increases is likely to increase, because phytoplankton contribute to DOC content through exudation during growth and release upon cell lysis, thereby enhancing downstream DOC levels relative to upstream inputs (Søndergaard et al. 1985; Sell and Overbeck 1992). \\
-4 & Soil litter cover & \(\Delta DOC\) & If soil litter cover increases, then \(\Delta DOC\) increases as decomposition of litter releases dissolved organic compounds into the water (Aitkenhead et al. 1999; Cincotta et al. 2019). \\
-5 & Water residence time & \(\Delta DOC\) & If water residence time increases, then \(\Delta DOC\) increases, because longer water residence times allow for more extensive microbial decomposition and processing of dissolved organic carbon, enhancing downstream DOC concentrations (Jepsen et al. 2019; Abbasi et al. 2024). \\
-6 & Solar radiation & Phytoplankton & If solar radiation increases then phytoplankton abundance is expected to increase because greater light availability enhances photosynthetic rates(Reynolds 2006). \\
-7 & Solar radiation & Macrophytes & If solar radiation increases, then macrophyte abundance increases because higher light availability enhances photosynthetic activity and supports plant growth (Feuchtmayr et al. 2009). \\
-8 & Solar radiation & Litter cover & If solar radiation increases, as in summer, then soil litter cover decreases because lower rates of tree leaf fall coincide with enhanced decomposition driven by higher temperatures and solar radiation (Gessner et al. 1999). \\
-9 & Water residence time & Macrophytes & If water residence time increases, macrophyte abundance may increase because longer residence time allows for higher nutrient retention, promoting plant growth and increasing the likelihood of macrophyte establishment and persistence (Manolaki et al. 2021). \\
-10 & Water residence time & Phytoplankton & If water residence time increases, phytoplankton abundance may increase because longer residence time allows for greater nutrient retention and stabilization, which can support enhanced phytoplankton growth, particularly in systems with nutrient limitation (Finger et al. 2007). \\
-11 & Channel gradient (terrain slope) & Water residence time & If valley slope increases, then water residence time decrease because steeper terrain causes water to move more quickly through the landscape, reducing the time available for subsurface and surface interactions (McGuire et al. 2005). \\
-12 & Max dam height & Water residence time & If dam height increases, water residence time increases because taller dams impound more water, expanding ponded areas and slowing streamflow, which prolongs the time water remains within the stream system (Majerova et al. 2015; Dittbrenner et al. 2022). \\
-13 & Number of dams & Water residence time & If the number of beaver dams increases, water residence time is expected to increase because dams slow down streamflow and create ponded areas that retain water for longer periods (Westbrook et al. 2006; Nyssen et al. 2011; Majerova et al. 2015). \\
-\midrule\noalign{}
+\setlength{\LTleft}{0pt}\setlength{\LTright}{0pt}\begingroup\small\sloppy\hyphenpenalty=0\emergencystretch=2em
+\renewcommand{\arraystretch}{1.25}
+\begin{longtable}{|>{\centering\arraybackslash}p{0.07\textwidth}|>{\raggedright\arraybackslash}p{0.17\textwidth}|>{\raggedright\arraybackslash}p{0.14\textwidth}|>{\raggedright\arraybackslash}p{0.48\textwidth}|}
+\caption{Tested hypotheses for the structural causal model (SCM) represented in Figure 1b of the main document.}\label{tab:S1}\\
+\hline
+\textbf{Causal path} & \textbf{Predictor} & \textbf{Response} & \textbf{Hypothesis} \\ \hline
+\endfirsthead
+\multicolumn{4}{l}{\small\textit{Table S1 (continued)}}\\
+\hline
+\textbf{Causal path} & \textbf{Predictor} & \textbf{Response} & \textbf{Hypothesis} \\ \hline
 \endhead
-\bottomrule\noalign{}
+\multicolumn{4}{r}{\small\textit{continued on next page}}\\
+\endfoot
 \endlastfoot
+1 & DOC upstream & \(\Delta DOC\) & If DOC upstream increases, then \(\Delta DOC\) decreases because beaver ponds can act as sink, retaining or transforming DOC through processes such as microbial degradation, sedimentation, and photodegradation, thereby reducing downstream DOC concentrations relative to upstream inputs (Larson et al. 2007; Wohl 2013; Johnston 2014). \\ \hline
+2 & Macrophytes & \(\Delta DOC\) & If macrophyte abundance increases, we expect \(\Delta DOC\) to increase because the decomposition of macrophyte biomass releases labile dissolved organic carbon, enhancing downstream concentrations (Reitsema et al. 2018). \\ \hline
+3 & Phytoplankton & \(\Delta DOC\) & If phytoplankton abundance increases, then \(\Delta DOC\) increases is likely to increase, because phytoplankton contribute to DOC content through exudation during growth and release upon cell lysis, thereby enhancing downstream DOC levels relative to upstream inputs (Søndergaard et al. 1985; Sell and Overbeck 1992). \\ \hline
+4 & Soil litter cover & \(\Delta DOC\) & If soil litter cover increases, then \(\Delta DOC\) increases as decomposition of litter releases dissolved organic compounds into the water (Aitkenhead et al. 1999; Cincotta et al. 2019). \\ \hline
+5 & Water residence time & \(\Delta DOC\) & If water residence time increases, then \(\Delta DOC\) increases, because longer water residence times allow for more extensive microbial decomposition and processing of dissolved organic carbon, enhancing downstream DOC concentrations (Jepsen et al. 2019; Abbasi et al. 2024). \\ \hline
+6 & Solar radiation & Phytoplankton & If solar radiation increases then phytoplankton abundance is expected to increase because greater light availability enhances photosynthetic rates (Reynolds 2006). \\ \hline
+7 & Solar radiation & Macrophytes & If solar radiation increases, then macrophyte abundance increases because higher light availability enhances photosynthetic activity and supports plant growth (Feuchtmayr et al. 2009). \\ \hline
+8 & Solar radiation & Litter cover & If solar radiation increases, as in summer, then soil litter cover decreases because lower rates of tree leaf fall coincide with enhanced decomposition driven by higher temperatures and solar radiation (Gessner et al. 1999). \\ \hline
+9 & Water residence time & Macrophytes & If water residence time increases, macrophyte abundance may increase because longer residence time allows for higher nutrient retention, promoting plant growth and increasing the likelihood of macrophyte establishment and persistence (Manolaki et al. 2021). \\ \hline
+10 & Water residence time & Phytoplankton & If water residence time increases, phytoplankton abundance may increase because longer residence time allows for greater nutrient retention and stabilization, which can support enhanced phytoplankton growth, particularly in systems with nutrient limitation (Finger et al. 2007). \\ \hline
+11 & Channel gradient (terrain slope) & Water residence time & If valley slope increases, then water residence time decrease because steeper terrain causes water to move more quickly through the landscape, reducing the time available for subsurface and surface interactions (McGuire et al. 2005). \\ \hline
+12 & Max dam height & Water residence time & If dam height increases, water residence time increases because taller dams impound more water, expanding ponded areas and slowing streamflow, which prolongs the time water remains within the stream system (Majerova et al. 2015; Dittbrenner et al. 2022). \\ \hline
+13 & Number of dams & Water residence time & If the number of beaver dams increases, water residence time is expected to increase because dams slow down streamflow and create ponded areas that retain water for longer periods (Westbrook et al. 2006; Nyssen et al. 2011; Majerova et al. 2015). \\ \hline
 \end{longtable}
+\renewcommand{\arraystretch}{1}\endgroup
 
 
 \section*{Structural Causal Model: the priors}
@@ -95,6 +97,7 @@ Posterior predictive checks assess how well the fitted SCM model reproduces obse
 
 
 
+\FloatBarrier
 \section*{Alternative structural causal model: lateral stream--wetland connectivity}
 
 Because a DAG encodes a specific set of causal assumptions, we also tested an alternative, extended SCM that incorporates the lateral connectivity between the stream and adjacent wetlands as an additional driver of water residence time (WRT). Hydrologically connected off-channel storage zones (wetlands, floodplains) exchange water with the channel and are known to extend the residence time of water in the system (transient-storage theory; Bencala and Walters 1983). We therefore hypothesized that beaver-pond WRT varies with the degree of lateral stream--wetland connectivity and, consequently, that connectivity indirectly influences $\Delta$DOC via WRT and primary producers.
@@ -117,6 +120,7 @@ Because a DAG encodes a specific set of causal assumptions, we also tested an al
 \caption{Posterior effects of lateral stream--wetland connectivity (relative to sites without wetland) on water residence time (left) and the total mediated effect on $\Delta$DOC (right), controlling for beaver-dam variables, channel gradient and solar radiation. Points show posterior means; thick and thin bars show the 66\% and 90\% credible intervals. The dashed line marks zero.}\label{fig:S5}
 \end{figure}
 
+\clearpage
 \section*{References}
 \begin{itemize}\setlength\itemsep{2pt}
 \item[] Bencala KE and Walters RA. 1983. Simulation of solute transport in a mountain pool-and-riffle stream: A transient storage model. Water Resources Research \textbf{19}: 718--24.
