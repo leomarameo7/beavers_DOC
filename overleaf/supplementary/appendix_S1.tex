@@ -14,7 +14,7 @@
 \maketitle
 \begin{center}\textbf{Beaver-engineering amplifies dissolved organic carbon concentration}\end{center}
 
-This document contains the material supporting the main findings of the manuscript (tested hypotheses of the structural causal model, priors, residuals, posterior predictive checks, posterior parameter distributions, a stream-level classification of $\Delta$DOC, and an alternative SCM including lateral stream--wetland connectivity). The full description of data collection, variable derivation and model specification is given in the Methods of the main manuscript.
+This document contains the material supporting the main findings of the manuscript (tested hypotheses of the structural causal model, priors, residuals, posterior predictive checks, posterior parameter distributions, a stream-level classification of $\Delta$DOC, the total effects of the drivers on $\Delta$DOC, and an alternative SCM including lateral stream--wetland connectivity). The full description of data collection, variable derivation and model specification is given in the Methods of the main manuscript.
 
 \section*{SCM: tested hypothesis}
 
@@ -108,6 +108,19 @@ To avoid conflating the posterior predictive probability of a response (Figure 2
 \caption{Stream-level $\Delta$DOC. Blue points and bars: posterior median and 90\% credible interval of the model-based expected $\Delta$DOC of each stream (ranked by posterior median). Orange crosses: observed stream-averaged $\Delta$DOC, shown for reference (one value of 29.9 mg L$^{-1}$ is clipped at 5 mg L$^{-1}$). The grey band is the region of practical equivalence ($\pm 0.5$ mg L$^{-1}$).}\label{fig:S7}
 \end{figure}
 
+
+\section*{Structural Causal Model: total effects of the exogenous drivers on $\Delta$DOC}
+
+The edges of the SCM (Figure 2b, main document) are direct, path-specific effects. To summarize the overall influence of each exogenous driver on $\Delta$DOC we computed its \emph{total effect} as the sum of the products of the coefficients along every open causal path from the driver to $\Delta$DOC (e.g., for the number of dams: dams $\rightarrow$ WRT $\rightarrow$ $\Delta$DOC, dams $\rightarrow$ WRT $\rightarrow$ macrophytes $\rightarrow$ $\Delta$DOC, and dams $\rightarrow$ WRT $\rightarrow$ phytoplankton $\rightarrow$ $\Delta$DOC), evaluated on each posterior draw (path tracing; Hayes 2018). All effects are on the standardized scale (change in $\Delta$DOC, in standard deviations, per standard deviation of the driver).
+
+Upstream DOC concentration had the largest total effect ($-0.10$; 90\% BCI: $-0.16$; $-0.05$; $P(\beta<0) > 0.99$), followed by solar radiation, which acts through all three primary-producer mediators ($+0.04$; 90\% BCI: 0.01; 0.07; $P(\beta>0) = 0.99$). The total effect of water residence time ($+0.04$; 90\% BCI: $-0.02$; 0.11; $P(\beta>0) = 0.87$) was positive but less certain. The total effects of the beaver-engineering variables, which act only through water residence time, were small: number of dams $+0.003$ (90\% BCI: $-0.002$; 0.010; $P(\beta>0) = 0.82$) and maximum dam height $+0.001$ (90\% BCI: $-0.003$; 0.007; $P(\beta>0) = 0.68$); channel gradient had a small negative total effect ($-0.004$; 90\% BCI: $-0.012$; 0.002). Hence, the direction of the beaver-mediated DOC change is set primarily by the external context of the pond (incoming DOC load and light availability for primary producers), whereas the structural characteristics of the dam complex modulate it only weakly via water residence time (Figure~\ref{fig:S8}).
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.9\textwidth]{figures/media/figS8_total_effects.png}
+\caption{Posterior distributions of the total (standardized) effect of each exogenous driver on $\Delta$DOC, obtained by tracing all open causal paths of the SCM. Points: posterior means; thick and thin bars: 66\% and 95\% credible intervals.}\label{fig:S8}
+\end{figure}
+
 \FloatBarrier
 \section*{Alternative structural causal model: lateral stream--wetland connectivity}
 
@@ -144,6 +157,7 @@ Because a DAG encodes a specific set of causal assumptions, we also tested an al
 \item[] Feuchtmayr H, Moran R, Hatton K, et al. 2009. \href{https://doi.org/10.1111/j.1365-2664.2009.01644.x}{Global warming and eutrophication: effects on water chemistry and autotrophic communities in experimental hypertrophic shallow lake mesocosms}. Journal of Applied Ecology \textbf{46}: 713--23.
 \item[] Finger D, Schmid M, and Wüest A. 2007. \href{https://doi.org/10.1029/2007WR005868}{Comparing effects of oligotrophication and upstream hydropower dams on plankton and productivity in perialpine lakes}. Water Resources Research \textbf{43}.
 \item[] FOEN, 2021. \href{https://www.geocat.ch/geonetwork/srv/eng/catalog.search\#/metadata/8b7c23ef-88a4-47d6-87dc-6f5b5d91928c}{Vegetation height model NFI}.
+\item[] Hayes AF. 2018. Introduction to Mediation, Moderation, and Conditional Process Analysis: A Regression-Based Approach, 2nd edn. New York: Guilford Press.
 \item[] Gelman A, Carlin JB, Stern HS, et al. 2013. Bayesian Data Analysis. CRC Press.
 \item[] Gelman A and Rubin DB. 1992. \href{https://doi.org/10.1214/ss/1177011136}{Inference from iterative simulation using multiple sequences}. Statistical Science \textbf{7}: 457--72.
 \item[] Gessner MO, Chauvet E, and Dobson M. 1999. \href{https://doi.org/10.2307/3546505}{A perspective on leaf litter breakdown in streams}. Oikos \textbf{85}: 377--84.

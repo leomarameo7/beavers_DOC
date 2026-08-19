@@ -394,6 +394,40 @@ ggplot(cls, aes(x = rank)) +
   theme_classic(base_size = 13) + theme(legend.position = "top")
 ```
 
+## Total effects of the exogenous drivers on ΔDOC (path tracing; Appendix S1: Figure S8)
+
+Following the mediation logic of Hayes (total effect = direct + sum of specific indirect effects), we trace the posterior draws of the SCM coefficients along every open causal path from each exogenous driver to ΔDOC.
+
+```{r total_effects_path_tracing}
+d <- as_draws_df(b1)
+a_nd <- d$b_waterrestimez_n_dams_z;            a_dh <- d$bsp_waterrestimez_midam_height_z;  a_sl <- d$b_waterrestimez_slope_z
+w_mac <- d$bsp_macrophyabunz_miwater_res_time_z; w_phy <- d$bsp_planktonabunz_miwater_res_time_z
+s_mac <- d$bsp_macrophyabunz_misolar_z;        s_phy <- d$bsp_planktonabunz_misolar_z;       s_lit <- d$bsp_coverlitterz_misolar_z
+c_mac <- d$bsp_deltaDOC_mimacrophy_abun_z;     c_phy <- d$bsp_deltaDOC_miplankton_abun_z;    c_lit <- d$bsp_deltaDOC_micover_litter_z
+c_wrt <- d$bsp_deltaDOC_miwater_res_time_z;    c_up  <- d$bsp_deltaDOC_miDOC_input_z
+
+wrt_total <- c_wrt + w_mac * c_mac + w_phy * c_phy   # WRT → ΔDOC: direct + via macrophytes + via phytoplankton
+eff <- list("Number of dams"       = a_nd * wrt_total,
+            "Max dam height"       = a_dh * wrt_total,
+            "Water residence time" = wrt_total,
+            "Channel gradient"     = a_sl * wrt_total,
+            "Solar radiation"      = s_mac * c_mac + s_phy * c_phy + s_lit * c_lit,
+            "Upstream DOC"         = c_up)
+tot <- bind_rows(lapply(names(eff), function(n) { x <- eff[[n]]
+  tibble(effect = n, mean = mean(x), lo90 = quantile(x, .05), hi90 = quantile(x, .95), p_pos = mean(x > 0)) }))
+tot
+
+df <- bind_rows(lapply(names(eff), function(n) tibble(effect = n, draw = eff[[n]]))) |>
+  mutate(effect = factor(effect, levels = rev(names(eff))))
+ggplot(df, aes(x = draw, y = effect)) +
+  geom_vline(xintercept = 0, linetype = 2, colour = "grey40") +
+  stat_halfeye(.width = c(.66, .95), fill = "steelblue", alpha = .8) +
+  coord_cartesian(xlim = c(-0.25, 0.25)) +
+  labs(x = expression(paste("Total (standardized) effect on ", Delta, "DOC")), y = NULL) +
+  theme_bw(base_size = 14) + theme(panel.grid.minor = element_blank())
+ggsave(here("results", "figures", "Figure_total_effects.png"), width = 8, height = 4.5, dpi = 300)
+```
+
 ## The beaver amplification factor (M)
 
 Let:
