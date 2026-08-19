@@ -1,0 +1,993 @@
+---
+title: "Notebook"
+author: "Dr. Leonardo Capitani (leocapi07@gmail.com, WSL & Eawag, Switzerland)"
+date: "Last compiled on `r format(Sys.time(), '%d %B, %Y')`"
+knitr:
+     opts_chunk:
+        R.options:
+         width: 120
+format: 
+      html:
+          toc: true
+          code-fold: true
+          code-tools: true
+          code-link: true
+          embed-resources: true
+          code-line-numbers: true
+html-math-method: 
+  method: mathjax
+  url: https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML
+execute:
+  echo: true
+  message: false
+  warning: false 
+  cache: false
+  freeze: true  # never re-render during project render
+editor: visual
+code-annotations: select
+editor_options: 
+  chunk_output_type: console
+bibliography: references.bib
+csl: "frontiers-in-ecology-and-the-environment.csl"
+---
+
+This notebook is intended to be used for reviewers and general public that is interested to chek the R code and reproduce the results presented in the study: **Beaver-engineering amplifies dissolved organic carbon concentration in streams.**
+
+### Libraries
+
+Let's load the R libraries that we are going to use in this study:
+
+```{r load_packages}
+library(RColorBrewer)
+library(NatParksPalettes)
+library(ggokabeito)
+library(dagitty)
+library(ggpmisc)
+library(scales)
+library(readxl)
+library(brms)
+library(tidyverse)
+library(tidybayes)
+library(here)
+library(ggdist)
+library(ggpubr)
+library(ggh4x)
+library(bayesplot)
+library(patchwork)
+library(chron)# for time formatting
+```
+
+### Functions
+
+We are going to define the stanrdization function:
+
+```{r fun_standardize}
+# function for standardizing data 
+standardize <- function(x) {
+ 
+  (x - mean(x, na.rm=TRUE)) / sd(x, na.rm=TRUE)
+  
+}
+```
+
+## Load processed data
+
+```{r load_data }
+
+m6 <- read.csv(here("data","processed","m6.csv"), row.names = NULL)|> 
+  
+  #select("month" , "delta_DOC", "n_dams_z","dam_persistence_z", 
+      #   "plankton_abun_z" , "cover_litter_z"  , "macrophy_abun_z" , "DOC_input_z", "dam_height_z","slope_z","discharge_z","water_volume_z","water_res_time_z","solar_z") |> 
+  
+  mutate_at( c( "season", "site"), factor) %>%
+  mutate(source = if_else(
+    site %in% c("Biber", "Chriesbach", "Coruz", "Ellikon", "Gaebelbach", "Gile", 
+                "Haslibach", "Hemishofen", "Leugene", "Logge", "Nider", "Riedgrabe", 
+                "Rot", "Talent", "Tegel", "Weierbach"),
+    "BGB",
+    "L"
+  ))
+```
+
+## DAG: Structural causal modelling framework (SCM)
+
+Structural causal modelling (SCM, [@pearl2009]) is an emerging causal inference framework, which unifies the strong features of structural equation modeling (SEM; [@shipley2016a; @arif2022d] and Rubin’s potential outcome framework [@rubin1974].
+
+![a) Sampling locations across Switzerland. Red dots (n = 176) denote sites where water samples were collected, back dots (n = 16) denote sites where water samples and primary producer abundance were sampled. b) The hypothesized drivers of beaver-mediated changes in ΔDOC (magenta ellipse, outcome variable). The blue box represents the stream hydrology variable. Orange boxes represent beaver-engineering variables. Green boxes represent primary producer variables. Black boxes represent parent drivers not influenced by other variables. The numbers on the edges represent potential causal paths and associated linear regression coefficients, that is, the standardized effect of the predictor X on the outcome Y. We motivated the causal path existence through science-based hypotheses presented in Appendix S1:Table S1. Beaver illustration credits and copyright to © Sarah Edmonds Illustration.](images/FIgure_1.png){#fig-DAG fig-align="center"}
+
+We will describe each of the abiotic - biotic variables of the SCM by its most plausible probability distribution.
+
+**Assumption:** The causal effect are linear - additive !
+
+Before defining the model formula, we need to know which columns contains `NAs` values. This is because the `brms` package by default excludes `NAs` observations. Since we do not want to exclude observations we are going to impute missing values telling to brms where there are NAs with the `mi()` function. Be aware that there’s one special type of missing value that you’ll encounter in our dataframe: a `NaN`, or **n**ot **a** **n**umber. It’s not that important to know about itbecause it generally behaves just like `NAs` .
+
+## **SCM model's formula**
+
+::: callout-note
+Which statistical distribution do we use for modelling the response variable delta DOC?
+:::
+
+You may know that the normal distribution is equivalent to a Student’s *t* distribution with the degrees of freedom parameter, $\nu$ (nu), set to infinity. In this study we’ll relax that assumption and estimate $\nu$ from the data just like we estimate $\mu$ with the linear model and $\sigma$ as the residual error. Since $\nu$ is now a parameter, we’ll have to give it a prior. Remember: **the lower the degrees of freedom, the more probability we assign to higher and lower values.**
+
+Multivariate formula:
+
+```{r brms_formula, echo = TRUE}
+
+bform <- 
+  # the outcome . Thew mi(0.283) is because the delta DOC has an error mesurament of about 0.2 mg/l. Therefore the cumulative error 
+  bf(delta_DOC | mi(0.283) ~  0 + Intercept + 
+                            #mi(solar_z) +
+                            mi(macrophy_abun_z) + 
+                            mi(DOC_input_z) + 
+                            mi(plankton_abun_z) +
+                            mi(cover_litter_z) + 
+                            mi(water_res_time_z) +
+                            #slope_z +
+                           (0 + Intercept | site), # account for the residual variance not explained by the predictors 
+                            family = student()) + 
+  # Amount of solar radiation 
+  
+  bf(solar_z | mi() ~ 0 + Intercept, family = gaussian()) + 
+
+  # Amount of DOC upstream the beaver pond
+  
+  bf(DOC_input_z | mi() ~ 0 + Intercept, family = gaussian()) + 
+
+  # Primary producers diversity and abundance
+
+  bf(plankton_abun_z  | mi() ~ 0 + Intercept + mi(solar_z) + mi(water_res_time_z) , family = gaussian()) +
+  
+  # macrophytes abundance
+  
+  bf(macrophy_abun_z  | mi() ~ 0 + Intercept + mi(solar_z) + mi(water_res_time_z), family = gaussian()) + 
+  
+  # solil litter cover in % (0-100%)
+  bf(cover_litter_z | mi() ~ 0 + Intercept + mi(solar_z) , family = gaussian()) + 
+  
+
+  # stream HIDROLOGY 
+  
+  bf(water_res_time_z | mi()  ~ 0  + n_dams_z  + mi(dam_height_z) + slope_z, family = gaussian()) +
+  
+  bf(dam_height_z | mi()  ~ 0 + Intercept , family = gaussian()) +
+  
+  set_rescor(FALSE)
+
+```
+
+In the `brms` package, if I do `set_rescor(TRUE)` than I include correlation between the residuals of the model. Specifically, it's relevant when you're fitting a multivariate response model, where you have multiple dependent variables and want to model the correlation between their residuals. In our specific case, I, Leonardo, found no difference if I fit the model with `set_rescor(FALSE)`
+
+## Default priors
+
+If we want to think about which parameters or model has, then use the `get_prior` function from the `brms` package:ackage:
+
+```{r get-priors, echo = T}
+priors <- default_prior(object = bform, data = m6 )
+```
+
+To define priors, think about:
+
+-   **Impossible and implausible parameter space**: one could reduce the parameter space by differentiating between *impossible* parameter space -- parameter values that do not receive any density mass in the prior and are prevented from occurring in the posterior, and *implausible* parameter space -- values that receive very little density mass and are very improbable in the prior, but could be obtained after the prior has been updated with the data.
+
+-   **Previous literature:** suppose that there is *relevant background information* about the relation between treatment X and the outcome Y, which can be used to specify the prior for regression coefficient.
+
+To set priors, it may be useful to ask yourself this question:
+
+*What is the probability that variable A takes a given value knowing that its predictors have taken these values?*
+
+### Set priors
+
+```{r set_priors}
+
+pr  <- c(    
+  # prior for the average (intercept) of predictors 
+     set_prior("normal(0, 1)", coef = "Intercept", resp = c("coverlitterz", "damheightz", "macrophyabunz",  'planktonabunz', "DOCinputz", "solarz" )),
+  
+# define population level effect (slopes ) of continuos numerical predictors 
+  set_prior("normal(-0.1, 0.075)",  coef = "misolar_z", resp = "coverlitterz"), # negative influence of solar radiation on cover litter 
+  
+### MACROPHYTES
+   set_prior("normal(0.1, 0.075)",  coef = "misolar_z", resp = "macrophyabunz"), # we expect positive influence of solar rad. on macrophytes abund. 
+   set_prior("normal(0, 0.075)",  coef = "miwater_res_time_z", resp = "macrophyabunz"), # positive influence of water residence time on macrophytes abundance 
+#### PLANKTON ABUNDANCE 
+   set_prior("normal(0.1, 0.075)",  coef = "misolar_z", resp = "planktonabunz"), # we expect positive influence of solar rad. on phytoplankton abund. 
+   
+   set_prior("normal(0.1, 0.075)",  coef = "miwater_res_time_z", resp = "planktonabunz"), # we expect positive influence of water rsidence time on phytoplankton abund. 
+#### WATER RESIDENCE TIME  
+  set_prior("normal(0.15, 0.075)",  coef = "midam_height_z",  resp =  "waterrestimez"), #we expect that if dam height increase than the wat res time will increase 
+  set_prior("normal(0.15, 0.075)",  coef = "n_dams_z",  resp =  "waterrestimez"), # we expect that if the number of dams increase than the water res time will increase too 
+set_prior("normal(0, 0.075)", coef = "slope_z",  resp =  "waterrestimez"), 
+
+# Prior for the average expected value of delta DOC intercept (Intercept varies around 0, expected outcome range -10 to +10)
+  set_prior("normal(0, 2.5)", coef = "Intercept", resp =  "deltaDOC"),
+# define population level effect (slopes ) of response variable outcome delta DOC  
+#set_prior("normal(0, 0.15)", coef = "misolar_z",  resp =  "deltaDOC"), # we expect positive or negative effects of solar radiation on DOC content. Please see  https://aslopubs.onlinelibrary.wiley.com/doi/epdf/10.4319/lo.2001.46.2.0345 .
+
+set_prior("normal(0, 0.1)", coef = "miDOC_input_z",  resp =  "deltaDOC"), # no directional expectation about the influence of DOC upstream on the delta DOC will increase too but we do have a lot uncertainty about it. 
+set_prior("normal(0.2, 0.075)", coef = "micover_litter_z",  resp =  "deltaDOC"), # we expect that if soil litter cover increase than the DELTA DOC will increase too. More carbon outoputted . 
+set_prior("normal(0.2, 0.075)", coef = "mimacrophy_abun_z",  resp =  "deltaDOC"), # we expect that if macrophytes abundance increases than the DELTA DOC will incrase too. 
+set_prior("normal(0.2, 0.075)", coef = "miplankton_abun_z",  resp =  "deltaDOC"), # we expect that if phytoplakton abundance increases than the DELTA DOC will incrase too. Higher uncertainty.
+set_prior("normal(0, 0.1)", coef = "miwater_res_time_z",  resp =  "deltaDOC"), # We expect that if water residence time increase than the Delta DOC  will decrease  because longer residence times may provide more time for microbial decomposition of organic matter.
+# set prior on degrees of freedom of the response variable delta DOC 
+#set_prior("normal(0, 0.15)", coef = "slope_z",  resp =  "deltaDOC"),
+
+set_prior("gamma(2, 0.1)", class = "nu", lb = 2, resp =  "deltaDOC"), 
+
+# residuals standard deviations for site level variation on  delta DOC 
+set_prior("normal(0, 2)", class = "sd", coef = "Intercept", group = "site" , resp =  "deltaDOC"), 
+
+# residuals standard deviations for the others predictors
+set_prior("normal(0, 0.5)", class = "sigma", resp = c("solarz","coverlitterz" , "DOCinputz" , "damheightz", "macrophyabunz" , "planktonabunz", "waterrestimez"))
+  )
+```
+
+### Validate priors
+
+```{r validate-priors}
+
+validate_prior(pr, bform, data = m6)
+```
+
+## Fit the model to observed data
+
+```{r fit_model_observed_data}
+
+b1 <- brm(bform,
+        data = m6, # observed data 
+        prior = pr,
+        iter = 10000, 
+        warmup = 3000,  # number of warmup iterations
+        chains = 4,
+        cores = 10, 
+        threads = threading(2),
+        control = list(max_treedepth = 12), # facilitate convergence
+        backend = "cmdstanr",
+        seed = 7, # allow exact replication of results 
+        file = here("results","models_fit","b1"),
+        sample_prior = TRUE # sample also the priors . No. 
+         )
+
+summary(b1)
+```
+
+## Figure 2a
+
+```{r first_question}
+newavg <- as.data.frame(m6 |> 
+  modelr::data_grid(
+  'DOC_input_z'= 0 ,
+  'water_res_time_z'= 0,
+  'cover_litter_z'= 0,
+  'plankton_abun_z'= 0, 
+  'macrophy_abun_z'= 0,
+  'solar_z'= 0, 
+  'slope_z'= 0,
+  'n_dams_z'= 0, 
+  'dam_height_z'= 0
+))
+# Add predicted draws
+draws <- b1 |> add_predicted_draws(newdata = newavg, 
+                                   seed = 7, 
+                                   category = "deltaDOC", 
+                                   re_formula = NA # exclude Site as grouping factor
+                                   )
+```
+
+```{r estimate_probabilities_and_HDI}
+
+# Define cutoffs
+cutoff_1 <- -0.5
+cutoff_2 <- 0.5
+
+# Compute proportions
+prop_above <- draws |> 
+  ungroup() |> 
+  summarise(p = 100 * sum(.prediction > cutoff_2) / n()) |> pull()
+
+prop_below <- draws |> 
+  ungroup() |> 
+  summarise(p = 100 * sum(.prediction < cutoff_1) / n()) |> pull()
+
+prop_rope <- draws |> 
+  ungroup() |> 
+  summarise(p = 100 * sum(.prediction >= cutoff_1 & .prediction <= cutoff_2) / n()) |> pull()
+
+# Create text strings
+above <- paste0(round(prop_above, 1), " %: source")
+below <- paste0(round(prop_below, 1), " %: sink")
+null  <- paste0(round(prop_rope, 1), " %: ROPE")
+
+# Fill colors
+fill_colors <- c(
+  sink   = "coral",
+  ROPE   = "lightgrey",
+  source = "skyblue"
+)
+
+```
+
+```{r }
+#| label: fig-mainresults2a
+#| fig-cap: "Posterior distribution of beaver-mediated DOC change. The red shaded area represents the proportion of the posterior distribution in favour of the hypothesis that beaver ponds act as DOC sinks. The light blue shaded area represents the proportion of the posterior distribution in favour of the hypothesis that beaver ponds act as DOC sources. The grey shaded area represents the Region Of Practical Equivalence (ROPE) and it defines an interval around zero where effects are too small to be of practical importance. The central dot indicates the median of the distribution, while the thick and thin horizontal lines represent the 66% and 95% credible intervals, respectively."
+#| fig-width: 10
+#| fig-height: 6
+# Plot
+(p1= ggplot(draws, aes(x = .prediction)) +
+  stat_halfeye(
+    aes(
+      y = 0,
+      fill = after_stat(case_when(
+        x < cutoff_1 ~ "sink",
+        x > cutoff_2 ~ "source",
+        TRUE         ~ "ROPE"
+      ))
+    ),
+    adjust = 0.8,
+    slab_alpha = 0.8,
+    show.legend = FALSE  # ✅ remove all legends
+  ) +
+  geom_vline(xintercept = c(cutoff_1, cutoff_2), linetype = "dashed", color = "black") +
+  scale_fill_manual(values = fill_colors) +
+  scale_x_continuous(limits = c(-3, 3), breaks = seq(-3, 3, 0.5)) +
+  theme_bw(base_size = 14) +
+  theme(
+    legend.position = "none",  # ✅ also removes legend if still there
+    axis.title.y = element_blank(),
+    axis.text.y = element_blank(),
+    axis.ticks.y = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.background = element_blank()
+  ) +
+  labs(
+    x = expression(Delta * "DOC (mg/L)"),
+    y = NULL
+  ) +
+  # ✅ Insert region labels manually
+  annotate("text", x = -1.5, y = 0.1, label = below, hjust = 0, size = 4.5) +
+  annotate("text", x =  0.0, y = 0.12, label = null,  hjust = 0.5, size = 4.5) +
+  annotate("text", x =  1.0, y = 0.1, label = above, hjust = 0, size = 4.5)
+)
+
+```
+
+## The beaver amplification factor (M)
+
+Let:
+
+-   $DOC_{up}^{summer}$ = Upstream DOC concentration in summer (mg/L)
+
+-   $DOC_{up}^{winter}$ = Upstream DOC concentration in winter (mg/L)
+
+-   $DOC_{down}^{summer}$= Downstream DOC concentration in summer (mg/L)
+
+-   $DOC_{down}^{winter}$ = Downstream DOC concentration in winter (mg/L
+
+-   $A_{beaver}$= Total surface water area in beaver territory (km²)
+
+-   $A_{floodplain}$ = Total potential floodplain area estimated from the upstream locations (km²).
+
+Then we can estimate these quantities:
+
+**Floodplain-scale seasonal DOC change per unit area:**
+
+$$
+D_{\text{floodplain}}^{seasonal} = \frac{\text{DOC}_{\text{up}}^{summer}}{A_{\text{floodplain}}} - \frac{\text{DOC}_{\text{up}}^{winter}}{A_{\text{floodplain}}}\ \quad \text{(mg/L·m}^{-2}\text{)}
+$$
+
+This measures how much the seasonal DOC concentration change as the water flows through the floodplain *before* it gets to the beaver area.
+
+-   What it means: It's the difference between the usptream DOC concentration in summer and the upstream concentration in winter, scaled down by the total area of the floodplain. Think of it as the natural seasonal "baseline". change of DOC coming from the land into the stream, standardized by the size of that land area.
+
+-   Formula Breakdown: It uses DOC measured upstream only.
+
+**Beaver-level summer DOC change per unit area:**
+
+$$
+D_{\text{beaver}}^{summer} = \frac{\text{DOC}_{\text{down}}^{summer}-\text{DOC}_{\text{up}}^{summer}}{A_{\text{beaver}}} \quad \text{(mg/L·m}^{-2}\text{)}
+$$
+
+**Beaver-level winter DOC change per unit area:**
+
+$$
+D_{\text{beaver}}^{winter} = \frac{\text{DOC}_{\text{down}}^{winter}-\text{DOC}_{\text{up}}^{winter}}{A_{\text{beaver}}} \quad \text{(mg/L·m}^{-2}\text{)}
+$$
+
+**Plain Definition:** These measure the **net change in DOC concentration caused by the beaver pond system itself** during a specific season (summer or winter), scaled by the size of the beaver pond area.
+
+-   **What it means:** It's the difference between the DOC concentration leaving the beaver area and the concentration entering it. If the value is positive, the beaver system is adding DOC (amplification). If it's negative, the system is removing DOC (buffering). This change is standardized by the size of the beaver pond/water area.
+
+What we want to know:
+
+::: callout-important
+**Research question:**
+
+By how many orders of magnitude does the beaver DOC change ($D_{beaver}$) exceed the seasonal floodplain DOC change (per unit area), $DOC_{floodplain}^{seasonal}$?
+:::
+
+------------------------------------------------------------------------
+
+### 1. Defining the beaver magnification factor ($\mathbf{M}$)
+
+We define the beaver amplification factor ($\mathbf{M}$) as the ratio of the absolute DOC change within the beaver territory $D_{beaver}$ and the season floodplain DOC change $DOC_{floodplain}^{seasonal}$. Using absolute values ($|\cdot|$) is necessary because both the beaver effect and the catchment driver can be negative (representing DOC removal/buffering).
+
+$$
+\mathbf{M} = \frac{|\mathbf{D_{\text{beaver}}}|}{|\mathbf{D_{\text{floodplain}}^{seasonal}}|}\quad \text{(unitless)}
+$$
+
+### 2. The Log-Magnitude Response Variable ($\mathbf{Y_{\text{logM}}}$)
+
+To quantify "orders of magnitude", we model the base-10 logarithm of this ratio. The logarithm transforms a multiplicative ratio into an additive difference:
+
+$$
+\mathbf{\log_{10}(M)} = \mathbf{\log_{10}(|\mathbf{D_{\text{beaver}}}|)} - \mathbf{\log_{10}(|\mathbf{D_{\text{floodplain}}^{seasonal}}|)}
+$$
+
+We define the new response variable as: $$
+\mathbf{Y_{\text{logM}}} = \mathbf{\log_{10}(|\mathbf{D_{\text{beaver}}}| + \mathbf{c})} - \mathbf{\log_{10}(|\mathbf{D_{\text{floodplain}}^{seasonal}}| + \mathbf{c})}
+$$ Where $\mathbf{c}$ is a small positive constant (offset) added to avoid $\mathbf{\log_{10}(0)}$.
+
+### 3. The Model
+
+We define a linear hierarchical model to estimate the average of $\mathbf{Y_{\text{logM}}}$, allowing this mean to vary by season and accounting for site-level heterogeneity.
+
+The formula is: $$
+\mathbf{Y_{\text{logM}}} \sim \mathbf{\mu}_{\text{logM, season}} + \mathbf{u}_{\text{site}} + \mathbf{\epsilon}
+$$
+
+The coefficients estimated in the model ($\mathbf{\mu}_{\text{logM, season}}$) directly represent the average number of orders of magnitude difference between the beaver DOC change and the seasonal floodplain DOC change for winter and summer.
+
+| Coefficient Estimate ($\mathbf{\mu}$) | Interpretation |
+|:-----------------------------------|:-----------------------------------|
+| $\mathbf{5}$ | The beaver effect is, on average, $\mathbf{10^5}$ times greater per unit area than the catchment driver. |
+| $\mathbf{0}$ | The beaver effect is, on average, $\mathbf{10^0}$ (or 1) times the catchment driver (i.e., they are of the same magnitude). |
+| $\mathbf{-2}$ | The beaver effect is, on average, $\mathbf{10^{-2}}$ (or 1/100) times the catchment driver. |
+
+In a perfect scenario (where there is no measurement error or other site-specific factors), a beaver pond simply transforms the seasonal floodplain-scale DOC change by a factor M.
+
+### Load and reshape the processed data
+
+```{r load_processed_data_frame}
+
+m12 <-  read_csv(here("data", "processed", "m12.csv")) |> mutate(season = as.factor(season))
+```
+
+```{r std}
+# ----------------------------------------------------------------------
+# STEP 1: Data Preparation for Log-Magnitude Ratio (Y_logM)
+# ----------------------------------------------------------------------
+m12_mag <- m12  |> 
+  # 1. Filter out rows where the denominator (D_catchment) is NA or exactly zero, 
+  #    as the ratio is undefined/unstable. Also ensure D_beaver is not NA.
+  filter(!is.na(D_catchment_km2), D_catchment_km2 != 0)  |> 
+  filter(!is.na(D_beaver_km2))
+
+# 2. Define a small offset constant 'c' to handle any remaining zeros after filtering
+#    (e.g., if D_beaver_km2 could still be 0, though D_catchment_km2 is not).
+#    We use half the minimum non-zero absolute value to be conservative.
+c_offset <- min(abs(m12_mag$D_beaver_km2[m12_mag$D_beaver_km2 != 0]), 
+                abs(m12_mag$D_catchment_km2[m12_mag$D_catchment_km2 != 0])) / 2
+
+# 3. Create the Log-Magnitude Ratio Response variable (Y_logM)
+m12_mag <- m12_mag %>%
+  mutate(
+    # Log of the absolute magnitude of the beaver effect
+    Log10_D_beaver = log10(abs(D_beaver_km2) + c_offset),
+    # Log of the absolute magnitude of the catchment driver
+    Log10_D_catchment = log10(abs(D_catchment_km2) + c_offset),
+    # The response is the difference: log(a) - log(b) = log(a/b)
+    Y_logM = Log10_D_beaver - Log10_D_catchment
+  )
+```
+
+Let's define our expectations by using priors that makes sense:
+
+```{r define_priors}
+# which priors do we have by default? 
+def <- default_prior(object = Y_logM ~ 0 + season + (1 | site), 
+              data = m12_mag )
+# ----------------------------------------------------------------------
+# Define Priors (Same as established previously)
+# ----------------------------------------------------------------------
+prio <- c(
+  # Prior for the fixed slopes (M_summer and M_winter)
+  prior(normal(0, 1.5), coef = "seasonsummer"), 
+  prior(normal(0, 1.5), coef = "seasonwinter"), 
+  # Prior for the residual standard deviation (sigma)
+  prior(student_t(3, 0, 1), class = "sigma"),
+  # Prior for the Site-level standard deviation (sigma_u)
+  prior(student_t(3, 0, 1), class = "sd") 
+)
+
+
+(val <- validate_prior( prior = prio,
+               formula =  Y_logM ~ 0 + season + (1 | site),
+               data = m12_mag))
+```
+
+### Fit the model
+
+```{r fit}
+
+# ----------------------------------------------------------------------
+# Fit the Model using the clean data: m12
+# ----------------------------------------------------------------------
+m1 <- brm(
+  formula = Y_logM ~ 0 + season + (1 | site),
+  data = m12_mag,
+  family = gaussian(),
+  prior = prio,
+  chains = 4, 
+  iter = 4000, 
+  warmup = 1000, 
+  cores = 10,
+  threads = threading(2),
+  control = list(max_treedepth = 11), # facilitate convergence. adjusting max_treedepth is a way to help the sampler converge better.
+  backend = "cmdstanr",
+  seed = 7,
+ sample_prior = "yes",
+ file = here("results","models_fit","M")
+)
+
+# Save the model object for future use
+```
+
+### Prior vs posteriors
+
+Here some rule of thumb by Andrew Gelman and the Stan team ([link](https://github.com/stan-dev/stan/wiki/prior-choice-recommendations)): "For each parameter, compare the posterior standard deviation to the prior standard deviation. If the posterior standard deviation for any parameter is *more than 0.1 times the prior sd*, then print out a note: "The prior distribution for this parameter is informative." Then the user can go back and check that the default prior makes sense for this particular example."
+
+```{r}
+#| label: fig-priors
+# Let's also visualize them. 
+tidy_inter <- mcmc_intervals_data(m1, prob = 0.66, # 66% intervals
+                                  prob_outer = 0.95,
+                                  #transformations =  "exp",
+                                  pars = vars(contains(c("b_seasonsummer","b_seasonwinter" ))))
+
+
+tidy_inter1 <- tidy_inter %>%
+  mutate(type = ifelse(grepl("^prior", sub("_.*", "", parameter)), "Prior", "Posterior"),
+         parameter = gsub("^prior_", "", parameter) ) 
+
+
+ggplot( tidy_inter1, aes(x = m, y = parameter, color = type)) + 
+   geom_pointinterval(aes(xmin = l, xmax = h), position = position_dodge(width = 0.5), size = 8)+
+   geom_pointinterval(aes(xmin = ll, xmax = hh), position = position_dodge(width = 0.5), size = 2)+
+  theme_bw(base_size = 14) +
+ labs(color= NULL,
+      x = "Parameter value",
+      y = NULL)+
+  theme(axis.text = element_text(colour = "black"))
+```
+
+The priors we used do not have strong influence on the posteriors.
+
+### Posterior predictive check
+
+Compute the R-squared:
+
+```{r rsquared}
+r2 <- bayes_R2(
+  m1,
+  resp = NULL,
+  summary = TRUE,
+  robust = FALSE,
+  probs = c(0.025, 0.975)
+)
+
+```
+
+The estimated Bayesian $R^2$, which accounts for both seasonal effects and site-level variability, is `r round(r2[1], 1)`
+
+```{r }
+#| label: fig-ppc
+pp_check(m1, type = "dens_overlay_grouped", group = "season", ndraws = 100)
+```
+
+Looks great!
+
+### Residuals
+
+```{r }
+#| label: fig-residualsM
+y_hat <- fitted(m1,   resp = "deltaDOC") # exctrat the point predictions of delta DOC
+res <- residuals(m1,  resp = "deltaDOC")
+
+# left plot 
+(p1 <-
+  tibble(y_hat = y_hat[, 1],
+         r     = res[, 1]) %>% 
+  
+  ggplot(aes(x = y_hat, y = r)) +
+  geom_hline(yintercept = 0, color = "grey67") +
+  geom_point(shape = 1, size = 1.5) +
+  labs(
+       x = expression(Y[pred]~": Predicted "*log[10]*"M value"),
+       y = expression(Y[i]-Y[pred]))+
+  theme_bw(base_size = 16)
+)
+```
+
+### Figure 3: the beaver amplification factor (M) posterior distribution
+
+```{r post_draws}
+
+# ----------------------------------------------------------------------
+# 1. Prepare Data: Extract Posteriors using correct variable names
+# ----------------------------------------------------------------------
+
+# Extract the posterior draws using the brms/Stan variable names (b_seasonsummer, b_seasonwinter)
+R_posteriors <- tidy_draws(m1) %>%
+  select(.draw, b_seasonsummer, b_seasonwinter) %>%
+  pivot_longer(
+    cols = starts_with("b_season"), 
+    names_to = "Season", 
+    values_to = "Log10_Magnitude"
+  ) %>%
+  mutate(
+    # Clean up Season name (remove 'b_season')
+    Season = str_remove(Season, "b_season"), 
+    # Ensure 'Season' is a factor for consistent plotting order
+    Season = factor(Season, levels = c("summer", "winter")) 
+  ) 
+
+# Calculate the mean and credible interval for annotations
+ci_data <- R_posteriors %>%
+  group_by(Season) %>%
+  mean_hdci(Log10_Magnitude, .width = 0.95) %>%
+  mutate(
+    mean_factor = 10^Log10_Magnitude,
+    # Create a clear annotation label
+    label = paste0("Mean: ", round(Log10_Magnitude, 2), 
+                   "\nFactor (M): ", formatC(mean_factor, format = "f", digits = 1))
+  )
+
+
+# Assuming ci_data is available in the environment from the previous steps
+# and contains the mean_factor column.
+summer_factor <- formatC(ci_data$mean_factor[ci_data$Season == 'summer'], format = "f", digits = 1)
+winter_factor <- formatC(ci_data$mean_factor[ci_data$Season == 'winter'], format = "f", digits = 1)
+```
+
+```{r}
+#| label: fig-mainresultsM
+#| fig-cap: "Posterior distribution of the beaver amplification factor M, comparing the beaver mediated change in DOC to the seasonal floodplain-scale DOC change per unit area. The vertical dashed line at 0 represents the line of equivalence, where the magnitudes are equal. The central dot marks the posterior mean. The thick inner segment shows the 66% credible interval, and the thinner outer segment shows the 95% CI. Green represents winter, and orange represents summer. For example, in summer log10(M)= 2.15 indicates the beaver DOC change is, on average, 102.15  times greater per unit area than the seasonal floodplain-scale DOC change. Since the entire 95% CI of both winter and summer are right of the equivalence line, the model provides strong evidence of beaver amplification effects (M>1) in both seasons."
+#| fig-width: 10
+#| fig-height: 8
+# Define colors
+plot_colors <- c("summer" = "#D55E00", "winter" = "#009E73")
+
+# ----------------------------------------------------------------------
+# 2. Visualization using stat_halfeye (Revised to remove .width legend)
+# ----------------------------------------------------------------------
+
+ ggplot(R_posteriors, aes(y = Season, x = Log10_Magnitude, fill = Season)) +
+  
+  stat_halfeye(
+    .width = c(0.66, 0.95),        # Show the 66% and 95% Credible Interval
+    point_size = 3,         
+    justification = -0.2,   
+    width = 0.5,            
+    show.legend = TRUE      # Keep this TRUE to show the 'fill' (Season) legend
+  ) +
+  
+  # --- Visualization of Threshold ---
+  geom_vline(xintercept = 0, linetype = "dashed", color = "black", linewidth = 0.8) +
+  
+  # Add the magnitude factor labels
+  geom_text(data = ci_data,
+            aes(x = Log10_Magnitude, label = label),
+            hjust = -0.1, vjust = 0.5, size = 4.5) +
+  
+  # --- Customization ---
+  scale_fill_manual(
+    values = plot_colors,
+    name = "Season" 
+  ) +
+  scale_x_continuous(
+    name = expression(log[10] ~ "Magnitude Ratio (" ~ M ~ "= " ~ frac(group("|", D[beaver], "|"), group("|", D[floodplain]^{seasonal}, "|")) ~ ")"),
+    breaks = c(0, 1, 2, 3), 
+    labels = c("1x (M=1)", "10x", "100x", "1000x")
+  ) +
+  
+  theme_bw(base_size = 16) +
+  theme(
+    axis.title.y = element_blank(), 
+        axis.text.y = element_blank(),
+    panel.grid.major.y = element_blank(),
+    legend.position = "top" 
+  ) +
+  # --- KEY CHANGE: Remove the legend for the interval aesthetics ---
+  guides(
+    color = "none", # If color was mapped to the intervals
+    linewidth = "none", # If linewidth was mapped to intervals
+    size = "none" # If size was mapped to the mean point
+  )
+
+```
+
+## Appendix S1
+
+## Figure S1: SCM's priors
+
+We are going to extract the priors distribution from the fitted model.
+
+```{r tidy_priors}
+# 1. Prior draws
+priors_draws <- b1 |> 
+  prior_draws() |> 
+  pivot_longer(cols = everything(), names_to = "label", values_to = "value") |> 
+mutate(label = str_replace(label, "^bsp_", "b_"))
+# 2. Prior summary + label construction
+priors_info <- b1 |> 
+  prior_summary() |> 
+  mutate(label = case_when(
+    class == "b" & !is.na(resp) ~ paste0("b_", resp, "_", coef),
+    class == "b" ~ paste0("b_", coef),
+    class == "bsp" ~ paste0("bsp_", resp, "_", coef),
+    class == "Intercept" & !is.na(resp) ~ paste0("b_", resp, "_Intercept"),
+    class == "Intercept" ~ "b_Intercept",
+    class == "sigma" ~ paste0("sigma_", resp),
+    class == "nu" ~ paste0("nu_", resp),
+    TRUE ~ paste(class, coef, sep = "_")
+  )) |> 
+  parse_dist(prior) |> 
+  # no filtering out "default" sources
+  select(label, prior)
+# 3. Join prior draws with prior labels
+priors_annotated <- priors_draws |> 
+  left_join(priors_info, by = "label")
+# 4 check if there are NA assigned 
+priors_annotated |> 
+  filter(is.na(prior)) |> 
+  distinct(label)
+```
+
+```{r plot_prior_direct_effects}
+# Extract priors for direct effects slopes 
+prior_direct_effects <- priors_annotated |> 
+  filter(
+    str_detect(label, "delta"),
+    !str_detect(label, "sigma"),
+    !str_detect(label, "prior"),
+    !label %in% c("b_deltaDOC_seasonsummer", "b_deltaDOC_seasonwinter")
+  )# Separate into intercepts, slopes, and 
+
+(p_direct <- ggplot(prior_direct_effects, aes(x = value, y = label)) +
+  stat_halfeye(fill = "skyblue", alpha = 0.7) +
+  
+  # Add prior text labels
+  geom_text(
+    data = prior_direct_effects |> distinct(label, prior),
+    aes(x = -Inf, y = label, label = prior),
+    hjust = -0.1,
+    size = 4,
+    inherit.aes = FALSE
+  )+
+  
+  theme_bw(base_size = 16) +
+  labs( x = NULL, y = NULL)+
+  
+  theme(axis.text.x = element_text(color = "black"),
+        axis.text.y = element_text(color = "black"),
+        legend.position = "right"
+  )+
+  scale_y_discrete( limits = c( "b_deltaDOC_miwater_res_time_z" ,
+                               "b_deltaDOC_micover_litter_z",
+                               "b_deltaDOC_miplankton_abun_z", 
+                               "b_deltaDOC_mimacrophy_abun_z",
+                               "b_deltaDOC_miDOC_input_z"
+  ),
+  labels = c(
+    "b_deltaDOC_miDOC_input_z" = expression(beta['1 [DOC upstream]']),
+    "b_deltaDOC_miwater_res_time_z" = expression(beta['5 [water res. time]']),
+    "b_deltaDOC_micover_litter_z" = expression(beta['4 [litter cover]']),
+    "b_deltaDOC_miplankton_abun_z" = expression(beta['3 [phytoplankton]']),
+    "b_deltaDOC_mimacrophy_abun_z" = expression(beta['2 [macrophytes]'])
+  ))
+)
+
+```
+
+```{r plot_sigma}
+# Extract priors for direct effects slopes 
+prior_sigmas <- priors_annotated |> 
+  filter(
+    str_detect(label, "sigma")
+  ) 
+
+(p_sigma <- ggplot(prior_sigmas, aes(x = value, y = label)) +
+  stat_halfeye(fill = "skyblue", alpha = 0.7) +
+  
+  # Add prior text labels
+  geom_text(
+    data = prior_sigmas |> distinct(label, prior),
+    aes(x = -Inf, y = label, label = prior),
+    hjust = -0.1,
+    size = 4,
+    inherit.aes = FALSE
+  )+
+  
+  theme_bw(base_size = 16) +
+  labs( x = NULL, y = NULL)+
+  
+  theme(axis.text.x = element_text(color = "black"),
+        axis.text.y = element_text(color = "black"),
+        legend.position = "right")+  
+  scale_y_discrete(
+  labels = c(
+    "sigma_deltaDOC" = expression(sigma[Delta*'DOC']),
+    "sigma_solarz" = expression(sigma['solar radiation']),
+    "sigma_DOCinputz" = expression(sigma['upstream DOC']),
+    "sigma_planktonabunz" = expression(sigma['phytoplankton']),
+    "sigma_macrophyabunz" = expression(sigma['macrophytes']),
+    "sigma_coverlitterz" = expression(sigma['cover litter']),
+    "sigma_damheightz" = expression(sigma['dam height']),
+    "sigma_ndamsz" = expression(sigma['number of dams']),
+    "sigma_waterrestimez" = expression(sigma['water res. time'])
+  )) + 
+    scale_x_continuous(limits = c(-2, 8))
+)
+
+```
+
+```{r prior_deltaDOC_intercepts}
+
+prior_deltaDOC_intercept <- priors_annotated |> 
+  filter(label %in% c("b_deltaDOC_Intercept")
+  )
+
+
+(p_delta_intercept <- ggplot(prior_deltaDOC_intercept, aes(x = value, y = label)) +
+  stat_halfeye(fill = "skyblue", alpha = 0.7) +
+  
+  # Add prior text labels
+  geom_text(
+    data = prior_deltaDOC_intercept |> distinct(label, prior),
+    aes(x = -Inf, y = label, label = prior),
+    hjust = -0.1,
+    size = 4,
+    inherit.aes = FALSE
+  )+
+  
+  theme_bw(base_size = 16) +
+  labs( x = NULL, y = NULL)+
+  
+  theme(axis.text.x = element_text(color = "black"),
+        axis.text.y = element_text(color = "black"),
+        legend.position = "right"
+  ) + 
+    scale_y_discrete( 
+                     labels = c("b_deltaDOC_Intercept" = expression(Delta*"DOC"['Intercept'])))
+)
+```
+
+```{r indirect_effects_priors}
+
+# Extract priors for indirect effects slopes 
+prior_ind_effects <- priors_annotated |> 
+  filter(
+    !str_detect(label, "delta"),
+    !str_detect(label, "sigma"),
+    !str_detect(label, "Intercept"),
+    !label %in% c("b_deltaDOC_seasonsummer", "b_deltaDOC_seasonwinter")
+  )
+
+
+(prior_plot_ind_effects <- ggplot(prior_ind_effects, aes(x = value, y = label)) +
+  stat_halfeye(fill = "skyblue", alpha = 0.7) +
+  
+  # Add prior text labels
+  geom_text(
+    data = prior_ind_effects |> distinct(label, prior),
+    aes(x = -Inf, y = label, label = prior),
+    hjust = -0.1,
+    size = 4,
+    inherit.aes = FALSE
+  )+
+  theme_bw(base_size = 16) +
+  labs( x = NULL, y = NULL)+
+  
+  theme(axis.text.x = element_text(color = "black"),
+        axis.text.y = element_text(color = "black"),
+        legend.position = "right"
+  ) +
+    scale_y_discrete(limits = c( 
+                               
+      "b_waterrestimez_n_dams_z",
+      "b_waterrestimez_midam_height_z",
+      "b_waterrestimez_slope_z" ,
+                               "b_planktonabunz_miwater_res_time_z" ,
+                               "b_macrophyabunz_miwater_res_time_z",
+                               "b_coverlitterz_misolar_z", 
+                               "b_macrophyabunz_misolar_z",
+                               "b_planktonabunz_misolar_z"
+  ),
+      
+      
+      
+      labels = c( "b_planktonabunz_misolar_z" = expression(beta['6 [solar rad. --> phyto.]']),
+                "b_macrophyabunz_misolar_z" =  expression(beta['7 [solar rad. --> macrop.]']),
+                "b_coverlitterz_misolar_z" =  expression(beta['8 [solar rad. --> cover litter]']),
+                "b_macrophyabunz_miwater_res_time_z" =  expression(beta['9 [water res. time --> macrop.]']),
+                "b_planktonabunz_miwater_res_time_z" =  expression(beta['10 [water res. time --> phyto.]']),
+              "b_waterrestimez_slope_z" =  expression(beta['11 [slope --> water res. time]']),
+              "b_waterrestimez_midam_height_z" =  expression(beta['12 [dam height --> water res. time]']),
+              "b_waterrestimez_n_dams_z" =  expression(beta['13 [n. dams --> water res. time]'])
+                                )
+      )
+  
+)
+```
+
+Composite figure:
+
+```{r}
+#| fig-width: 13
+#| fig-height: 12
+(priors_figure <- (p_delta_intercept + p_direct  ) / (prior_plot_ind_effects )  + p_sigma  +  
+                                  plot_layout(widths = c(4, 4, 2),
+                                    heights = c(1, 3.5, 1.5)) +
+                          plot_annotation(tag_levels = "a")
+)
+
+```
+
+### Figure S2: residuals
+
+We can evaluate the model fit by looking at the difference between observed data and their predictions. That is the *residuals* ($r_i$).
+
+$$
+r_i = y_i - y_i^{pred}.
+$$
+
+If the model is a reasonable representation of the observational process that origins the data than the residuals should look roughly randomly scattered in comparison to a horizontal line,
+
+Here we’ll extract the point predictions and the residuals.
+
+```{r get_residuals}
+
+y_hat <- fitted(b1,   resp = "deltaDOC") # exctrat the point predictions of delta DOC
+res <- residuals(b1,  resp = "deltaDOC")
+```
+
+And then we plot:
+
+```{r residual_plots, warning=FALSE, message=FALSE}
+#| label: fig-residuals
+#| fig-cap: "Residuals from the fitted model, plotted in two different ways: (a) residuals versus predicted values, and (b) residuals versus observed values."
+#| fig-width: 13
+#| fig-height: 8 
+
+# left plot 
+(p1 <-
+  tibble(y_hat = y_hat[, 1],
+         r     = res[, 1]) %>% 
+  
+  ggplot(aes(x = y_hat, y = r)) +
+  geom_hline(yintercept = 0, color = "grey67") +
+  geom_point(shape = 1, size = 1.5) +
+  labs(
+       x = expression(Y[pred]~": Predicted "*Delta*"DOC value (mg/L)"),
+       y = expression(Y[i]-Y[pred]))+
+  theme_bw(base_size = 16)
+)
+
+```
+
+Residuals looks reasonable: the residuals are centered around zero for the vast majority of the predicted values.
+
+### **Figure S3: posterior predictive check**
+
+Let’s see how well the model predicts our outcome variable `delta DOC`.
+
+```{r pp_check_}
+
+(ppc1 <- pp_check(b1, resp = "deltaDOC", ndraws = 1000)+
+  theme_bw(base_size = 16) +
+ labs(x = expression(" "*Delta*"DOC (mg/L)"))+
+  theme(axis.text = element_text(colour = "black"))+ 
+  scale_x_continuous(breaks = seq(from = -3.5, to = 3.5, by = 0.5), limits = c(-3.5, 3.5))
+)
+
+```
