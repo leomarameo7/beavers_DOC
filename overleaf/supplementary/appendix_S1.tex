@@ -14,7 +14,7 @@
 \maketitle
 \begin{center}\textbf{Beaver-engineering amplifies dissolved organic carbon concentration}\end{center}
 
-This document contains the material supporting the main findings of the manuscript (tested hypotheses of the structural causal model, priors, residuals, posterior predictive checks and posterior parameter distributions). The full description of data collection, variable derivation and model specification is given in the Methods of the main manuscript.
+This document contains the material supporting the main findings of the manuscript (tested hypotheses of the structural causal model, priors, residuals, posterior predictive checks, posterior parameter distributions, and an alternative SCM including lateral stream--wetland connectivity). The full description of data collection, variable derivation and model specification is given in the Methods of the main manuscript.
 
 \section*{SCM: tested hypothesis}
 
@@ -94,8 +94,32 @@ Posterior predictive checks assess how well the fitted SCM model reproduces obse
 \end{figure}
 
 
+
+\section*{Alternative structural causal model: lateral stream--wetland connectivity}
+
+Because a DAG encodes a specific set of causal assumptions, we also tested an alternative, extended SCM that incorporates the lateral connectivity between the stream and adjacent wetlands as an additional driver of water residence time (WRT). Hydrologically connected off-channel storage zones (wetlands, floodplains) exchange water with the channel and are known to extend the residence time of water in the system (transient-storage theory; Bencala and Walters 1983). We therefore hypothesized that beaver-pond WRT varies with the degree of lateral stream--wetland connectivity and, consequently, that connectivity indirectly influences $\Delta$DOC via WRT and primary producers.
+
+\paragraph{Connectivity variable.} Following the methodology of K. Berger (MSc thesis, University of Bern), each site was classified into one of three categories: \emph{No wetland} (no wetland along the stream course; $n = 136$ sites), \emph{Wetland, not connected} (wetland present but not hydrologically connected to the stream; $n = 11$), and \emph{Wetland, connected} (wetland present and connected to the stream; $n = 13$). Twenty-two sites could not be classified and were excluded from this analysis (310 observations retained).
+
+\paragraph{DAG and identification.} In the extended DAG (Figure~\ref{fig:S6}) lateral connectivity has no parents, hence there are no open back-door paths between connectivity and $\Delta$DOC and the total effect of connectivity on $\Delta$DOC is identified without adjustment (empty adjustment set, \emph{dagitty}). The causal influence flows through two front-door paths: connectivity $\rightarrow$ WRT $\rightarrow$ macrophytes $\rightarrow$ $\Delta$DOC and connectivity $\rightarrow$ WRT $\rightarrow$ phytoplankton $\rightarrow$ $\Delta$DOC. Because the total effect of WRT on $\Delta$DOC is likewise unconfounded, we fitted a parsimonious two-equation Bayesian model in \emph{brms}: (i) $\Delta$DOC (with the 0.283 mg L$^{-1}$ measurement error, Student-$t$ likelihood, site-level random intercept) regressed on WRT; (ii) WRT regressed on number of dams, maximum dam height, channel gradient, solar radiation and lateral connectivity (reference level: \emph{No wetland}). Missing values in WRT and dam height were imputed within the model (\texttt{mi()}). Four chains were run (R-hat $\le 1.005$). The total effect of each connectivity level on $\Delta$DOC was computed from the posterior draws as the product of the connectivity $\rightarrow$ WRT contrast and the WRT $\rightarrow$ $\Delta$DOC coefficient.
+
+\paragraph{Results.} Relative to sites without wetland, the presence of an unconnected wetland increased WRT by 0.20 standardized units (90\% BCI: $-0.20$; 0.59; $P(\beta>0) = 0.80$) and a connected wetland by 0.01 (90\% BCI: $-0.35$; 0.39). The WRT $\rightarrow$ $\Delta$DOC path was positive but weak (0.09; 90\% BCI: 0.01; 0.16). The resulting total effects of connectivity on $\Delta$DOC were negligible: 0.02 (90\% BCI: $-0.02$; 0.07) for unconnected and 0.00 (90\% BCI: $-0.04$; 0.04) for connected wetlands (Figure~\ref{fig:S5}). We therefore found no evidence that lateral stream--wetland connectivity modifies the beaver-mediated DOC change through the water-residence-time pathway. Given that only 7\% and 6\% of sites fell into the connected and unconnected wetland categories, we regard this result as power-limited rather than as strong evidence of absence of an effect. Importantly, the estimates of the remaining paths were consistent with those of the main SCM (Figure~2b, main manuscript), indicating that our main conclusions are robust to this alternative causal structure.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.85\textwidth]{figures/media/figS6_dag_connectivity.png}
+\caption{Extended directed acyclic graph (DAG) including lateral stream--wetland connectivity (exposure, green) as a driver of water residence time (WRT). Green edges mark the open front-door paths from connectivity to $\Delta$DOC (outcome, blue).}\label{fig:S6}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figures/media/figS5_connectivity.png}
+\caption{Posterior effects of lateral stream--wetland connectivity (relative to sites without wetland) on water residence time (left) and the total mediated effect on $\Delta$DOC (right), controlling for beaver-dam variables, channel gradient and solar radiation. Points show posterior means; thick and thin bars show the 66\% and 90\% credible intervals. The dashed line marks zero.}\label{fig:S5}
+\end{figure}
+
 \section*{References}
 \begin{itemize}\setlength\itemsep{2pt}
+\item[] Bencala KE and Walters RA. 1983. Simulation of solute transport in a mountain pool-and-riffle stream: A transient storage model. Water Resources Research \textbf{19}: 718--24.
 \item[] Abbasi M, Peacock M, Drakare S, et al. 2024. \href{https://doi.org/10.1016/j.watres.2024.121910}{Water residence time is an important predictor of dissolved organic matter composition and drinking water treatability}. Water Research \textbf{260}: 121910.
 \item[] Aitkenhead JA, Hope D, and Billett MF. 1999. \href{https://doi.org/10.1002/(SICI)1099-1085(19990615)13:8\%3C1289::AID-HYP766\%3E3.0.CO;2-M}{The relationship between dissolved organic carbon in stream water and soil organic carbon pools at different spatial scales}. Hydrological Processes \textbf{13}: 1289--302.
 \item[] Arif S and MacNeil MA. 2023. \href{https://doi.org/10.1002/ecm.1554}{Applying the structural causal model framework for observational causal inference in ecology}. \emph{Ecological Monographs} \textbf{93}: e1554.
