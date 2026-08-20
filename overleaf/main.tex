@@ -270,7 +270,7 @@ where \(u_{site}\) represents site-specific deviations and \(\epsilon\) the resi
 
 \subsubsection{Definition of catchment and floodplain area}
 
-We delineated the catchment area by automatically assigning pour points to stream outlets at each site and entering these, along with a D8 pointer raster based on a 25 m DEM \cite{swisstopo2004} into the \emph{Watershed} algorithm in Whitebox \cite{lindsay2016} executed using the \emph{Whitebox} package in R \cite{wu2022}. We calculated the floodplain area of each site using a custom-made function in R based on \hl{the elevation differential of the local terrain and the nearest channel,} adapted from a method developed by \citet{clubb2017}.
+We delineated the catchment area by automatically assigning pour points to stream outlets at each site and entering these, along with a D8 pointer raster based on a 25 m DEM \cite{swisstopo2004} into the \emph{Watershed} algorithm in Whitebox \cite{lindsay2016} executed using the \emph{Whitebox} package in R \cite{wu2022}. We calculated the floodplain area of each site using a custom-made function in R based on the elevation differential of the local terrain and the nearest channel, adapted from a method developed by \citet{clubb2017}.
 
 \backmatter
 
