@@ -1,4 +1,4 @@
-# Beaver engineering creates intense, context-dependent DOC control points in streams
+# Pathways and magnitude of beaver-mediated DOC change in streams
 
 Code and data for the manuscript **"Beaver engineering creates intense, context-dependent dissolved organic carbon control points in streams"**
 (Capitani L. *et al.*, in preparation for *Scientific Reports*).
