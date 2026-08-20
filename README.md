@@ -1,6 +1,6 @@
-# Pathways and magnitude of beaver-mediated DOC change in streams
+# Beaver engineering creates intense, context-dependent DOC control points in streams
 
-Code and data for the manuscript **"Beaver engineering creates intense but bidirectional dissolved organic carbon hotspots in streams"**
+Code and data for the manuscript **"Beaver engineering creates intense, context-dependent dissolved organic carbon control points in streams"**
 (Capitani L. *et al.*, in preparation for *Scientific Reports*).
 Contact: Leonardo Capitani (leocapi07@gmail.com), WSL & Eawag, Switzerland.
 
