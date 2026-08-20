@@ -100,7 +100,7 @@ If the model is a reasonable representation of the observational process that or
 
 \begin{figure}[!htb]
 \centering
-\includegraphics[width=\textwidth]{figures/media/image2.png}
+\includegraphics[width=\textwidth]{figures/media/figS3_residuals.png}
 \caption{Residual plot showing the relationship between model-predicted $\Delta$DOC values (mg\,L$^{-1}$) and corresponding residuals. Points represent the difference between observed and predicted values; a random scatter around zero (grey line) indicates good model fit and no systematic bias in predictions.}\label{fig:S3}
 \end{figure}
 
@@ -111,7 +111,7 @@ Posterior predictive checks assess how well the fitted SCM model reproduces obse
 
 \begin{figure}[!htb]
 \centering
-\includegraphics[width=\textwidth]{figures/media/image3.png}
+\includegraphics[width=\textwidth]{figures/media/figS4_ppc.png}
 \caption{Posterior predictive checks of the mean and standard deviation statistics for the response variable delta DOC, with 1000 posterior draws used to generate the predictive distribution. This plot provides a visual assessment of the model's fit by comparing the observed data (dark blue) against the model's predictions (light blue) from the posterior distribution.}\label{fig:S4}
 \end{figure}
 
@@ -120,7 +120,7 @@ Posterior predictive checks assess how well the fitted SCM model reproduces obse
 
 \begin{figure}[!htb]
 \centering
-\includegraphics[width=\textwidth]{figures/media/image5.png}
+\includegraphics[width=\textwidth]{figures/media/figS5_posteriors.png}
 \caption{Posterior parameters distributions of the fitted SCM. Median shown with point; 66\% and 95\% credible intervals shown with black bars. Parameters that have more than 90\% probability mass on either side of zero are considered to have a positive or negative influence on the response variable. a) The direct effects on $\Delta$DOC b) The indirect effects on $\Delta$DOC.}\label{fig:S5}
 \end{figure}
 
@@ -157,7 +157,7 @@ Upstream DOC concentration had the largest total effect ($-0.10$; 90\% BCI: $-0.
 
 Because a DAG encodes a specific set of causal assumptions, we also tested an alternative, extended SCM that incorporates the lateral connectivity between the stream and adjacent wetlands as an additional driver of water residence time (WRT). Hydrologically connected off-channel storage zones (wetlands, floodplains) exchange water with the channel and are known to extend the residence time of water in the system (transient-storage theory; Bencala and Walters 1983). We therefore hypothesized that beaver-pond WRT varies with the degree of lateral stream--wetland connectivity and, consequently, that connectivity indirectly influences $\Delta$DOC via WRT and primary producers.
 
-\paragraph{Connectivity variable.} For each site, we first determined whether a wetland was present within a 50~m buffer around the river reach between the upstream and downstream sampling locations, using the wetland layer (\emph{Feuchtgebiet}: marshes, bogs, swamp forests, wet meadows, floodplains and fens) of the swissTLM3D topographic landscape model (SwissTopo 2024). For sites with a wetland, we then assessed visually on the swisstopo maps and orthophotos whether the wetland was hydrologically connected to the river water, or separated from it by roads, trails, tree lines or other barriers. Each site was thereby assigned to one of three categories: \emph{No wetland} (no wetland within the buffer; $n = 136$ sites), \emph{Wetland, not connected} (wetland present but not directly connected to the river; $n = 11$), and \emph{Wetland, connected} (wetland present and directly connected to the river; $n = 13$). Twenty-two sites could not be classified and were excluded from this analysis (310 observations retained). Note that most of these wetlands are themselves strongly influenced by beaver damming and would likely not exist without beavers.
+\paragraph{Connectivity variable.} For each site, we first determined whether a wetland was present within a 50~m buffer around the river reach between the upstream and downstream sampling locations, using the wetland layer (marshes, bogs, swamp forests, wet meadows, floodplains and fens) of the swissTLM3D topographic landscape model (SwissTopo 2024). For sites with a wetland, we then assessed visually on the swisstopo maps and orthophotos whether the wetland was hydrologically connected to the river water, or separated from it by roads, trails, tree lines or other barriers. Each site was thereby assigned to one of three categories: \emph{No wetland} (no wetland within the buffer; $n = 136$ sites), \emph{Wetland, not connected} (wetland present but not directly connected to the river; $n = 11$), and \emph{Wetland, connected} (wetland present and directly connected to the river; $n = 13$). Twenty-two sites could not be classified and were excluded from this analysis (310 observations retained). Note that most of these wetlands are themselves strongly influenced by beaver damming and would likely not exist without beavers.
 
 \paragraph{DAG and identification.} In the extended DAG (Figure~\ref{fig:S8}) lateral connectivity has no parents, hence there are no open back-door paths between connectivity and $\Delta$DOC and the total effect of connectivity on $\Delta$DOC is identified without adjustment (empty adjustment set, \emph{dagitty}). The causal influence flows through two front-door paths: connectivity $\rightarrow$ WRT $\rightarrow$ macrophytes $\rightarrow$ $\Delta$DOC and connectivity $\rightarrow$ WRT $\rightarrow$ phytoplankton $\rightarrow$ $\Delta$DOC. Because the total effect of WRT on $\Delta$DOC is likewise unconfounded, we fitted a parsimonious two-equation Bayesian model in \emph{brms}: (i) $\Delta$DOC (with the 0.283 mg L$^{-1}$ measurement error, Student-$t$ likelihood, site-level random intercept) regressed on WRT; (ii) WRT regressed on number of dams, maximum dam height, channel gradient, solar radiation and lateral connectivity (reference level: \emph{No wetland}). Missing values in WRT and dam height were imputed within the model (\texttt{mi()}). Four chains were run (R-hat $\le 1.005$). The total effect of each connectivity level on $\Delta$DOC was computed from the posterior draws as the product of the connectivity $\rightarrow$ WRT contrast and the WRT $\rightarrow$ $\Delta$DOC coefficient.
 
@@ -171,8 +171,8 @@ Because a DAG encodes a specific set of causal assumptions, we also tested an al
 
 \begin{figure}[!htb]
 \centering
-\includegraphics[width=\textwidth]{figures/media/figS5_connectivity.png}
-\caption{Posterior effects of lateral stream--wetland connectivity (relative to sites without wetland) on water residence time (left) and the total mediated effect on $\Delta$DOC (right), controlling for beaver-dam variables, channel gradient and solar radiation. Points show posterior means; thick and thin bars show the 66\% and 90\% credible intervals. The dashed line marks zero.}\label{fig:S9}
+\includegraphics[width=\textwidth]{figures/media/figS9_connectivity.png}
+\caption{Posterior effects of lateral stream--wetland connectivity (relative to sites without wetland) on water residence time (left) and the total mediated effect on $\Delta$DOC (right), controlling for beaver-dam variables, channel gradient and solar radiation. Points: posterior medians; thick and thin bars: 66\% and 95\% credible intervals. The dashed line marks zero.}\label{fig:S9}
 \end{figure}
 
 \clearpage
