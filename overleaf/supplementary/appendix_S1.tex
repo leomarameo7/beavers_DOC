@@ -29,8 +29,18 @@
 \textsuperscript{*}Corresponding author: Leonardo Capitani (leocapi07@gmail.com)
 \end{center}
 
-This document contains the material supporting the main findings of the manuscript (tested hypotheses of the structural causal model, priors, residuals, posterior predictive checks, posterior parameter distributions, a stream-level classification of $\Delta$DOC, the total effects of the drivers on $\Delta$DOC, and an alternative SCM including lateral stream--wetland connectivity). The full description of data collection, variable derivation and model specification is given in the Methods of the main manuscript.
+This document contains the material supporting the main findings of the manuscript (the hypothesised causal structure and tested hypotheses of the structural causal model, priors, residuals, posterior predictive checks, posterior parameter distributions, a stream-level classification of $\Delta$DOC, the total effects of the drivers on $\Delta$DOC, and an alternative SCM including lateral stream--wetland connectivity). The full description of data collection, variable derivation and model specification is given in the Methods of the main manuscript.
 
+\FloatBarrier
+\section*{SCM: hypothesised causal structure}
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=\textwidth]{figures/media/figS1_dag_hypotheses.png}
+\caption{Directed acyclic graph (DAG) of the structural causal model (SCM), with the hypothesised causal mechanisms numbered 1--13. Orange boxes: beaver-engineering variables; the blue box: stream hydrology; green boxes: primary producer variables; black boxes: parent drivers not influenced by other variables; the magenta ellipse: the outcome \(\Delta\)DOC. Each numbered edge corresponds to one tested hypothesis in Table~S1. Beaver illustration credits to \textcopyright{} Sarah Edmonds Illustration.}\label{fig:S1}
+\end{figure}
+
+\FloatBarrier
 \section*{SCM: tested hypothesis}
 
 
@@ -38,7 +48,7 @@ This document contains the material supporting the main findings of the manuscri
 \setlength{\LTleft}{0pt}\setlength{\LTright}{0pt}\begingroup\small\sloppy\hyphenpenalty=0\emergencystretch=2em
 \renewcommand{\arraystretch}{1.25}
 \begin{longtable}{|>{\centering\arraybackslash}p{0.07\textwidth}|>{\raggedright\arraybackslash}p{0.17\textwidth}|>{\raggedright\arraybackslash}p{0.14\textwidth}|>{\raggedright\arraybackslash}p{0.48\textwidth}|}
-\caption{Tested hypotheses for the structural causal model (SCM) represented in Figure 1b of the main document.}\label{tab:S1}\\
+\caption{Tested hypotheses for the structural causal model (SCM). The causal-path numbers correspond to the numbered edges of the DAG in Figure~\ref{fig:S1} (and Figure 1b of the main document).}\label{tab:S1}\\
 \hline
 \textbf{Causal path} & \textbf{Predictor} & \textbf{Response} & \textbf{Hypothesis} \\ \hline
 \endfirsthead
@@ -66,16 +76,18 @@ This document contains the material supporting the main findings of the manuscri
 \renewcommand{\arraystretch}{1}\endgroup
 
 
+\FloatBarrier
 \section*{Structural Causal Model: the priors}
 
-To ensure the model was not over-constrained by prior knowledge, we used weakly informative priors for all parameters. This approach allows the data to inform the model without assuming strong beliefs about the parameter values beforehand (Figure~\ref{fig:S1}). We note, however, that for macrophytes, phytoplankton, and litter cover---variables measured in 16 of the 176 streams---we used more informative priors that incorporate established ecological knowledge about their influence on DOC concentrations (Figure~\ref{fig:S1} panel b).
+To ensure the model was not over-constrained by prior knowledge, we used weakly informative priors for all parameters. This approach allows the data to inform the model without assuming strong beliefs about the parameter values beforehand (Figure~\ref{fig:S2}). We note, however, that for macrophytes, phytoplankton, and litter cover---variables measured in 16 of the 176 streams---we used more informative priors that incorporate established ecological knowledge about their influence on DOC concentrations (Figure~\ref{fig:S2} panel b).
 
-\begin{figure}[htbp]
+\begin{figure}[!htb]
 \centering
 \includegraphics[width=\textwidth]{figures/media/image4.png}
-\caption{Half-eye plots display the prior distributions used in the model. The shaded areas (slabs) represent the probability density of each prior distribution, illustrating their shape and spread. The central dot indicates the median of the distribution, while the thick and thin horizontal lines represent the 66\% and 95\% credible intervals, respectively. Text labels to the left of each distribution indicate the corresponding prior specification.}\label{fig:S1}
+\caption{Half-eye plots display the prior distributions used in the model. The shaded areas (slabs) represent the probability density of each prior distribution, illustrating their shape and spread. The central dot indicates the median of the distribution, while the thick and thin horizontal lines represent the 66\% and 95\% credible intervals, respectively. Text labels to the left of each distribution indicate the corresponding prior specification.}\label{fig:S2}
 \end{figure}
 
+\FloatBarrier
 \section*{Structural Causal Model: the residuals}
 
 We can evaluate the model fit by looking at the difference between observed data and their predictions. That are the residuals (\(r_{i}\)).
@@ -86,54 +98,58 @@ r_{i} = y_{i} - y_{i}^{pred}
 
 If the model is a reasonable representation of the observational process that originates the data then the residuals should look roughly randomly scattered in comparison to a horizontal line.
 
-\begin{figure}[htbp]
+\begin{figure}[!htb]
 \centering
 \includegraphics[width=\textwidth]{figures/media/image2.png}
-\caption{Residual plot showing the relationship between model-predicted $\Delta$DOC values (mg\,L$^{-1}$) and corresponding residuals. Points represent the difference between observed and predicted values; a random scatter around zero (grey line) indicates good model fit and no systematic bias in predictions.}\label{fig:S2}
+\caption{Residual plot showing the relationship between model-predicted $\Delta$DOC values (mg\,L$^{-1}$) and corresponding residuals. Points represent the difference between observed and predicted values; a random scatter around zero (grey line) indicates good model fit and no systematic bias in predictions.}\label{fig:S3}
 \end{figure}
 
+\FloatBarrier
 \section*{Structural Causal Model: posterior predictive checks}
 
 Posterior predictive checks assess how well the fitted SCM model reproduces observed data by comparing the observed values to data simulated from the model's posterior predictive distribution.
 
-\begin{figure}[htbp]
+\begin{figure}[!htb]
 \centering
 \includegraphics[width=\textwidth]{figures/media/image3.png}
-\caption{Posterior predictive checks of the mean and standard deviation statistics for the response variable delta DOC, with 1000 posterior draws used to generate the predictive distribution. This plot provides a visual assessment of the model's fit by comparing the observed data (dark blue) against the model's predictions (light blue) from the posterior distribution.}\label{fig:S3}
+\caption{Posterior predictive checks of the mean and standard deviation statistics for the response variable delta DOC, with 1000 posterior draws used to generate the predictive distribution. This plot provides a visual assessment of the model's fit by comparing the observed data (dark blue) against the model's predictions (light blue) from the posterior distribution.}\label{fig:S4}
 \end{figure}
 
+\FloatBarrier
 \section*{Structural Causal Model: posterior parameters distribution}
 
-\begin{figure}[htbp]
+\begin{figure}[!htb]
 \centering
 \includegraphics[width=\textwidth]{figures/media/image5.png}
-\caption{Posterior parameters distributions of the fitted SCM. Median shown with point; 66\% and 95\% credible intervals shown with black bars. Parameters that have more than 90\% probability mass on either side of zero are considered to have a positive or negative influence on the response variable. a) The direct effects on $\Delta$DOC b) The indirect effects on $\Delta$DOC.}\label{fig:S4}
+\caption{Posterior parameters distributions of the fitted SCM. Median shown with point; 66\% and 95\% credible intervals shown with black bars. Parameters that have more than 90\% probability mass on either side of zero are considered to have a positive or negative influence on the response variable. a) The direct effects on $\Delta$DOC b) The indirect effects on $\Delta$DOC.}\label{fig:S5}
 \end{figure}
 
 
 
 
+\FloatBarrier
 \section*{Structural Causal Model: stream-level classification of $\Delta$DOC}
 
-To avoid conflating the posterior predictive probability of a response (Figure 1a, main document) with the proportion of streams showing that response, we classified each stream individually using the structural causal model (SCM), which includes a stream-level random intercept. (As a consistency check, the posterior predictive distribution of $\Delta$DOC from the SCM for a typical stream -- predictors at their mean, stream effects integrated out -- gives 12\% sink, 76\% negligible and 12\% source responses, in close agreement with the season-specific measurement-error model of Figure 1a.) For each of the 179 streams we computed the posterior distribution of the expected $\Delta$DOC (population-level effects plus the stream-level intercept, averaged over the stream's observations; 2,000 posterior draws) and assigned the stream to the region (sink $< -0.5$ mg L$^{-1}$, ROPE $\pm 0.5$ mg L$^{-1}$, source $> 0.5$ mg L$^{-1}$) that held the majority of its posterior mass. The expected $\Delta$DOC of all 179 streams fell within the ROPE (posterior medians from $-0.40$ to $0.38$ mg L$^{-1}$; median width of the 90\% credible interval 0.41 mg L$^{-1}$; Figure~\ref{fig:S7}), reflecting the small average effect (intercept 0.00 mg L$^{-1}$; 95\% BCI $-0.12$; 0.12) and the small between-stream standard deviation (0.05 mg L$^{-1}$; 95\% BCI 0.00; 0.14). The heavy-tailed posterior predictive distribution of Figure 1a thus captures the variability of individual samplings around a null average rather than consistent stream-level differences.
+To avoid conflating the posterior predictive probability of a response (Figure 1a, main document) with the proportion of streams showing that response, we classified each stream individually using the structural causal model (SCM), which includes a stream-level random intercept. (As a consistency check, the posterior predictive distribution of $\Delta$DOC from the SCM for a typical stream -- predictors at their mean, stream effects integrated out -- gives 12\% sink, 76\% negligible and 12\% source responses, in close agreement with the season-specific measurement-error model of Figure 1a.) For each of the 179 streams we computed the posterior distribution of the expected $\Delta$DOC (population-level effects plus the stream-level intercept, averaged over the stream's observations; 2,000 posterior draws) and assigned the stream to the region (sink $< -0.5$ mg L$^{-1}$, ROPE $\pm 0.5$ mg L$^{-1}$, source $> 0.5$ mg L$^{-1}$) that held the majority of its posterior mass. The expected $\Delta$DOC of all 179 streams fell within the ROPE (posterior medians from $-0.40$ to $0.38$ mg L$^{-1}$; median width of the 90\% credible interval 0.41 mg L$^{-1}$; Figure~\ref{fig:S6}), reflecting the small average effect (intercept 0.00 mg L$^{-1}$; 95\% BCI $-0.12$; 0.12) and the small between-stream standard deviation (0.05 mg L$^{-1}$; 95\% BCI 0.00; 0.14). The heavy-tailed posterior predictive distribution of Figure 1a thus captures the variability of individual samplings around a null average rather than consistent stream-level differences.
 
-\begin{figure}[htbp]
+\begin{figure}[!htb]
 \centering
 \includegraphics[width=\textwidth]{figures/media/figS7_site_level.png}
-\caption{Stream-level $\Delta$DOC. Blue points and bars: posterior median and 90\% credible interval of the model-based expected $\Delta$DOC of each stream (ranked by posterior median). Orange crosses: observed stream-averaged $\Delta$DOC, shown for reference (one value of 29.9 mg L$^{-1}$ is clipped at 5 mg L$^{-1}$). The grey band is the region of practical equivalence ($\pm 0.5$ mg L$^{-1}$).}\label{fig:S7}
+\caption{Stream-level $\Delta$DOC. Blue points and bars: posterior median and 90\% credible interval of the model-based expected $\Delta$DOC of each stream (ranked by posterior median). Orange crosses: observed stream-averaged $\Delta$DOC, shown for reference (one value of 29.9 mg L$^{-1}$ is clipped at 5 mg L$^{-1}$). The grey band is the region of practical equivalence ($\pm 0.5$ mg L$^{-1}$).}\label{fig:S6}
 \end{figure}
 
 
+\FloatBarrier
 \section*{Structural Causal Model: total effects of the exogenous drivers on $\Delta$DOC}
 
 The edges of the SCM (Figure 1b, main document) are direct, path-specific effects. To summarize the overall influence of each exogenous driver on $\Delta$DOC we computed its \emph{total effect} as the sum of the products of the coefficients along every open causal path from the driver to $\Delta$DOC (e.g., for the number of dams: dams $\rightarrow$ WRT $\rightarrow$ $\Delta$DOC, dams $\rightarrow$ WRT $\rightarrow$ macrophytes $\rightarrow$ $\Delta$DOC, and dams $\rightarrow$ WRT $\rightarrow$ phytoplankton $\rightarrow$ $\Delta$DOC), evaluated on each posterior draw (path tracing; Hayes 2018). All effects are on the standardized scale (change in $\Delta$DOC, in standard deviations, per standard deviation of the driver).
 
-Upstream DOC concentration had the largest total effect ($-0.10$; 90\% BCI: $-0.16$; $-0.05$; $P(\beta<0) > 0.99$), followed by solar radiation, which acts through all three primary-producer mediators ($+0.04$; 90\% BCI: 0.01; 0.07; $P(\beta>0) = 0.99$). The total effect of water residence time ($+0.04$; 90\% BCI: $-0.02$; 0.11; $P(\beta>0) = 0.87$) was positive but less certain. The total effects of the beaver-engineering variables, which act only through water residence time, were small: number of dams $+0.003$ (90\% BCI: $-0.002$; 0.010; $P(\beta>0) = 0.82$) and maximum dam height $+0.001$ (90\% BCI: $-0.003$; 0.007; $P(\beta>0) = 0.68$); channel gradient had a small negative total effect ($-0.004$; 90\% BCI: $-0.012$; 0.002). Hence, the direction of the beaver-mediated DOC change is set primarily by the external context of the pond (incoming DOC load and light availability for primary producers), whereas the structural characteristics of the dam complex modulate it only weakly via water residence time (Figure~\ref{fig:S8}).
+Upstream DOC concentration had the largest total effect ($-0.10$; 90\% BCI: $-0.16$; $-0.05$; $P(\beta<0) > 0.99$), followed by solar radiation, which acts through all three primary-producer mediators ($+0.04$; 90\% BCI: 0.01; 0.07; $P(\beta>0) = 0.99$). The total effect of water residence time ($+0.04$; 90\% BCI: $-0.02$; 0.11; $P(\beta>0) = 0.87$) was positive but less certain. The total effects of the beaver-engineering variables, which act only through water residence time, were small: number of dams $+0.003$ (90\% BCI: $-0.002$; 0.010; $P(\beta>0) = 0.82$) and maximum dam height $+0.001$ (90\% BCI: $-0.003$; 0.007; $P(\beta>0) = 0.68$); channel gradient had a small negative total effect ($-0.004$; 90\% BCI: $-0.012$; 0.002). Hence, the direction of the beaver-mediated DOC change is set primarily by the external context of the pond (incoming DOC load and light availability for primary producers), whereas the structural characteristics of the dam complex modulate it only weakly via water residence time (Figure~\ref{fig:S7}).
 
-\begin{figure}[htbp]
+\begin{figure}[!htb]
 \centering
 \includegraphics[width=0.9\textwidth]{figures/media/figS8_total_effects.png}
-\caption{Posterior distributions of the total (standardized) effect of each exogenous driver on $\Delta$DOC, obtained by tracing all open causal paths of the SCM. Points: posterior means; thick and thin bars: 66\% and 95\% credible intervals.}\label{fig:S8}
+\caption{Posterior distributions of the total (standardized) effect of each exogenous driver on $\Delta$DOC, obtained by tracing all open causal paths of the SCM. Points: posterior means; thick and thin bars: 66\% and 95\% credible intervals.}\label{fig:S7}
 \end{figure}
 
 \FloatBarrier
@@ -143,23 +159,24 @@ Because a DAG encodes a specific set of causal assumptions, we also tested an al
 
 \paragraph{Connectivity variable.} For each site, we first determined whether a wetland was present within a 50~m buffer around the river reach between the upstream and downstream sampling locations, using the wetland layer (\emph{Feuchtgebiet}: marshes, bogs, swamp forests, wet meadows, floodplains and fens) of the swissTLM3D topographic landscape model (SwissTopo 2024). For sites with a wetland, we then assessed visually on the swisstopo maps and orthophotos whether the wetland was hydrologically connected to the river water, or separated from it by roads, trails, tree lines or other barriers. Each site was thereby assigned to one of three categories: \emph{No wetland} (no wetland within the buffer; $n = 136$ sites), \emph{Wetland, not connected} (wetland present but not directly connected to the river; $n = 11$), and \emph{Wetland, connected} (wetland present and directly connected to the river; $n = 13$). Twenty-two sites could not be classified and were excluded from this analysis (310 observations retained). Note that most of these wetlands are themselves strongly influenced by beaver damming and would likely not exist without beavers.
 
-\paragraph{DAG and identification.} In the extended DAG (Figure~\ref{fig:S6}) lateral connectivity has no parents, hence there are no open back-door paths between connectivity and $\Delta$DOC and the total effect of connectivity on $\Delta$DOC is identified without adjustment (empty adjustment set, \emph{dagitty}). The causal influence flows through two front-door paths: connectivity $\rightarrow$ WRT $\rightarrow$ macrophytes $\rightarrow$ $\Delta$DOC and connectivity $\rightarrow$ WRT $\rightarrow$ phytoplankton $\rightarrow$ $\Delta$DOC. Because the total effect of WRT on $\Delta$DOC is likewise unconfounded, we fitted a parsimonious two-equation Bayesian model in \emph{brms}: (i) $\Delta$DOC (with the 0.283 mg L$^{-1}$ measurement error, Student-$t$ likelihood, site-level random intercept) regressed on WRT; (ii) WRT regressed on number of dams, maximum dam height, channel gradient, solar radiation and lateral connectivity (reference level: \emph{No wetland}). Missing values in WRT and dam height were imputed within the model (\texttt{mi()}). Four chains were run (R-hat $\le 1.005$). The total effect of each connectivity level on $\Delta$DOC was computed from the posterior draws as the product of the connectivity $\rightarrow$ WRT contrast and the WRT $\rightarrow$ $\Delta$DOC coefficient.
+\paragraph{DAG and identification.} In the extended DAG (Figure~\ref{fig:S8}) lateral connectivity has no parents, hence there are no open back-door paths between connectivity and $\Delta$DOC and the total effect of connectivity on $\Delta$DOC is identified without adjustment (empty adjustment set, \emph{dagitty}). The causal influence flows through two front-door paths: connectivity $\rightarrow$ WRT $\rightarrow$ macrophytes $\rightarrow$ $\Delta$DOC and connectivity $\rightarrow$ WRT $\rightarrow$ phytoplankton $\rightarrow$ $\Delta$DOC. Because the total effect of WRT on $\Delta$DOC is likewise unconfounded, we fitted a parsimonious two-equation Bayesian model in \emph{brms}: (i) $\Delta$DOC (with the 0.283 mg L$^{-1}$ measurement error, Student-$t$ likelihood, site-level random intercept) regressed on WRT; (ii) WRT regressed on number of dams, maximum dam height, channel gradient, solar radiation and lateral connectivity (reference level: \emph{No wetland}). Missing values in WRT and dam height were imputed within the model (\texttt{mi()}). Four chains were run (R-hat $\le 1.005$). The total effect of each connectivity level on $\Delta$DOC was computed from the posterior draws as the product of the connectivity $\rightarrow$ WRT contrast and the WRT $\rightarrow$ $\Delta$DOC coefficient.
 
-\paragraph{Results.} Relative to sites without wetland, the presence of an unconnected wetland increased WRT by 0.20 standardized units (90\% BCI: $-0.20$; 0.59; $P(\beta>0) = 0.80$) and a connected wetland by 0.01 (90\% BCI: $-0.35$; 0.39). The WRT $\rightarrow$ $\Delta$DOC path was positive but weak (0.09; 90\% BCI: 0.01; 0.16). The resulting total effects of connectivity on $\Delta$DOC were negligible: 0.02 (90\% BCI: $-0.02$; 0.07) for unconnected and 0.00 (90\% BCI: $-0.04$; 0.04) for connected wetlands (Figure~\ref{fig:S5}). We therefore found no evidence that lateral stream--wetland connectivity modifies the beaver-mediated DOC change through the water-residence-time pathway. Given that only 7\% and 6\% of sites fell into the connected and unconnected wetland categories, we regard this result as power-limited rather than as strong evidence of absence of an effect. Importantly, the estimates of the remaining paths were consistent with those of the main SCM (Figure 1b, main manuscript), indicating that our main conclusions are robust to this alternative causal structure.
+\paragraph{Results.} Relative to sites without wetland, the presence of an unconnected wetland increased WRT by 0.20 standardized units (90\% BCI: $-0.20$; 0.59; $P(\beta>0) = 0.80$) and a connected wetland by 0.01 (90\% BCI: $-0.35$; 0.39). The WRT $\rightarrow$ $\Delta$DOC path was positive but weak (0.09; 90\% BCI: 0.01; 0.16). The resulting total effects of connectivity on $\Delta$DOC were negligible: 0.02 (90\% BCI: $-0.02$; 0.07) for unconnected and 0.00 (90\% BCI: $-0.04$; 0.04) for connected wetlands (Figure~\ref{fig:S9}). We therefore found no evidence that lateral stream--wetland connectivity modifies the beaver-mediated DOC change through the water-residence-time pathway. Given that only 7\% and 6\% of sites fell into the connected and unconnected wetland categories, we regard this result as power-limited rather than as strong evidence of absence of an effect. Importantly, the estimates of the remaining paths were consistent with those of the main SCM (Figure 1b, main manuscript), indicating that our main conclusions are robust to this alternative causal structure.
 
-\begin{figure}[htbp]
+\begin{figure}[!htb]
 \centering
 \includegraphics[width=0.85\textwidth]{figures/media/figS6_dag_connectivity.png}
-\caption{Extended directed acyclic graph (DAG) including lateral stream--wetland connectivity (exposure, green) as a driver of water residence time (WRT). Green edges mark the open front-door paths from connectivity to $\Delta$DOC (outcome, blue).}\label{fig:S6}
+\caption{Extended directed acyclic graph (DAG) including lateral stream--wetland connectivity (exposure, green) as a driver of water residence time (WRT). Green edges mark the open front-door paths from connectivity to $\Delta$DOC (outcome, blue).}\label{fig:S8}
 \end{figure}
 
-\begin{figure}[htbp]
+\begin{figure}[!htb]
 \centering
 \includegraphics[width=\textwidth]{figures/media/figS5_connectivity.png}
-\caption{Posterior effects of lateral stream--wetland connectivity (relative to sites without wetland) on water residence time (left) and the total mediated effect on $\Delta$DOC (right), controlling for beaver-dam variables, channel gradient and solar radiation. Points show posterior means; thick and thin bars show the 66\% and 90\% credible intervals. The dashed line marks zero.}\label{fig:S5}
+\caption{Posterior effects of lateral stream--wetland connectivity (relative to sites without wetland) on water residence time (left) and the total mediated effect on $\Delta$DOC (right), controlling for beaver-dam variables, channel gradient and solar radiation. Points show posterior means; thick and thin bars show the 66\% and 90\% credible intervals. The dashed line marks zero.}\label{fig:S9}
 \end{figure}
 
 \clearpage
+\FloatBarrier
 \section*{References}
 \begin{itemize}\setlength\itemsep{2pt}
 \item[] Bencala KE and Walters RA. 1983. Simulation of solute transport in a mountain pool-and-riffle stream: A transient storage model. Water Resources Research \textbf{19}: 718--24.
