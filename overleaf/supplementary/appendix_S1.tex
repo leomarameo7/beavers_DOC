@@ -2,7 +2,7 @@
 %% Compile separately from main.tex (Overleaf: Menu -> Main document -> supplementary/appendix_S1.tex)
 \documentclass[11pt,a4paper]{article}
 \usepackage[margin=2.5cm]{geometry}
-\usepackage{graphicx,amsmath,amssymb,booktabs,longtable,array,soul,hyperref,placeins}
+\usepackage{graphicx,amsmath,amssymb,booktabs,longtable,array,soul,hyperref,placeins,float}
 \usepackage[T1]{fontenc}\usepackage[utf8]{inputenc}\usepackage{lmodern}
 \renewcommand{\thefigure}{S\arabic{figure}}
 \renewcommand{\thetable}{S\arabic{table}}
@@ -31,10 +31,10 @@
 
 This document contains the material supporting the main findings of the manuscript (the hypothesised causal structure and tested hypotheses of the structural causal model, priors, residuals, posterior predictive checks, posterior parameter distributions, a stream-level classification of $\Delta$DOC, the total effects of the drivers on $\Delta$DOC, and an alternative SCM including lateral stream--wetland connectivity). The full description of data collection, variable derivation and model specification is given in the Methods of the main manuscript.
 
-\FloatBarrier
+\clearpage
 \section*{SCM: hypothesised causal structure}
 
-\begin{figure}[!htb]
+\begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{figures/media/figS1_dag_hypotheses.png}
 \caption{Directed acyclic graph (DAG) of the structural causal model (SCM), with the hypothesised causal mechanisms numbered 1--13. Orange boxes: beaver-engineering variables; the blue box: stream hydrology; green boxes: primary producer variables; black boxes: parent drivers not influenced by other variables; the magenta ellipse: the outcome \(\Delta\)DOC. Each numbered edge corresponds to one tested hypothesis in Table~S1. Beaver illustration credits to \textcopyright{} Sarah Edmonds Illustration.}\label{fig:S1}
