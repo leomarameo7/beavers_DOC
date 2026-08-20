@@ -140,6 +140,8 @@ The total effect of `lateral_connectivity` on `delta_DOC` is the *sum of all cau
 ```{r adjset_total}
 # Step 3-4: backdoor paths and adjustment sets, for TOTAL effect
 adjustmentSets(dag, exposure = "lateral_connectivity", outcome = "delta_DOC", effect = "total")
+# list the open paths (the orange front-door paths in Appendix S1: Figure S8)
+paths(dag, "lateral_connectivity", "delta_DOC")
 ```
 
 Since there's no backdoor path (nothing causes `lateral_connectivity`), there's nothing to adjust for — you want all those mediator paths to stay open so their contribution is captured in the estimate. That's why the answer is `{}`.
@@ -258,11 +260,31 @@ bform <-
 
 #detach("package:rethinking", unload = TRUE)
 
+# Informative priors: shared parameters carry the same priors as in the main SCM (notebook.qmd);
+# the three connectivity-level coefficients get weakly-informative normal(0, 1) priors (WRT is z-scored).
+prio_conn <- c(
+  prior(normal(0, 2.5),       class = "b", coef = "Intercept",          resp = "deltaDOC"),
+  prior(normal(0, 0.1),       class = "b", coef = "miwater_res_time_z", resp = "deltaDOC"),
+  prior(student_t(3, 0, 2.5), class = "sigma",                          resp = "deltaDOC"),
+  prior(gamma(2, 0.1),        class = "nu",                             resp = "deltaDOC"),
+  prior(normal(0, 2),         class = "sd", coef = "Intercept", group = "site", resp = "deltaDOC"),
+  prior(normal(0.15, 0.075),  class = "b", coef = "n_dams_z",           resp = "waterrestimez"),
+  prior(normal(0.15, 0.075),  class = "b", coef = "midam_height_z",     resp = "waterrestimez"),
+  prior(normal(0, 0.075),     class = "b", coef = "slope_z",            resp = "waterrestimez"),
+  prior(normal(0, 0.075),     class = "b", coef = "solar_z",            resp = "waterrestimez"),
+  prior(normal(0, 1),         class = "b", coef = "lateral_connectivityNo_wetland",        resp = "waterrestimez"),
+  prior(normal(0, 1),         class = "b", coef = "lateral_connectivityyes_not_connected", resp = "waterrestimez"),
+  prior(normal(0, 1),         class = "b", coef = "lateral_connectivityyes_connected",     resp = "waterrestimez"),
+  prior(normal(0, 0.5),       class = "sigma",                          resp = "waterrestimez"),
+  prior(normal(0, 1),         class = "b", coef = "Intercept",          resp = "damheightz"),
+  prior(normal(0, 0.5),       class = "sigma",                          resp = "damheightz"))
+
 fit_connectivity <- brm(bform, data = m6_fit, 
+                        prior = prio_conn,
                         chains = 4, 
                         cores = 10, seed = 42,
                         backend = "cmdstanr",
-                        file = here("results","models_fit","fitconnectivity"),
+                        file = here("results","models_fit","fitconnectivity_informative"),
                         sample_prior = FALSE
 )
 
@@ -308,35 +330,31 @@ effects_df <- data.frame(
                            "connected"      = "Yes, connected\nvs No wetland"))
 ```
 
-Then plot the results as contrasts:
+Then plot the results as contrasts (Appendix S1: Figure S9):
 
 ```{r}
 #| label: fig-contrasts
-#| fig-cap: "Posterior effects of lateral stream-wetland connectivity (relative to no wetland) on water residence time (left) and the total mediated effect on ΔDOC (right), controlling for beaver dam variables and season. Points show posterior means; bars show 90% credible intervals. Dashed line marks zero."
-#| fig-width: 13
-#| fig-height: 8 
-stage_df <- bind_rows(
-  data.frame(stage = "Connectivity \u2192 WRT", contrast = "yes_not_connected", effect = effect_wrt_not_connected),
-  data.frame(stage = "Connectivity \u2192 WRT", contrast = "connected",     effect = effect_wrt_connected),
-  data.frame(stage = "Total: Connectivity \u2192 \u0394DOC", contrast = "yes_not_connected", effect = total_effect_not_connected),
-  data.frame(stage = "Total: Connectivity \u2192 \u0394DOC", contrast = "connected",     effect = total_effect_connected)
-) %>%
-  mutate(contrast = recode(contrast,
-                           "not_connected" = "Not connected vs No wetland",
-                           "connected"      = "Connected vs No wetland"))
-
-ggplot(stage_df, aes(x = effect, y = contrast, fill = contrast)) +
-  ggdist::stat_halfeye(.width = 0.90, point_interval = "mean_qi", alpha = 0.7) +
-  geom_vline(xintercept = 0, linetype = "dashed", color = "grey30") +
-  facet_wrap(~stage, scales = "free_x") +
-  scale_fill_manual(values = c("#4477AA", "#CC6677")) +
-  labs(
-    title = "Posterior effects of lateral connectivity",
-    x = "Standardized effect", y = NULL
-  ) +
-  theme_minimal(base_size = 16) +
-  theme(legend.position = "none")
+#| fig-cap: "Posterior effects of lateral stream-wetland connectivity (relative to sites without wetland) on water residence time (left) and the total mediated effect on ΔDOC (right). Points: posterior medians; thick/thin bars: 66% and 95% credible intervals."
+#| fig-width: 11
+#| fig-height: 4.5
+df_s9 <- bind_rows(
+  tibble(stage = "A", contrast = "Wetland, not connected vs no wetland", draw = effect_wrt_not_connected),
+  tibble(stage = "A", contrast = "Wetland, connected vs no wetland",     draw = effect_wrt_connected),
+  tibble(stage = "B", contrast = "Wetland, not connected vs no wetland", draw = total_effect_not_connected),
+  tibble(stage = "B", contrast = "Wetland, connected vs no wetland",     draw = total_effect_connected)) |>
+  mutate(contrast = factor(contrast, levels = rev(c("Wetland, not connected vs no wetland", "Wetland, connected vs no wetland"))))
+lab_s9 <- as_labeller(c(A = "Connectivity%->%'water residence time'", B = "'Total effect on'~Delta*'DOC'"), label_parsed)
+(p_s9 <- ggplot(df_s9, aes(x = draw, y = contrast)) +
+  geom_vline(xintercept = 0, linetype = 2, colour = "grey40") +
+  stat_halfeye(.width = c(.66, .95), fill = "steelblue", alpha = .8) +
+  facet_wrap(~stage, scales = "free_x", labeller = lab_s9) +
+  labs(x = "Standardized effect", y = NULL) +
+  theme_bw(base_size = 15) +
+  theme(axis.text = element_text(color = "black"), panel.grid.minor = element_blank(),
+        strip.background = element_rect(fill = "grey92")))
+ggsave(here("results", "figures", "figS9_connectivity.png"), p_s9, width = 11, height = 4.5, dpi = 300)
 ```
+
 
 ### Conclusions:
 
