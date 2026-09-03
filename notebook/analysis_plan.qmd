@@ -1,0 +1,461 @@
+---
+title: "Beaver DOC: proposed analysis plan for the revised submission"
+subtitle: "Which variable answers which research question, and which figure goes where"
+author: "Leonardo Capitani"
+date: last-modified
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: true
+    code-tools: true
+    embed-resources: true
+    fig-width: 9
+    fig-align: center
+execute:
+  echo: true
+  message: false
+  warning: false
+  cache: false
+editor: visual
+---
+
+```{r setup}
+#| include: false
+library(tidyverse)
+library(scales)
+library(patchwork)
+library(ggdist)
+library(knitr)
+library(here)
+
+set.seed(7)
+SD_M  <- 0.2      # analytical error of one DOC concentration (mg/L)
+NREP  <- 12000    # Monte Carlo replicates for measurement-error propagation
+
+OK <- c(blue = "#0072B2", vermillion = "#D55E00", green = "#009E73",
+        amber = "#E69F00", grey = "grey35")
+
+dir.create(here("results", "figures", "plan"), recursive = TRUE, showWarnings = FALSE)
+```
+
+::: {.callout-tip appearance="simple"}
+## What this document is for
+
+This is a **decision document**, not the manuscript. It sets out, in one place:
+
+1.  every variable we use, its unit, and the question it answers;
+2.  how the derived variables are built (one diagram);
+3.  which figure answers which research question, and whether it belongs in the **main text** or in **Appendix S1**;
+4.  the two **new** analyses proposed after Josh's response-space note, computed here on the real data so we can judge them before committing.
+
+Nothing in the Overleaf manuscript has been changed. Numbers below are computed live from `data/processed/`.
+:::
+
+# 1. The variables
+
+Every quantity in the paper, with its unit and the question it exists to answer. Symbols are Latin letters; the subject of every statement is **beaver-engineering** (the physical modification beavers create), not the animal's current behaviour, because the upstream–downstream contrast measures the reach as a whole.
+
+```{r variable-table}
+#| echo: false
+vars <- tribble(
+  ~Symbol, ~Name, ~Definition, ~`Meaning (unit)`, ~`Question it answers`,
+
+  "DOC_up,s / DOC_down,s", "measured concentrations", "—",
+  "DOC concentration entering / leaving the beaver-engineered reach in season s (w = winter, s = summer) **(mg L⁻¹)**",
+  "What is the DOC concentration before and after the beaver-engineered reach in each season?",
+
+  "ΔDOC_s", "local response", "DOC_down,s − DOC_up,s",
+  "the change in DOC that beaver-engineering produces in season s; positive = enrichment, negative = depletion **(mg L⁻¹)**",
+  "Does beaver-engineering increase or decrease DOC concentrations, and by how much, in each season?",
+
+  "**S**", "inherited **S**easonal signal", "DOC_up,summer − DOC_up,winter",
+  "the seasonal DOC trajectory the upstream river corridor delivers to the reach; S > 0 seasonal enrichment, S < 0 seasonal depletion **(mg L⁻¹)**",
+  "How does DOC change between winter and summer in the river *before* it reaches the beaver-engineered reach?",
+
+  "**B**", "**B**eaver seasonal modification", "ΔDOC_summer − ΔDOC_winter",
+  "how much beaver-engineering changes its own DOC response from winter to summer **(mg L⁻¹)**",
+  "Does the effect of beaver-engineering on DOC differ between winter and summer, and in which direction?",
+
+  "T", "downstream seasonal signal", "S + B (exact identity)",
+  "the seasonal DOC trajectory leaving the reach after beaver-engineering has modified it **(mg L⁻¹)**",
+  "How does DOC change between winter and summer in the river *after* the beaver-engineered reach?",
+
+  "A_beaver / A_floodplain", "areas", "mapped",
+  "ponded footprint of the beaver-engineered reach; contributing catchment floodplain area generating S **(km²)**",
+  "How large is the beaver-engineered footprint, and how large is the floodplain area that generates the inherited seasonal signal?",
+
+  "**G**", "seasonal **G**ain", "B / S",
+  "how beaver-engineering modifies the seasonal DOC signal inherited from upstream (T = S(1 + G)): G > 0 reinforces, −1 < G < 0 dampens, G = −1 cancels, G < −1 reverses the inherited trajectory, whether enrichment (S > 0) or depletion (S < 0) **(dimensionless)**",
+  "Does beaver-engineering reinforce, dampen or reverse the seasonal DOC trajectory inherited from upstream?",
+
+  "**F**", "**F**ootprint contrast", "A_floodplain / A_beaver",
+  "how much larger the floodplain area generating S is than the beaver-engineered footprint **(dimensionless)**",
+  "How small is the beaver-engineered footprint relative to the floodplain area that generates the inherited seasonal signal?",
+
+  "**L**", "**L**everage", "|G| · F",
+  "magnitude of beaver-engineering's modification of the inherited seasonal signal, per unit of engineered footprint **(dimensionless)**",
+  "How strongly does beaver-engineering modify the inherited seasonal DOC signal relative to the small area it occupies?",
+
+  "D_beaver,s", "area-normalised local response", "ΔDOC_s / A_beaver",
+  "beaver-engineering's DOC change per unit of its footprint, season s **(mg L⁻¹ km⁻²)**",
+  "How much DOC change does beaver-engineering produce per unit area of its footprint in season s?",
+
+  "D_floodplain", "area-normalised seasonal signal", "S / A_floodplain",
+  "the upstream seasonal DOC change per unit of floodplain area **(mg L⁻¹ km⁻²)**",
+  "How much seasonal DOC change does the floodplain generate per unit of its area?",
+
+  "**M**", "amplification factor", "|D_beaver,s| / |D_floodplain| = (|ΔDOC_s| / |S|) · F",
+  "how much larger, per unit area, beaver-engineering's DOC change in season s is than the floodplain-scale seasonal DOC change **(dimensionless)**",
+  "How many times larger, per unit area, is the DOC change produced by beaver-engineering than the seasonal DOC change generated by the floodplain?"
+)
+kable(vars)
+```
+
+::: {.callout-important}
+## The identity that matters
+
+$$T \;=\; S + B \;=\; S\,(1 + G)$$
+
+The beaver-engineered reach is a **local operator acting on a signal it inherits** from the upstream corridor, not an intrinsically fixed DOC source or sink. This is the formal version of the "control point" framing already used in the manuscript.
+:::
+
+# 2. How the derived variables are built
+
+![Season-specific causal structure (top panels) and the derivation of the contrast variables (bottom, dashed). Solid arrows are causal pathways; the green arrow is the persistence of the hydrologic template between seasons; dashed arrows are deterministic calculations, not causal claims.](../images/DAG_variable_derivation.png){#fig-dag}
+
+::: {.callout-note}
+## Key message of @fig-dag
+
+The **same causal mechanism** operates in winter and summer. Downstream DOC inherits the upstream DOC state and is modified by local hydrological and biological processes whose expression depends on season. S, B, T, G, F, L and M are **calculated outside the causal DAG** from the observed (or posterior) concentrations — they are contrasts, not extra causal nodes.
+
+**Placement: Appendix S1** (companion to the hypothesised DAG, Fig. S1).
+:::
+
+# 3. Research questions and hypotheses
+
+| \# | Research question | Hypothesis | Answered by |
+|-----------------|-------------------|------------------|------------------|
+| **Q1 Direction** | Does beaver-engineering consistently increase or decrease DOC concentrations downstream compared with upstream? | Beaver-engineering has **no consistent direction**: responses are variable and heavy-tailed, with a shift toward enrichment in summer when primary production is highest. | ΔDOC_s, B |
+| **Q2 Drivers** | Which abiotic and biotic drivers set the direction of the DOC change? | Dams increase water residence time, which promotes primary producers and thereby DOC; high upstream DOC favours retention. | Structural causal model |
+| **Q3 Magnitude** | Irrespective of direction, how large is the beaver-mediated DOC change per unit area relative to the seasonal floodplain-scale variation, and does it reinforce or oppose the inherited signal? | The change per unit area is orders of magnitude larger than the floodplain-scale seasonal signal, and beaver-engineering **modifies** (rather than merely adds to) the inherited seasonal trajectory. | M (magnitude), G (direction relative to inherited signal), F (spatial context) |
+
+# 4. Data used here
+
+```{r load-data}
+m <- read.csv(here("data", "processed", "m12.csv"))
+
+w <- m |> filter(season == "winter") |>
+  select(site, beaver_territory, up_w = DOC_input, dn_w = DOC_out,
+         Afp = A_floodplain_km2, Abv = A_beaver_km2)
+s <- m |> filter(season == "summer") |>
+  select(site, beaver_territory, up_s = DOC_input, dn_s = DOC_out)
+
+d <- inner_join(w, s, by = c("site", "beaver_territory")) |>
+  mutate(
+    dw      = dn_w - up_w,          # DOC_w : local response, winter
+    ds      = dn_s - up_s,          # DOC_s : local response, summer
+    S       = up_s - up_w,          # inherited seasonal signal
+    B       = ds - dw,              # beaver seasonal modification
+    Tt      = dn_s - dn_w,          # downstream seasonal signal (= S + B)
+    G       = B / S,                # seasonal gain
+    F       = Afp / Abv,            # footprint contrast
+    ratio_s = abs(ds) / abs(S),     # concentration ratio, summer
+    M_s     = ratio_s * F           # amplification factor, summer
+  ) |>
+  filter(is.finite(G), is.finite(F))
+
+glue::glue("Paired reaches with complete seasonal and spatial data: {nrow(d)}")
+```
+
+# 5. Q1 — Direction
+
+## Figure: seasonal posterior predictive distribution of ΔDOC
+
+![Posterior predictive distribution of ΔDOC for a single sampling of a beaver-engineered stream, by season, from the measurement-error model on raw upstream and downstream concentrations.](../overleaf/figures/media/Figure_2a.png){#fig-q1}
+
+::: {.callout-note}
+## Key message of @fig-q1
+
+Beaver-engineering does **not** change DOC in a consistent direction. The average change is negligible (+0.14 mg L⁻¹ summer, 0.00 mg L⁻¹ winter, both inside the ROPE), but individual responses are broad and heavy-tailed: for a single sampling the probability of a negligible change is about 76%, of enrichment 12–16%, of depletion 9–12%, with a **slight prevalence of enrichment in summer**.
+
+**Placement: main text, Figure 1a.** *(unchanged from the current submission)*
+:::
+
+## Sentence to add to Q1: the seasonal switch
+
+```{r q1-switch}
+#| echo: true
+switches <- d |> summarise(
+  winter_pos = mean(dw > 0), summer_pos = mean(ds > 0),
+  med_abs_w  = median(abs(dw)), med_abs_s = median(abs(ds)),
+  dep_to_enr = sum(dw < 0 & ds > 0), enr_to_dep = sum(dw > 0 & ds < 0))
+kable(switches |> mutate(across(c(winter_pos, summer_pos), ~sprintf("%.0f%%", 100*.x)),
+                         across(starts_with("med"), ~round(.x, 3))),
+      col.names = c("winter enriching", "summer enriching",
+                    "median |ΔDOC| winter", "median |ΔDOC| summer",
+                    "depletion → enrichment", "enrichment → depletion"))
+```
+
+::: {.callout-note}
+## Key message
+
+Winter responses are almost evenly split between enrichment and depletion and are small; summer responses are larger and more often positive, and roughly twice as many reaches switch from winter depletion to summer enrichment as the reverse. This is a **one-sentence addition to Q1**, no new figure.
+:::
+
+# 6. Q2 — Drivers
+
+![Structural causal model of the drivers of beaver-mediated DOC change; solid edges carry ≥90% posterior probability of a directional effect, dashed edges are inconclusive.](../images/Capitani_Figure_2b.png){#fig-q2}
+
+::: {.callout-note}
+## Key message of @fig-q2
+
+Direction is set by the **external context** of the pond. Upstream DOC has the largest total effect (−0.10), followed by solar radiation acting through primary producers (+0.04); dam number (+0.003) and dam height (+0.001) act only weakly, through water residence time. Beaver-engineering creates the conditions; the inputs decide the sign.
+
+**Placement: main text, Figure 1b.** *(unchanged)* Supporting: total effects (Fig. S7), priors/residuals/checks (Figs. S2–S5), alternative connectivity SCM (Figs. S8–S9).
+:::
+
+# 7. Q3 — Magnitude and modification
+
+This is where the two new analyses go.
+
+## 7.1 NEW: what the amplification factor M is actually made of
+
+```{r m-decomposition}
+comp <- bind_rows(
+  tibble(q = "ratio", v = d$ratio_s),
+  tibble(q = "F",     v = d$F),
+  tibble(q = "M",     v = d$M_s)) |>
+  filter(v > 0) |>
+  mutate(q = factor(q, levels = rev(c("ratio", "F", "M"))))
+
+med <- comp |> group_by(q) |> summarise(m = median(v), .groups = "drop")
+
+lab_expr <- c(
+  ratio = "atop('Concentration ratio', '|'*Delta*'DOC'[summer]*'| / |S|')",
+  F     = "atop('Footprint contrast', 'F = '*A[floodplain]/A[beaver])",
+  M     = "atop('Amplification factor', 'M = ratio '%*%' F')")
+
+p_dec <- ggplot(comp, aes(v, q)) +
+  geom_vline(xintercept = 1, linetype = "dashed", colour = "grey50") +
+  stat_halfeye(aes(fill = q), .width = c(.5, .95), point_interval = "median_qi",
+               alpha = .85, show.legend = FALSE) +
+  geom_text(data = med, aes(x = m, label = ifelse(m < 10, sprintf("median %.2f", m),
+                                                  sprintf("median %.0f", m))),
+            vjust = -1.9, size = 3.6, colour = "grey20") +
+  scale_fill_manual(values = c(ratio = OK[["blue"]], F = OK[["amber"]], M = OK[["green"]])) +
+  scale_y_discrete(labels = function(x) parse(text = lab_expr[x])) +
+  scale_x_log10(labels = label_log(), breaks = 10^(-2:5)) +
+  labs(x = "Value (dimensionless, log scale)", y = NULL) +
+  theme_bw(base_size = 12) +
+  theme(panel.grid.minor = element_blank(),
+        axis.text.y = element_text(lineheight = 1.05))
+
+ggsave(here("results", "figures", "plan", "fig_M_decomposition.png"),
+       p_dec, width = 9, height = 4.6, dpi = 300)
+p_dec
+```
+
+```{r m-numbers}
+#| echo: false
+kable(tibble(
+  Quantity = c("Concentration ratio |ΔDOC_summer| / |S|", "Footprint contrast F",
+               "Amplification factor M (summer)", "Beaver footprint as % of floodplain"),
+  Median = c(sprintf("%.2f", median(d$ratio_s)), sprintf("%.0f", median(d$F)),
+             sprintf("%.0f", median(d$M_s)), sprintf("%.2f%%", 100*median(1/d$F)))))
+```
+
+::: {.callout-important}
+## Key message of the decomposition
+
+**M is the product of a modest concentration ratio and a very large footprint contrast.** The reach changes DOC by roughly **half** the inherited seasonal signal, and it occupies about **0.4%** of the floodplain area; the "≈140 times" headline is mostly the area ratio.
+
+Reporting the two factors separately is the honest version of the current Q3 claim, it is far harder to attack, and it answers Reviewer 1's question about what "floodplain-scale" means. A reviewer who does this arithmetic unaided will otherwise conclude the headline oversells the biogeochemistry.
+
+**Placement: main text, as a new panel of the M figure (Figure 2a), with the model-based seasonal M posterior as Figure 2b.**
+:::
+
+![Model-based posterior of the amplification factor M by season (existing figure, proposed as Figure 2b).](../overleaf/figures/media/figure_M.png){#fig-M}
+
+::: {.callout-note}
+## Key message of @fig-M
+
+Per unit area, the DOC change produced by beaver-engineering is **141 times** the floodplain-scale seasonal change in summer and **33 times** in winter; both 95% intervals lie entirely above the equivalence line.
+
+**Placement: main text, Figure 2b.** *(unchanged, but now read together with the decomposition)*
+:::
+
+## 7.2 NEW: does beaver-engineering reinforce, dampen or reverse the inherited signal?
+
+```{r states-mc}
+STATES <- c("Amplifies enrichment", "Dampens enrichment", "Reverses enrichment to depletion",
+            "Amplifies depletion",  "Dampens depletion",  "Reverses depletion to enrichment")
+
+classify <- function(S, B) {
+  G <- B / S
+  ifelse(G > 0,  ifelse(S > 0, STATES[1], STATES[4]),
+  ifelse(G > -1, ifelse(S > 0, STATES[2], STATES[5]),
+                 ifelse(S > 0, STATES[3], STATES[6])))
+}
+d$state <- factor(classify(d$S, d$B), levels = STATES)
+n <- nrow(d)
+
+# (i) propagate the 0.2 mg/L analytical error of each of the four concentrations
+sim <- replicate(NREP, {
+  a  <- d$up_w + rnorm(n, 0, SD_M); b <- d$dn_w + rnorm(n, 0, SD_M)
+  cc <- d$up_s + rnorm(n, 0, SD_M); e <- d$dn_s + rnorm(n, 0, SD_M)
+  classify(cc - a, (e - cc) - (b - a))
+})
+d$p_own   <- sapply(seq_len(n), \(i) mean(sim[i, ] == as.character(d$state[i])))
+Bsim <- replicate(NREP, ((d$dn_s + rnorm(n,0,SD_M)) - (d$up_s + rnorm(n,0,SD_M))) -
+                        ((d$dn_w + rnorm(n,0,SD_M)) - (d$up_w + rnorm(n,0,SD_M))))
+d$B_lo <- apply(Bsim, 1, quantile, .025); d$B_hi <- apply(Bsim, 1, quantile, .975)
+d$B_signif <- d$B_lo > 0 | d$B_hi < 0
+
+# (ii) null: beaver-engineering has the SAME effect in both seasons (no true seasonal modification)
+eff <- (d$dw + d$ds) / 2
+nullsim <- replicate(NREP, {
+  a  <- d$up_w + rnorm(n,0,SD_M); b <- d$up_w + eff + rnorm(n,0,SD_M)
+  cc <- d$up_s + rnorm(n,0,SD_M); e <- d$up_s + eff + rnorm(n,0,SD_M)
+  classify(cc - a, (e - cc) - (b - a))
+})
+
+obs_n <- as.numeric(table(d$state)[STATES])
+tab <- tibble(
+  state      = factor(STATES, levels = STATES),
+  observed   = obs_n,
+  with_error = round(sapply(STATES, \(s) mean(colSums(sim     == s))), 1),
+  null_mean  = round(sapply(STATES, \(s) mean(colSums(nullsim == s))), 1),
+  null_lo    = sapply(STATES, \(s) quantile(colSums(nullsim == s), .025)),
+  null_hi    = sapply(STATES, \(s) quantile(colSums(nullsim == s), .975)),
+  p_more     = sapply(seq_along(STATES), \(i) mean(colSums(nullsim == STATES[i]) >= obs_n[i])),
+  p_fewer    = sapply(seq_along(STATES), \(i) mean(colSums(nullsim == STATES[i]) <= obs_n[i]))) |>
+  mutate(p_two   = pmin(1, 2 * pmin(p_more, p_fewer)),
+         verdict = case_when(p_two < 0.05 & observed > null_mean ~ "more than noise predicts",
+                             p_two < 0.05 & observed < null_mean ~ "fewer than noise predicts",
+                             TRUE ~ "within noise"))
+kable(tab |> select(state, observed, with_error, null_mean, p_two, verdict) |>
+        mutate(p_two = ifelse(p_two < 0.001, "<0.001", sprintf("%.3f", p_two))),
+      col.names = c("Response state", "Observed", "Expected (error propagated)",
+                    "Expected under null", "p (two-sided)", "Verdict"))
+```
+
+```{r stability}
+#| echo: false
+glue::glue(
+"Reaches whose six-state label is stable in ≥80% of error replicates: {sum(d$p_own>=0.8)} of {n} ({round(100*mean(d$p_own>=0.8))}%)
+Reaches whose B is distinguishable from zero (95% interval excludes 0): {sum(d$B_signif)} of {n} ({round(100*mean(d$B_signif))}%)")
+```
+
+```{r fig-response-space}
+#| fig-height: 10.5
+d <- d |> mutate(lab = ifelse(ds > 0, "Summer: DOC enrichment", "Summer: DOC depletion"))
+psl <- pseudo_log_trans(sigma = 0.1, base = 10)
+
+ann <- tibble(
+  x = c(20, 20, -20, -20), y = c(20, -20, 20, -20),
+  hj = c(1, 1, 0, 0),
+  lab = c("Amplifies\nseasonal enrichment", "Dampens / reverses\nseasonal enrichment",
+          "Dampens / reverses\nseasonal depletion", "Amplifies\nseasonal depletion"))
+
+pa <- ggplot(d, aes(S, B)) +
+  annotate("segment", x = -40, xend = 40, y = 40, yend = -40,
+           linetype = "dashed", colour = "grey45", linewidth = .5) +
+  geom_hline(yintercept = 0, colour = "grey70", linewidth = .4) +
+  geom_vline(xintercept = 0, colour = "grey70", linewidth = .4) +
+  geom_point(aes(colour = lab, shape = lab, alpha = B_signif), size = 2.1, stroke = .9) +
+  geom_text(data = ann, aes(x, y, label = lab, hjust = hj), size = 3.1,
+            colour = "grey30", lineheight = .95, inherit.aes = FALSE) +
+  scale_colour_manual(values = c("Summer: DOC enrichment" = OK[["blue"]],
+                                 "Summer: DOC depletion"  = OK[["vermillion"]]), name = NULL) +
+  scale_shape_manual(values = c("Summer: DOC enrichment" = 24,
+                                "Summer: DOC depletion"  = 25), name = NULL) +
+  scale_alpha_manual(values = c(`FALSE` = .25, `TRUE` = 1), guide = "none") +
+  scale_x_continuous(trans = psl, breaks = c(-10,-1,0,1,10), limits = c(-40, 40)) +
+  scale_y_continuous(trans = psl, breaks = c(-10,-1,0,1,10), limits = c(-40, 40)) +
+  labs(x = expression("Inherited seasonal signal   S   (mg "*L^-1*")"),
+       y = expression("Beaver seasonal modification   B   (mg "*L^-1*")"),
+       subtitle = "Dashed diagonal: B = -S, exact cancellation of the inherited signal\nFaded symbols: B not distinguishable from zero given the measurement error") +
+  theme_bw(base_size = 12) +
+  theme(panel.grid.minor = element_blank(), legend.position = "top",
+        plot.subtitle = element_text(size = 9, colour = "grey35"))
+
+tb <- tab |> mutate(state = fct_rev(state), flag = verdict)
+pb <- ggplot(tb, aes(y = state)) +
+  geom_linerange(aes(xmin = null_lo, xmax = null_hi), colour = "grey78", linewidth = 5) +
+  geom_point(aes(x = null_mean), colour = "grey35", size = 2, shape = 124) +
+  geom_point(aes(x = observed, colour = flag), size = 3.4) +
+  scale_colour_manual(values = c("more than noise predicts"  = OK[["blue"]],
+                                 "fewer than noise predicts" = OK[["vermillion"]],
+                                 "within noise"              = "grey30"), name = NULL) +
+  labs(x = "Number of reaches", y = NULL,
+       subtitle = "Grey band: 95% range expected if beaver-engineering had the same effect in\nboth seasons (measurement noise only). Vertical tick: null mean.") +
+  theme_bw(base_size = 12) +
+  theme(panel.grid.minor = element_blank(), panel.grid.major.y = element_blank(),
+        legend.position = "top", plot.subtitle = element_text(size = 9, colour = "grey35"))
+
+fig_rs <- pa / pb + plot_layout(heights = c(1.45, 1)) + plot_annotation(tag_levels = "a")
+ggsave(here("results", "figures", "plan", "fig_response_space.png"),
+       fig_rs, width = 9, height = 10.5, dpi = 300)
+fig_rs
+```
+
+::: {.callout-important}
+## Key message of the response space
+
+**(a)** Beaver-engineered reaches occupy all six response states: they reinforce, dampen and occasionally reverse the seasonal DOC trajectory they inherit. This is the visual proof that the reach is an **operator on an incoming signal**, not a fixed source or sink.
+
+**(b)** Much of that state table is what measurement noise alone would produce if beaver-engineering had the *same* effect in both seasons. The decisive departure is **reversals of depletion into enrichment**: `r tab$observed[6]` observed against `r tab$null_mean[6]` expected under the null (p `r ifelse(tab$p_two[6]<0.001,"< 0.001",sprintf("= %.3f",tab$p_two[6]))`). Three further states sit at or just past the conventional threshold and all point the same way: amplification of enrichment is more frequent than the null (`r tab$observed[1]` vs `r tab$null_mean[1]`, p = `r sprintf("%.2f",tab$p_two[1])`), while amplification of depletion (`r tab$observed[4]` vs `r tab$null_mean[4]`, p = `r sprintf("%.2f",tab$p_two[4])`) and reversal of enrichment into depletion (`r tab$observed[3]` vs `r tab$null_mean[3]`, p = `r sprintf("%.2f",tab$p_two[3])`) are less frequent. The two "dampens" states are indistinguishable from the null.
+
+**Beaver-engineering systematically pushes the inherited seasonal trajectory toward summer enrichment**, beyond anything measurement error can generate. This is the same signal as Q1 (+0.14 mg L⁻¹ in summer) and the primary-producer pathway of Q2, now expressed as an operation on the incoming signal.
+
+The honest caveat stays: roughly half the reaches do not have a stable six-state label and only about a third have a seasonal modification B distinguishable from zero, so the **counts must be reported with this null comparison**, never on their own.
+
+**Placement: panel (a) main text as Figure 3, panel (b) Appendix S1** — or both in Appendix S1 if we want to keep the main text to three figures.
+:::
+
+# 8. Figure inventory
+
+```{r inventory}
+#| echo: false
+inv <- tribble(
+  ~Figure, ~Content, ~`Answers`, ~Placement, ~Status,
+  "Fig. 1a", "Seasonal posterior predictive of ΔDOC", "Q1 Direction", "Main text", "existing",
+  "Fig. 1b", "SCM with estimated paths", "Q2 Drivers", "Main text", "existing",
+  "Fig. 2a", "Decomposition of M: ratio × footprint", "Q3 Magnitude", "Main text", "**new**",
+  "Fig. 2b", "Model-based M by season", "Q3 Magnitude", "Main text", "existing",
+  "Fig. 3",  "Response space S–B", "Q3 Modification (G)", "Main text (or S1)", "**new**",
+  "Fig. 4",  "Map, sampling design and M schematic", "Methods", "Main text", "existing",
+  "Fig. S1", "Hypothesised DAG with numbered paths", "Q2", "Appendix S1", "existing",
+  "Fig. S2–S5", "Priors, residuals, posterior checks, posterior parameters", "Q2", "Appendix S1", "existing",
+  "Fig. S6", "Stream-level classification of ΔDOC", "Q1", "Appendix S1", "existing",
+  "Fig. S7", "Total effects of the drivers", "Q2", "Appendix S1", "existing",
+  "Fig. S8–S9", "Alternative SCM with lateral connectivity", "Q2", "Appendix S1", "existing",
+  "Fig. S10", "Variable-derivation DAG (this document, §2)", "all", "Appendix S1", "**new**",
+  "Fig. S11", "State counts vs measurement-noise null", "Q3", "Appendix S1", "**new**",
+  "Table S1", "Tested hypotheses per causal path", "Q2", "Appendix S1", "existing")
+kable(inv)
+```
+
+# 9. What I recommend **not** doing
+
+::: {.callout-warning}
+## Four things to leave out
+
+1.  **L (leverage) as a headline index.** It is numerically almost the same as M (`r sprintf("median L = %.0f vs median M = %.0f", median(abs(d$G)*d$F), median(d$M_s))`), and it has a blind spot M does not: a reach that enriches DOC equally in both seasons has B = 0, hence G = 0 and L = 0, i.e. "no leverage" despite a strong constant effect. Mention it in Appendix S1 at most.
+
+2.  **The six-state counts as raw numbers.** See §7.2 — noise alone reproduces four of the six.
+
+3.  **Rebuilding the SCM before submission.** Josh's proposal (season-specific downstream DOC as the target, everything derived from posteriors) is correct in principle, and the Q1 model already implements it for direction. But the full version re-specifies an eight-equation multivariate model, forces a redesign of every prior (upstream DOC changes from a standardized driver near −0.10 to an inheritance coefficient near +1), and changes Figure 1b, Table S1 and six supplementary figures simultaneously. That is a two-week job, treated in the companion document `scm_rebuild.qmd`.
+
+4.  **Four new figures.** Two are enough; the rest belong in the supplement.
+:::
+
+# 10. Reproducibility
+
+```{r session}
+#| echo: false
+cat("Data:   data/processed/m12.csv (paired seasons, areas)\n")
+cat("Output: results/figures/plan/fig_M_decomposition.png, fig_response_space.png\n\n")
+sessionInfo()$R.version$version.string
+```

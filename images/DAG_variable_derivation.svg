@@ -1,0 +1,141 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="990" viewBox="0 0 1600 990" font-family="Helvetica, Arial, sans-serif">
+<rect width="1600" height="990" fill="white"/>
+<defs><marker id="a" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L10,5 L0,10 Z" fill="#222"/></marker><marker id="g" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L10,5 L0,10 Z" fill="#1e8449"/></marker><marker id="d" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L10,5 L0,10 Z" fill="#333"/></marker></defs>
+<text x="800" y="30" text-anchor="middle" font-size="20" font-weight="bold">Season-specific local processes (s ∈ {winter, summer}) and derivation of B, S, G, F, L and M</text>
+<rect x="15" y="50" width="225" height="415" rx="10" fill="#f3f3f3" stroke="#999"/>
+<text x="127" y="78" text-anchor="middle" font-size="15" font-weight="bold">Persistent engineered</text><text x="127" y="98" text-anchor="middle" font-size="15" font-weight="bold">structure / landscape</text><text x="127" y="118" text-anchor="middle" font-size="15" font-weight="bold">template (time-invariant)</text>
+<rect x="300" y="45" width="1285" height="215" rx="10" fill="#eef5fc" stroke="#2b6cb0"/><text x="318" y="70" font-size="16" font-weight="bold" fill="#2b6cb0">WINTER (s = winter)</text>
+<rect x="300" y="268" width="1285" height="205" rx="10" fill="#eef8ee" stroke="#3a7d3a"/><text x="318" y="465" font-size="16" font-weight="bold" fill="#3a7d3a">SUMMER (s = summer)</text>
+<path d="M210,180.0 L335,172.0" fill="none" stroke="#222" stroke-width="2" marker-end="url(#a)"/>
+<path d="M210,180.0 L335,372.0" fill="none" stroke="#222" stroke-width="2" marker-end="url(#a)"/>
+<path d="M210,248.0 L335,172.0" fill="none" stroke="#222" stroke-width="2" marker-end="url(#a)"/>
+<path d="M210,248.0 L335,372.0" fill="none" stroke="#222" stroke-width="2" marker-end="url(#a)"/>
+<path d="M210,316.0 L335,172.0" fill="none" stroke="#222" stroke-width="2" marker-end="url(#a)"/>
+<path d="M210,316.0 L335,372.0" fill="none" stroke="#222" stroke-width="2" marker-end="url(#a)"/>
+<path d="M210,384.0 L335,172.0" fill="none" stroke="#222" stroke-width="2" marker-end="url(#a)"/>
+<path d="M210,384.0 L335,372.0" fill="none" stroke="#222" stroke-width="2" marker-end="url(#a)"/>
+<path d="M430,172.0 L585,144.0" fill="none" stroke="#222" stroke-width="2" marker-end="url(#a)"/>
+<path d="M430,172.0 L585,214.0" fill="none" stroke="#222" stroke-width="2" marker-end="url(#a)"/>
+<path d="M382.5,194 Q798.75,266.0 1215.0,218" fill="none" stroke="#222" stroke-width="2" marker-end="url(#a)"/>
+<path d="M707.5,96 L660.0,125" fill="none" stroke="#222" stroke-width="2" marker-end="url(#a)"/>
+<path d="M707.5,96 L920.0,200" fill="none" stroke="#222" stroke-width="2" marker-end="url(#a)"/>
+<path d="M795,77.0 L664.0,195" fill="none" stroke="#222" stroke-width="2" marker-end="url(#a)"/>
+<path d="M735,144.0 L1115,198.0" fill="none" stroke="#222" stroke-width="2" marker-end="url(#a)"/>
+<path d="M743,214.0 L1115,198.0" fill="none" stroke="#222" stroke-width="2" marker-end="url(#a)"/>
+<path d="M995,219.0 L1115,198.0" fill="none" stroke="#222" stroke-width="2" marker-end="url(#a)"/>
+<path d="M1395,138.0 L1315,198.0" fill="none" stroke="#222" stroke-width="2" marker-end="url(#a)"/>
+<path d="M430,372.0 L585,356.0" fill="none" stroke="#222" stroke-width="2" marker-end="url(#a)"/>
+<path d="M430,372.0 L585,426.0" fill="none" stroke="#222" stroke-width="2" marker-end="url(#a)"/>
+<path d="M382.5,394 Q798.75,480.5 1215.0,447" fill="none" stroke="#222" stroke-width="2" marker-end="url(#a)"/>
+<path d="M727.5,316 L660.0,337" fill="none" stroke="#222" stroke-width="2" marker-end="url(#a)"/>
+<path d="M727.5,316 L920.0,415" fill="none" stroke="#222" stroke-width="2" marker-end="url(#a)"/>
+<path d="M815,297.0 L664.0,407" fill="none" stroke="#222" stroke-width="2" marker-end="url(#a)"/>
+<path d="M735,356.0 L1115,427.0" fill="none" stroke="#222" stroke-width="2" marker-end="url(#a)"/>
+<path d="M743,426.0 L1115,427.0" fill="none" stroke="#222" stroke-width="2" marker-end="url(#a)"/>
+<path d="M995,434.0 L1115,427.0" fill="none" stroke="#222" stroke-width="2" marker-end="url(#a)"/>
+<path d="M1395,372.0 L1315,427.0" fill="none" stroke="#222" stroke-width="2" marker-end="url(#a)"/>
+<path d="M382.5,194 L382.5,350" fill="none" stroke="#1e8449" stroke-width="2.5" marker-end="url(#g)"/>
+<path d="M1215.0,218 L1082.5,525" fill="none" stroke="#222" stroke-width="2" marker-end="url(#d)" stroke-dasharray="6 5"/>
+<path d="M1480.0,158 L1082.5,525" fill="none" stroke="#222" stroke-width="2" marker-end="url(#d)" stroke-dasharray="6 5"/>
+<path d="M1215.0,447 L1217.5,640" fill="none" stroke="#222" stroke-width="2" marker-end="url(#d)" stroke-dasharray="6 5"/>
+<path d="M1480.0,392 L1217.5,640" fill="none" stroke="#222" stroke-width="2" marker-end="url(#d)" stroke-dasharray="6 5"/>
+<path d="M1480.0,158 L960.0,645" fill="none" stroke="#222" stroke-width="2" marker-end="url(#d)" stroke-dasharray="6 5"/>
+<path d="M1480.0,392 L960.0,645" fill="none" stroke="#222" stroke-width="2" marker-end="url(#d)" stroke-dasharray="6 5"/>
+<path d="M990,558.0 L692.5,645" fill="none" stroke="#222" stroke-width="2" marker-end="url(#d)" stroke-dasharray="6 5"/>
+<path d="M1125,673.0 L795,685.0" fill="none" stroke="#222" stroke-width="2" marker-end="url(#d)" stroke-dasharray="6 5"/>
+<path d="M692.5,725 L830.0,790" fill="none" stroke="#222" stroke-width="2" marker-end="url(#d)" stroke-dasharray="6 5"/>
+<path d="M960.0,725 L830.0,790" fill="none" stroke="#222" stroke-width="2" marker-end="url(#d)" stroke-dasharray="6 5"/>
+<path d="M830.0,848 L957.5,895" fill="none" stroke="#222" stroke-width="2" marker-end="url(#d)" stroke-dasharray="6 5"/>
+<path d="M1117.5,848 L957.5,895" fill="none" stroke="#222" stroke-width="2" marker-end="url(#d)" stroke-dasharray="6 5"/>
+<path d="M1225,819.0 L1395.0,895" fill="none" stroke="#222" stroke-width="2" marker-end="url(#d)" stroke-dasharray="6 5"/>
+<path d="M1310,673.0 L1395.0,895" fill="none" stroke="#222" stroke-width="2" marker-end="url(#d)" stroke-dasharray="6 5"/>
+<path d="M1060,685.0 Q1155.0,885.5 1250,926.0" fill="none" stroke="#222" stroke-width="2" marker-end="url(#d)" stroke-dasharray="6 5"/>
+<rect x="30" y="160" width="180" height="40" rx="7" fill="#e6e6e6" stroke="#555" stroke-width="2"/>
+<text x="120.0" y="185.0" text-anchor="middle" font-size="15">number_dams</text>
+<rect x="30" y="228" width="180" height="40" rx="7" fill="#e6e6e6" stroke="#555" stroke-width="2"/>
+<text x="120.0" y="253.0" text-anchor="middle" font-size="15">max_dam_height</text>
+<rect x="30" y="296" width="180" height="40" rx="7" fill="#e6e6e6" stroke="#555" stroke-width="2"/>
+<text x="120.0" y="321.0" text-anchor="middle" font-size="15">channel_gradient</text>
+<rect x="30" y="364" width="180" height="40" rx="7" fill="#e6e6e6" stroke="#555" stroke-width="2"/>
+<text x="120.0" y="389.0" text-anchor="middle" font-size="15">lateral_connectivity</text>
+<rect x="335" y="150" width="95" height="44" rx="7" fill="#ead9f5" stroke="#8e44ad" stroke-width="2"/>
+<text x="382.5" y="177.0" text-anchor="middle" font-size="15">WRT_w</text>
+<rect x="620" y="58" width="175" height="38" rx="7" fill="#fff3c4" stroke="#c9a227" stroke-width="2"/>
+<text x="707.5" y="82.0" text-anchor="middle" font-size="15">solar_radiation_w</text>
+<rect x="585" y="125" width="150" height="38" rx="7" fill="#dff0d8" stroke="#3a7d3a" stroke-width="2"/>
+<text x="660.0" y="149.0" text-anchor="middle" font-size="15">macrophytes_w</text>
+<rect x="585" y="195" width="158" height="38" rx="7" fill="#dff0d8" stroke="#3a7d3a" stroke-width="2"/>
+<text x="664.0" y="219.0" text-anchor="middle" font-size="15">phytoplankton_w</text>
+<rect x="845" y="200" width="150" height="38" rx="7" fill="#f3e6d3" stroke="#a67c52" stroke-width="2"/>
+<text x="920.0" y="224.0" text-anchor="middle" font-size="15">soil_litter_w</text>
+<rect x="1115" y="178" width="200" height="40" rx="7" fill="#d6e8f7" stroke="#2b6cb0" stroke-width="2"/>
+<text x="1215.0" y="203.0" text-anchor="middle" font-size="15">downstream_DOC_w</text>
+<rect x="1395" y="118" width="170" height="40" rx="7" fill="#e6e6e6" stroke="#555" stroke-width="2"/>
+<text x="1480.0" y="143.0" text-anchor="middle" font-size="15">upstream_DOC_w</text>
+<rect x="335" y="350" width="95" height="44" rx="7" fill="#ead9f5" stroke="#8e44ad" stroke-width="2"/>
+<text x="382.5" y="377.0" text-anchor="middle" font-size="15">WRT_s</text>
+<rect x="640" y="278" width="175" height="38" rx="7" fill="#fff3c4" stroke="#c9a227" stroke-width="2"/>
+<text x="727.5" y="302.0" text-anchor="middle" font-size="15">solar_radiation_s</text>
+<rect x="585" y="337" width="150" height="38" rx="7" fill="#dff0d8" stroke="#3a7d3a" stroke-width="2"/>
+<text x="660.0" y="361.0" text-anchor="middle" font-size="15">macrophytes_s</text>
+<rect x="585" y="407" width="158" height="38" rx="7" fill="#dff0d8" stroke="#3a7d3a" stroke-width="2"/>
+<text x="664.0" y="431.0" text-anchor="middle" font-size="15">phytoplankton_s</text>
+<rect x="845" y="415" width="150" height="38" rx="7" fill="#f3e6d3" stroke="#a67c52" stroke-width="2"/>
+<text x="920.0" y="439.0" text-anchor="middle" font-size="15">soil_litter_s</text>
+<rect x="1115" y="407" width="200" height="40" rx="7" fill="#d6e8f7" stroke="#2b6cb0" stroke-width="2"/>
+<text x="1215.0" y="432.0" text-anchor="middle" font-size="15">downstream_DOC_s</text>
+<rect x="1395" y="352" width="170" height="40" rx="7" fill="#e6e6e6" stroke="#555" stroke-width="2"/>
+<text x="1480.0" y="377.0" text-anchor="middle" font-size="15">upstream_DOC_s</text>
+<rect x="990" y="525" width="185" height="66" rx="7" fill="#ececec" stroke="#777" stroke-width="2"/>
+<text x="1082.5" y="546.3" text-anchor="middle" font-size="13" font-weight="bold">ΔDOC_w</text>
+<text x="1082.5" y="562.3" text-anchor="middle" font-size="13">= downstream_DOC_w</text>
+<text x="1082.5" y="578.3" text-anchor="middle" font-size="13">− upstream_DOC_w</text>
+<rect x="1125" y="640" width="185" height="66" rx="7" fill="#ececec" stroke="#777" stroke-width="2"/>
+<text x="1217.5" y="661.3" text-anchor="middle" font-size="13" font-weight="bold">ΔDOC_s</text>
+<text x="1217.5" y="677.3" text-anchor="middle" font-size="13">= downstream_DOC_s</text>
+<text x="1217.5" y="693.3" text-anchor="middle" font-size="13">− upstream_DOC_s</text>
+<rect x="590" y="645" width="205" height="80" rx="7" fill="#f8d7d7" stroke="#c0392b" stroke-width="2"/>
+<text x="692.5" y="673.3" text-anchor="middle" font-size="13" font-weight="bold">B = ΔDOC_s − ΔDOC_w</text>
+<text x="692.5" y="689.3" text-anchor="middle" font-size="13">(beaver seasonal</text>
+<text x="692.5" y="705.3" text-anchor="middle" font-size="13">modification)</text>
+<rect x="860" y="645" width="200" height="80" rx="7" fill="#e8dbf5" stroke="#7d3c98" stroke-width="2"/>
+<text x="960.0" y="673.3" text-anchor="middle" font-size="13" font-weight="bold">S = upstream_DOC_s</text>
+<text x="960.0" y="689.3" text-anchor="middle" font-size="13">− upstream_DOC_w</text>
+<text x="960.0" y="705.3" text-anchor="middle" font-size="13">(inherited seasonal signal)</text>
+<rect x="735" y="790" width="190" height="58" rx="7" fill="#fff3c4" stroke="#c9a227" stroke-width="2"/>
+<text x="830.0" y="815.3" text-anchor="middle" font-size="13" font-weight="bold">G = B / S</text>
+<text x="830.0" y="831.3" text-anchor="middle" font-size="13">(seasonal Gain)</text>
+<rect x="1010" y="790" width="215" height="58" rx="7" fill="#fff3c4" stroke="#c9a227" stroke-width="2"/>
+<text x="1117.5" y="815.3" text-anchor="middle" font-size="13" font-weight="bold">F = A_floodplain / A_beaver</text>
+<text x="1117.5" y="831.3" text-anchor="middle" font-size="13">(Footprint contrast)</text>
+<rect x="850" y="895" width="215" height="62" rx="7" fill="#fbe0c8" stroke="#d35400" stroke-width="2"/>
+<text x="957.5" y="922.3" text-anchor="middle" font-size="13" font-weight="bold">L = |G| · F</text>
+<text x="957.5" y="938.3" text-anchor="middle" font-size="13">(spatiotemporal Leverage)</text>
+<rect x="1250" y="895" width="290" height="62" rx="7" fill="#fbe0c8" stroke="#d35400" stroke-width="2"/>
+<text x="1395.0" y="922.3" text-anchor="middle" font-size="13" font-weight="bold">M_s = (|ΔDOC_s| / |S|) · F</text>
+<text x="1395.0" y="938.3" text-anchor="middle" font-size="13">(amplification factor, per season)</text>
+<rect x="15" y="600" width="370" height="330" rx="8" fill="white" stroke="#888"/>
+<rect x="30" y="625" width="34" height="18" rx="5" fill="#e6e6e6" stroke="#555"/><text x="75" y="639" font-size="13">Time-invariant engineered / landscape controls</text>
+<rect x="30" y="655" width="34" height="18" rx="5" fill="#ead9f5" stroke="#8e44ad"/><text x="75" y="669" font-size="13">Hydrology (water residence time, WRT)</text>
+<rect x="30" y="685" width="34" height="18" rx="5" fill="#dff0d8" stroke="#3a7d3a"/><text x="75" y="699" font-size="13">Biological state</text>
+<rect x="30" y="715" width="34" height="18" rx="5" fill="#f3e6d3" stroke="#a67c52"/><text x="75" y="729" font-size="13">Organic matter inputs</text>
+<rect x="30" y="745" width="34" height="18" rx="5" fill="#d6e8f7" stroke="#2b6cb0"/><text x="75" y="759" font-size="13">Observed DOC concentrations</text>
+<rect x="30" y="775" width="34" height="18" rx="5" fill="#ececec" stroke="#777"/><text x="75" y="789" font-size="13">Derived quantities (calculated)</text>
+<path d="M30,815 L64,815" stroke="#222" stroke-width="2" marker-end="url(#a)"/><text x="75" y="820" font-size="13">Causal pathway</text>
+<path d="M30,845 L64,845" stroke="#1e8449" stroke-width="2.5" marker-end="url(#g)"/><text x="75" y="850" font-size="13">Seasonal persistence of the hydrologic template</text>
+<path d="M30,875 L64,875" stroke="#333" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#d)"/><text x="75" y="880" font-size="13">Deterministic contrast / calculation</text>
+<text x="30" y="915" font-size="12" fill="#444">Subscripts: w = winter, s = summer. Names: Gain, Footprint, Leverage.</text>
+<rect x="1330" y="520" width="255" height="230" rx="8" fill="white" stroke="#888"/>
+<text x="1342" y="545" font-size="12" font-weight="bold">How to read</text>
+<text x="1342" y="562" font-size="12">The same causal mechanism operates in</text>
+<text x="1342" y="579" font-size="12">winter and summer (top panels). Downstream</text>
+<text x="1342" y="596" font-size="12">DOC inherits the upstream DOC state and is</text>
+<text x="1342" y="613" font-size="12">modified by local hydrological and biological</text>
+<text x="1342" y="630" font-size="12">processes whose expression depends on</text>
+<text x="1342" y="647" font-size="12">season. ΔDOC, B, S, G, F, L and M are</text>
+<text x="1342" y="664" font-size="12">calculated outside the causal DAG from the</text>
+<text x="1342" y="681" font-size="12">observed (or posterior) concentrations.</text>
+<text x="1342" y="698" font-size="12">G &gt; 0 reinforces the inherited seasonal</text>
+<text x="1342" y="715" font-size="12">signal, −1 &lt; G &lt; 0 dampens it, G &lt; −1</text>
+<text x="1342" y="732" font-size="12">reverses it.</text>
+</svg>

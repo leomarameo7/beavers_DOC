@@ -1,0 +1,264 @@
+---
+title: "Option: rebuilding the SCM with downstream DOC as the target"
+subtitle: "Josh's proposal, tested on the real data, with a cost and risk assessment"
+author: "Leonardo Capitani"
+date: last-modified
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: true
+    code-tools: true
+    embed-resources: true
+    fig-width: 9
+    fig-align: center
+execute:
+  echo: true
+  message: false
+  warning: false
+editor: visual
+---
+
+```{r setup}
+#| include: false
+library(tidyverse); library(brms); library(ggdist); library(patchwork)
+library(knitr); library(here); library(glue)
+OK <- c(blue="#0072B2", vermillion="#D55E00", green="#009E73", amber="#E69F00")
+```
+
+::: {.callout-tip appearance="simple"}
+## The proposal being evaluated
+
+> "Could we try one more thing instead, which is to change the target variable from delta DOC to just the downstream DOC concentration? Upstream DOC would then still feed into this. We can then estimate delta DOC directly from the posteriors, winter and summer separately etc. That is: instead of using B as the target variable, retain winter and summer DOC as the target, and then use the posterior distributions to get distributions of B, gamma, lambda etc."
+>
+> — Josh Larsen
+
+This document tests that proposal rather than describing it. **The short answer: the idea is correct, and the correct implementation of it is already what the manuscript does.** The free-slope version is not just expensive, it degrades the estimate. Evidence below.
+:::
+
+# 1. What the proposal changes
+
+The current analysis has two separate models:
+
+| Model | Target | Purpose |
+|------------------|------------------|-------------------------------------|
+| Q1 measurement-error model | raw upstream and downstream DOC, season × location | direction of ΔDOC |
+| Q2 structural causal model | ΔDOC with propagated error 0.283 mg L⁻¹ | drivers |
+
+Josh's proposal merges them: one model with **downstream DOC as the target**, upstream DOC as a parent, season-specific paths, and every contrast (ΔDOC, B, S, G, M) derived from the posterior. Conceptually this is attractive: the contrasts inherit full uncertainty instead of being computed from point values.
+
+# 2. The critical question: what does "upstream DOC feeds into this" mean?
+
+There are two ways to let upstream DOC enter the downstream equation, and they are **different estimands**:
+
+$$\text{(a) free slope: } \;\text{DOC}_{down} = \alpha_s + \beta_s \,\text{DOC}_{up} + \dots \qquad
+\text{(b) offset: }\; \text{DOC}_{down} = \alpha_s + 1\cdot\text{DOC}_{up} + \dots$$
+
+Under (b), $\alpha_s$ **is** ΔDOC in season *s*. Under (a) there is no single ΔDOC: the implied difference $\alpha_s + (\beta_s - 1)\,\text{DOC}_{up}$ depends on how much DOC the stream was carrying. The paired design was chosen precisely to remove that dependence.
+
+So the proposal only reproduces the intended quantity if $\beta \approx 1$. Let us check.
+
+```{r data}
+m <- read.csv(here("data","processed","m6.csv"))
+wide <- m |> select(site, season, up = DOC_input, dn = DOC_out) |>
+  filter(!is.na(up), !is.na(dn)) |>
+  mutate(season = factor(season), site = factor(site))
+glue("Observations: {nrow(wide)} | sites: {nlevels(wide$site)} | mean upstream DOC: {round(mean(wide$up),2)} mg/L")
+```
+
+```{r ols}
+ols <- bind_rows(lapply(c("summer","winter"), function(s){
+  x  <- wide |> filter(season == s)
+  xt <- x |> arrange(desc(up)) |> slice(-(1:3))
+  tibble(season = s,
+         slope_all   = round(coef(lm(dn ~ up, x))[2], 2),
+         slope_trim3 = round(coef(lm(dn ~ up, xt))[2], 2),
+         r           = round(cor(x$up, x$dn), 2))}))
+kable(ols, col.names = c("Season","Slope (all data)","Slope (3 largest upstream removed)","correlation"))
+```
+
+::: {.callout-note}
+## Inheritance really is one-to-one
+
+Once three extreme upstream concentrations are removed, the slope of downstream on upstream DOC is **0.99 in summer and 0.95 in winter**. Downstream DOC tracks upstream DOC one-for-one, exactly as the paired design assumes. Josh's premise is empirically correct.
+:::
+
+# 3. Three pilot fits
+
+All three use the same data, the same Student-*t* likelihood, the same site random intercept and the same 0.2 mg L⁻¹ instrument error on the response.
+
+```{r fits}
+#| results: hide
+# (a) FREE SLOPE, upstream as a measurement-error covariate -- the literal proposal
+f_free <- brm(bf(dn | mi(0.2) ~ 0 + season + season:me(up, 0.2) + (1|site), family = student()),
+  data = wide,
+  prior = c(prior(normal(0, 1), class = "b"),
+            prior(normal(1, 0.3), class = "b", coef = "seasonsummer:meup0.2"),
+            prior(normal(1, 0.3), class = "b", coef = "seasonwinter:meup0.2"),
+            prior(student_t(3, 0, 2.5), class = "sigma"), prior(gamma(2, 0.1), class = "nu"),
+            prior(normal(0, 1), class = "sd"),
+            prior(normal(2.5, 2), class = "meanme"), prior(normal(0, 3), class = "sdme")),
+  chains = 4, cores = 4, iter = 3000, warmup = 1000, seed = 7,
+  control = list(adapt_delta = 0.95, max_treedepth = 12),
+  backend = "cmdstanr", file = here("results","models_fit","pilot_downstream_v2"), refresh = 0)
+
+# (b) OFFSET, inheritance fixed at 1 -- the paired contrast written as a downstream-DOC model
+f_off <- brm(bf(dn | mi(0.2) ~ 0 + season + offset(up) + (1|site), family = student()),
+  data = wide,
+  prior = c(prior(normal(0, 1), class = "b"), prior(student_t(3, 0, 2.5), class = "sigma"),
+            prior(gamma(2, 0.1), class = "nu"), prior(normal(0, 1), class = "sd")),
+  chains = 4, cores = 4, iter = 3000, warmup = 1000, seed = 7,
+  backend = "cmdstanr", file = here("results","models_fit","pilot_offset"), refresh = 0)
+```
+
+```{r diag}
+#| echo: false
+dg <- tibble(
+  Model = c("(a) free slope, me(up, 0.2)", "(b) offset, inheritance = 1"),
+  `max R-hat` = c(round(max(rhat(f_free), na.rm = TRUE), 3), round(max(rhat(f_off), na.rm = TRUE), 3)),
+  `min bulk ESS` = c(round(min(summary(f_free)$fixed[,"Bulk_ESS"])), round(min(summary(f_off)$fixed[,"Bulk_ESS"]))))
+kable(dg)
+```
+
+```{r estimates}
+#| echo: false
+df <- as_draws_df(f_free); do <- as_draws_df(f_off)
+res <- bind_rows(lapply(c("summer","winter"), function(s){
+  ub <- mean(wide$up[wide$season == s])
+  a  <- df[[paste0("b_season", s)]]; b <- df[[paste0("bsp_season", s, ":meup0.2")]]
+  free <- a + (b - 1) * ub
+  off  <- do[[paste0("b_season", s)]]
+  bind_rows(
+    tibble(season = s, model = "(a) free slope, evaluated at mean upstream DOC",
+           est = mean(free), lo = quantile(free, .025), hi = quantile(free, .975)),
+    tibble(season = s, model = "(b) offset (inheritance = 1)",
+           est = mean(off),  lo = quantile(off,  .025), hi = quantile(off,  .975)),
+    tibble(season = s, model = "(c) current manuscript Q1 model",
+           est = ifelse(s == "summer", 0.137, 0.003),
+           lo  = ifelse(s == "summer", 0.054, -0.064),
+           hi  = ifelse(s == "summer", 0.223,  0.068)))}))
+kable(res |> mutate(across(c(est, lo, hi), ~round(.x, 3))),
+      col.names = c("Season","Model","ΔDOC (mg/L)","2.5%","97.5%"))
+
+inh <- tibble(season = c("summer","winter"),
+  inheritance = sapply(c("summer","winter"), \(s) mean(df[[paste0("bsp_season", s, ":meup0.2")]])),
+  lo = sapply(c("summer","winter"), \(s) quantile(df[[paste0("bsp_season", s, ":meup0.2")]], .025)),
+  hi = sapply(c("summer","winter"), \(s) quantile(df[[paste0("bsp_season", s, ":meup0.2")]], .975)))
+kable(inh |> mutate(across(-season, ~round(.x, 2))),
+      col.names = c("Season","Estimated inheritance slope β","2.5%","97.5%"),
+      caption = "Free-slope model: β should be near 1 if the model is recovering the paired contrast.")
+```
+
+```{r fig-compare}
+#| fig-height: 3.6
+#| fig-cap: "Estimated average ΔDOC by season under the three formulations. The free-slope implementation of the proposal disagrees with both the offset formulation and the current manuscript model."
+res$model <- factor(res$model, levels = rev(unique(res$model)))
+ggplot(res, aes(est, model, colour = season)) +
+  geom_vline(xintercept = 0, linetype = "dashed", colour = "grey55") +
+  geom_pointrange(aes(xmin = lo, xmax = hi), position = position_dodge(width = .45), size = .5) +
+  scale_colour_manual(values = c(summer = OK[["vermillion"]], winter = OK[["green"]]), name = NULL) +
+  labs(x = expression(Delta*"DOC (mg "*L^-1*")"), y = NULL) +
+  theme_bw(base_size = 12) +
+  theme(panel.grid.minor = element_blank(), legend.position = "top")
+```
+
+::: {.callout-important}
+## The decisive result
+
+**(b) and (c) agree exactly.** The offset formulation gives +0.12 mg L⁻¹ in summer and −0.00 in winter; the current manuscript model gives +0.14 and +0.00. They are the same estimand written two ways, and both sample cleanly (R-hat ≈ 1.00).
+
+**(a) does not.** Despite a prior centred on 1, the free slope lands at about 0.44 with an interval spanning almost the whole plausible range, R-hat is above the 1.01 standard, and the implied ΔDOC at the mean upstream concentration is about **−1.3 mg L⁻¹ in summer** — the opposite sign to every other estimate we have. With two observations per site, a site random intercept and a latent upstream variable, the slope is competing with the site effects for the same information and the model is only weakly identified.
+
+**Conclusion: "keep downstream DOC as the target and let upstream feed in" is already implemented in the manuscript.** The paired ΔDOC model *is* the downstream-DOC model with inheritance fixed at 1. Estimating that slope freely does not add information here, it removes it.
+:::
+
+# 4. What a full rebuild would still involve
+
+The pilot settles the target-variable question but not the rest of Josh's proposal, which is to derive B, S, G and M from the posterior of a **season-specific SCM including the mediators**. That part remains a substantial job.
+
+## 4.1 The model
+
+```{r spec}
+#| eval: false
+#| code-fold: false
+# Sketch only -- NOT run. Every path needs a season interaction, and every
+# predictor keeps its mi() imputation.
+bf(DOC_down | mi(0.2) ~ 0 + season + offset(DOC_up) +
+     season:mi(macrophy_abun_z) + season:mi(plankton_abun_z) +
+     season:mi(cover_litter_z)  + season:mi(water_res_time_z) +
+     (1 | site), family = student()) +
+bf(water_res_time_z | mi() ~ 0 + season + season:n_dams_z +
+     season:mi(dam_height_z) + season:slope_z) +
+bf(plankton_abun_z  | mi() ~ 0 + season + season:mi(solar_z) + season:mi(water_res_time_z)) +
+bf(macrophy_abun_z  | mi() ~ 0 + season + season:mi(solar_z) + season:mi(water_res_time_z)) +
+bf(cover_litter_z   | mi() ~ 0 + season + season:mi(solar_z)) +
+bf(solar_z | mi() ~ 0 + season) + bf(dam_height_z | mi() ~ 1) +
+  set_rescor(FALSE)
+```
+
+## 4.2 The priors all move scale
+
+```{r priors}
+#| echo: false
+kable(tribble(
+  ~Parameter, ~`Current (ΔDOC target, standardized)`, ~`Required (downstream DOC target, mg/L)`,
+  "Upstream DOC → outcome", "β₁ ~ Normal(0, 0.1), estimate −0.10", "inheritance fixed at 1 (offset), or Normal(1, 0.1) — a different quantity entirely",
+  "Intercept", "Normal(0, 2.5) on ΔDOC", "Normal(0, 1) on the mg/L offset; season-specific",
+  "Producer paths → outcome", "Normal(0.2, 0.075), standardized", "must be rescaled to mg/L per SD of the producer variable",
+  "σ of the outcome", "Student-t(3, 0, 2.5) on ΔDOC", "same family, but the residual now absorbs concentration-level variation",
+  "Site random intercept", "Normal(0, 2) on ΔDOC", "now absorbs site DOC level, so the prior must widen substantially"),
+  caption = "Every prior on the outcome equation changes meaning when the target changes.")
+```
+
+## 4.3 Everything downstream of the model changes at once
+
+```{r cascade}
+#| echo: false
+kable(tribble(
+  ~Item, ~`Why it changes`,
+  "Figure 1b (SCM path estimates)", "all coefficients move to a new scale and gain a season dimension",
+  "Table S1 (13 hypotheses)", "each hypothesis is phrased in terms of ΔDOC",
+  "Fig. S2 (priors)", "new prior set",
+  "Figs. S3–S4 (residuals, posterior predictive)", "new outcome",
+  "Fig. S5 (posterior parameters)", "new parameters, doubled by season",
+  "Fig. S7 (total effects)", "path tracing must be redone per season; upstream DOC is no longer a driver but an inherited baseline, so the largest current total effect disappears by construction",
+  "Figs. S8–S9 (connectivity SCM)", "must be re-specified the same way for consistency",
+  "Results §2 and Methods", "every number and the causal wording"))
+```
+
+# 5. Cost, risk and recommendation
+
+```{r cost}
+#| echo: false
+kable(tribble(
+  ~Stage, ~`Working days`,
+  "Re-specification and prior redesign, prior predictive checks", "2–3",
+  "Fitting, convergence and identification troubleshooting (the pilot above already shows where it bites)", "2–3",
+  "Re-deriving posterior quantities and regenerating 6–8 figures", "2–3",
+  "Rewriting Methods, Results and Appendix S1", "2–3",
+  "Co-author review of a substantially changed analysis", "2+",
+  "**Total**", "**10–14**"))
+```
+
+::: {.callout-warning}
+## Recommendation
+
+**Do not rebuild before the 10 September submission.** Three reasons, in order of weight:
+
+1.  **The core of the proposal is already in the manuscript.** The pilot shows the paired ΔDOC model and the downstream-DOC model with inheritance 1 are the same thing, and that the free-slope alternative is worse identified and gives a contradictory answer.
+2.  **The expensive remainder changes Q2, not Q1.** A season-specific mediator SCM is a genuinely different paper-level analysis; it would also delete the single largest total effect in the current results (upstream DOC) by turning it into an offset, which is a substantive reinterpretation, not a technical refinement.
+3.  **Timing.** 10–14 working days against a 7-day window, with the corresponding author unavailable from 10 September to mid-November.
+
+**What to do instead, at no analytical cost:** add one sentence to the Methods saying that ΔDOC is modelled as a paired contrast, equivalent to modelling downstream DOC with an inheritance coefficient of one, and that the free-slope alternative was not identifiable with two samplings per reach. That answers the question a methodological reviewer would ask, and it is now backed by the pilot in this document.
+
+**What to keep for later:** the season-specific mediator SCM is the natural core of a follow-up paper, where the seasonal expression of the biological pathway is the question rather than a robustness check.
+:::
+
+# 6. Reproducibility
+
+```{r session}
+#| echo: false
+cat("Pilot fits cached in results/models_fit/: pilot_downstream_v2.rds, pilot_offset.rds\n")
+cat("Data: data/processed/m6.csv\n\n")
+sessionInfo()$R.version$version.string
+```
