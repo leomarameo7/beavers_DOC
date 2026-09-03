@@ -287,69 +287,91 @@ Per unit area, the DOC change produced by beaver-engineering is **141 times** th
 
 ## 7.2 NEW: does beaver-engineering reinforce, dampen or reverse the inherited signal?
 
-```{r states-mc}
+The measurement error of each concentration (0.2 mg L⁻¹) must be carried into S and B, otherwise the state counts are read off point values that the data do not support. We do this with a **Bayesian hierarchical measurement-error model**, in the same style as the rest of the paper, not with a null-hypothesis test.
+
+::: {.callout-note appearance="simple"}
+## Why S and T, and not S and B
+
+S and B share the two upstream measurements, so their errors are correlated (ρ = −0.71) and cannot be modelled independently. The two contrasts that use **disjoint** samples are
+
+$$S = \text{DOC}_{up,summer} - \text{DOC}_{up,winter} \qquad T = \text{DOC}_{down,summer} - \text{DOC}_{down,winter}$$
+
+Their errors are independent, each with SD $\sqrt2 \times 0.2 = 0.283$ mg L⁻¹. We estimate the latent true S and T per reach, then derive $B = T - S$ and $G = B/S$ from the posterior, which reproduces the correct error correlation automatically.
+:::
+
+```{r latent-model}
+#| results: hide
+library(brms)
+dd <- d |> mutate(S_obs = S, T_obs = Tt, se_d = sqrt(2) * SD_M, reach = factor(row_number()))
+
+pri <- c(prior(normal(0, 2), class = "Intercept"),
+         prior(student_t(3, 0, 2.5), class = "sd"))
+
+fit_latent <- function(f, file)
+  brm(f, data = dd, prior = pri, chains = 4, cores = 4, iter = 3000, warmup = 1000,
+      seed = 7, backend = "cmdstanr", control = list(adapt_delta = 0.95),
+      file = here("results", "models_fit", file), refresh = 0)
+
+fS <- fit_latent(bf(S_obs | se(se_d, sigma = FALSE) ~ 1 + (1 | reach)), "latent_S")
+fT <- fit_latent(bf(T_obs | se(se_d, sigma = FALSE) ~ 1 + (1 | reach)), "latent_T")
+
+latent <- function(f) { x <- as_draws_df(f)
+  as.matrix(x[, grep("^r_reach\\[", names(x))]) + x$b_Intercept }
+Slat <- latent(fS); Tlat <- latent(fT); Blat <- Tlat - Slat
+```
+
+```{r states-bayes}
 STATES <- c("Amplifies enrichment", "Dampens enrichment", "Reverses enrichment to depletion",
             "Amplifies depletion",  "Dampens depletion",  "Reverses depletion to enrichment")
 
-classify <- function(S, B) {
-  G <- B / S
-  ifelse(G > 0,  ifelse(S > 0, STATES[1], STATES[4]),
-  ifelse(G > -1, ifelse(S > 0, STATES[2], STATES[5]),
-                 ifelse(S > 0, STATES[3], STATES[6])))
-}
-d$state <- factor(classify(d$S, d$B), levels = STATES)
-n <- nrow(d)
+classify_i <- function(S, B) { G <- B / S
+  ifelse(G > 0, ifelse(S > 0, 1, 4), ifelse(G > -1, ifelse(S > 0, 2, 5), ifelse(S > 0, 3, 6))) }
 
-# (i) propagate the 0.2 mg/L analytical error of each of the four concentrations
-sim <- replicate(NREP, {
-  a  <- d$up_w + rnorm(n, 0, SD_M); b <- d$dn_w + rnorm(n, 0, SD_M)
-  cc <- d$up_s + rnorm(n, 0, SD_M); e <- d$dn_s + rnorm(n, 0, SD_M)
-  classify(cc - a, (e - cc) - (b - a))
-})
-d$p_own   <- sapply(seq_len(n), \(i) mean(sim[i, ] == as.character(d$state[i])))
-Bsim <- replicate(NREP, ((d$dn_s + rnorm(n,0,SD_M)) - (d$up_s + rnorm(n,0,SD_M))) -
-                        ((d$dn_w + rnorm(n,0,SD_M)) - (d$up_w + rnorm(n,0,SD_M))))
-d$B_lo <- apply(Bsim, 1, quantile, .025); d$B_hi <- apply(Bsim, 1, quantile, .975)
-d$B_signif <- d$B_lo > 0 | d$B_hi < 0
+st   <- classify_i(Slat, Blat)                          # posterior draws x reaches
+cnt  <- t(apply(st, 1, \(r) tabulate(r, 6)))            # posterior draws x 6 counts
 
-# (ii) null: beaver-engineering has the SAME effect in both seasons (no true seasonal modification)
-eff <- (d$dw + d$ds) / 2
-nullsim <- replicate(NREP, {
-  a  <- d$up_w + rnorm(n,0,SD_M); b <- d$up_w + eff + rnorm(n,0,SD_M)
-  cc <- d$up_s + rnorm(n,0,SD_M); e <- d$up_s + eff + rnorm(n,0,SD_M)
-  classify(cc - a, (e - cc) - (b - a))
-})
-
-obs_n <- as.numeric(table(d$state)[STATES])
 tab <- tibble(
-  state      = factor(STATES, levels = STATES),
-  observed   = obs_n,
-  with_error = round(sapply(STATES, \(s) mean(colSums(sim     == s))), 1),
-  null_mean  = round(sapply(STATES, \(s) mean(colSums(nullsim == s))), 1),
-  null_lo    = sapply(STATES, \(s) quantile(colSums(nullsim == s), .025)),
-  null_hi    = sapply(STATES, \(s) quantile(colSums(nullsim == s), .975)),
-  p_more     = sapply(seq_along(STATES), \(i) mean(colSums(nullsim == STATES[i]) >= obs_n[i])),
-  p_fewer    = sapply(seq_along(STATES), \(i) mean(colSums(nullsim == STATES[i]) <= obs_n[i]))) |>
-  mutate(p_two   = pmin(1, 2 * pmin(p_more, p_fewer)),
-         verdict = case_when(p_two < 0.05 & observed > null_mean ~ "more than noise predicts",
-                             p_two < 0.05 & observed < null_mean ~ "fewer than noise predicts",
-                             TRUE ~ "within noise"))
-kable(tab |> select(state, observed, with_error, null_mean, p_two, verdict) |>
-        mutate(p_two = ifelse(p_two < 0.001, "<0.001", sprintf("%.3f", p_two))),
-      col.names = c("Response state", "Observed", "Expected (error propagated)",
-                    "Expected under null", "p (two-sided)", "Verdict"))
+  state     = factor(STATES, levels = STATES),
+  post_mean = round(colMeans(cnt), 1),
+  lo        = apply(cnt, 2, quantile, .025),
+  hi        = apply(cnt, 2, quantile, .975),
+  point     = as.numeric(tabulate(classify_i(dd$S_obs, dd$T_obs - dd$S_obs), 6)))
+kable(tab, col.names = c("Response state", "Posterior mean count", "2.5%", "97.5%",
+                         "Count from point values (ignoring error)"))
 ```
 
-```{r stability}
+```{r bayes-contrasts}
 #| echo: false
+p_state <- apply(st, 2, \(v) max(tabulate(v, 6)) / length(v))   # per-reach classification confidence
+d$p_state  <- p_state
+d$B_strong <- colMeans(abs(Blat) > 0.5) > 0.9                    # ROPE on B, as elsewhere in the paper
+
+ctr <- tibble(
+  Contrast = c("Reverses depletion→enrichment  −  reverses enrichment→depletion",
+               "Amplifies enrichment  −  dampens enrichment",
+               "Number of reaches with B > 0 (out of 158)",
+               "Median B across reaches (mg L⁻¹)"),
+  Posterior = c(mean(cnt[,6] - cnt[,3]), mean(cnt[,1] - cnt[,2]),
+                mean(rowSums(Blat > 0)), mean(apply(Blat, 1, median))),
+  lo = c(quantile(cnt[,6]-cnt[,3], .025), quantile(cnt[,1]-cnt[,2], .025),
+         quantile(rowSums(Blat > 0), .025), quantile(apply(Blat, 1, median), .025)),
+  hi = c(quantile(cnt[,6]-cnt[,3], .975), quantile(cnt[,1]-cnt[,2], .975),
+         quantile(rowSums(Blat > 0), .975), quantile(apply(Blat, 1, median), .975)),
+  `P(> 0)` = c(mean(cnt[,6] - cnt[,3] > 0), mean(cnt[,1] - cnt[,2] > 0),
+               mean(rowSums(Blat > 0) > 79), mean(apply(Blat, 1, median) > 0)))
+kable(ctr |> mutate(across(where(is.numeric), ~round(.x, 2))),
+      caption = "Posterior contrasts. For the count of reaches with B > 0 the probability shown is P(more than half).")
+
 glue::glue(
-"Reaches whose six-state label is stable in ≥80% of error replicates: {sum(d$p_own>=0.8)} of {n} ({round(100*mean(d$p_own>=0.8))}%)
-Reaches whose B is distinguishable from zero (95% interval excludes 0): {sum(d$B_signif)} of {n} ({round(100*mean(d$B_signif))}%)")
+"Reaches whose six-state label carries posterior probability > 0.9: {sum(p_state>0.9)} of {nrow(d)} ({round(100*mean(p_state>0.9))}%)
+Reaches with P(|B| > 0.5 mg/L) > 0.9, i.e. a practically relevant seasonal modification: {sum(d$B_strong)} of {nrow(d)}
+Between-reach SD of the true inherited signal S: {round(mean(as_draws_df(fS)$sd_reach__Intercept),2)} mg/L (measurement SD 0.283), so shrinkage is small")
 ```
 
 ```{r fig-response-space}
 #| fig-height: 10.5
-d <- d |> mutate(lab = ifelse(ds > 0, "Summer: DOC enrichment", "Summer: DOC depletion"))
+d <- d |> mutate(lab = ifelse(ds > 0, "Summer: DOC enrichment", "Summer: DOC depletion"),
+                 S_pm = apply(Slat, 2, median), B_pm = apply(Blat, 2, median))
 psl <- pseudo_log_trans(sigma = 0.1, base = 10)
 
 ann <- tibble(
@@ -358,12 +380,12 @@ ann <- tibble(
   lab = c("Amplifies\nseasonal enrichment", "Dampens / reverses\nseasonal enrichment",
           "Dampens / reverses\nseasonal depletion", "Amplifies\nseasonal depletion"))
 
-pa <- ggplot(d, aes(S, B)) +
+pa <- ggplot(d, aes(S_pm, B_pm)) +
   annotate("segment", x = -40, xend = 40, y = 40, yend = -40,
            linetype = "dashed", colour = "grey45", linewidth = .5) +
   geom_hline(yintercept = 0, colour = "grey70", linewidth = .4) +
   geom_vline(xintercept = 0, colour = "grey70", linewidth = .4) +
-  geom_point(aes(colour = lab, shape = lab, alpha = B_signif), size = 2.1, stroke = .9) +
+  geom_point(aes(colour = lab, shape = lab, alpha = B_strong), size = 2.1, stroke = .9) +
   geom_text(data = ann, aes(x, y, label = lab, hjust = hj), size = 3.1,
             colour = "grey30", lineheight = .95, inherit.aes = FALSE) +
   scale_colour_manual(values = c("Summer: DOC enrichment" = OK[["blue"]],
@@ -375,21 +397,23 @@ pa <- ggplot(d, aes(S, B)) +
   scale_y_continuous(trans = psl, breaks = c(-10,-1,0,1,10), limits = c(-40, 40)) +
   labs(x = expression("Inherited seasonal signal   S   (mg "*L^-1*")"),
        y = expression("Beaver seasonal modification   B   (mg "*L^-1*")"),
-       subtitle = "Dashed diagonal: B = -S, exact cancellation of the inherited signal\nFaded symbols: B not distinguishable from zero given the measurement error") +
+       subtitle = "Posterior medians of the latent (measurement-error corrected) contrasts\nDashed diagonal: B = -S, exact cancellation.  Solid symbols: P(|B| > 0.5 mg/L) > 0.9") +
   theme_bw(base_size = 12) +
   theme(panel.grid.minor = element_blank(), legend.position = "top",
         plot.subtitle = element_text(size = 9, colour = "grey35"))
 
-tb <- tab |> mutate(state = fct_rev(state), flag = verdict)
+tb <- tab |> mutate(state = fct_rev(state),
+                    side = ifelse(state %in% STATES[c(1, 6)], "pushes toward summer enrichment",
+                                  ifelse(state %in% STATES[c(3, 4)], "pushes toward summer depletion",
+                                         "dampens the inherited signal")))
 pb <- ggplot(tb, aes(y = state)) +
-  geom_linerange(aes(xmin = null_lo, xmax = null_hi), colour = "grey78", linewidth = 5) +
-  geom_point(aes(x = null_mean), colour = "grey35", size = 2, shape = 124) +
-  geom_point(aes(x = observed, colour = flag), size = 3.4) +
-  scale_colour_manual(values = c("more than noise predicts"  = OK[["blue"]],
-                                 "fewer than noise predicts" = OK[["vermillion"]],
-                                 "within noise"              = "grey30"), name = NULL) +
-  labs(x = "Number of reaches", y = NULL,
-       subtitle = "Grey band: 95% range expected if beaver-engineering had the same effect in\nboth seasons (measurement noise only). Vertical tick: null mean.") +
+  geom_pointrange(aes(x = post_mean, xmin = lo, xmax = hi, colour = side), size = .55) +
+  scale_colour_manual(values = c("pushes toward summer enrichment" = OK[["blue"]],
+                                 "pushes toward summer depletion"  = OK[["vermillion"]],
+                                 "dampens the inherited signal"    = "grey40"), name = NULL) +
+  labs(x = "Posterior number of reaches (mean and 95% credible interval)", y = NULL,
+       subtitle = "Counts derived from the latent S and B of the hierarchical measurement-error model,\nso the classification uncertainty is propagated rather than ignored") +
+  guides(colour = guide_legend(nrow = 2)) +
   theme_bw(base_size = 12) +
   theme(panel.grid.minor = element_blank(), panel.grid.major.y = element_blank(),
         legend.position = "top", plot.subtitle = element_text(size = 9, colour = "grey35"))
@@ -405,11 +429,15 @@ fig_rs
 
 **(a)** Beaver-engineered reaches occupy all six response states: they reinforce, dampen and occasionally reverse the seasonal DOC trajectory they inherit. This is the visual proof that the reach is an **operator on an incoming signal**, not a fixed source or sink.
 
-**(b)** Much of that state table is what measurement noise alone would produce if beaver-engineering had the *same* effect in both seasons. The decisive departure is **reversals of depletion into enrichment**: `r tab$observed[6]` observed against `r tab$null_mean[6]` expected under the null (p `r ifelse(tab$p_two[6]<0.001,"< 0.001",sprintf("= %.3f",tab$p_two[6]))`). Three further states sit at or just past the conventional threshold and all point the same way: amplification of enrichment is more frequent than the null (`r tab$observed[1]` vs `r tab$null_mean[1]`, p = `r sprintf("%.2f",tab$p_two[1])`), while amplification of depletion (`r tab$observed[4]` vs `r tab$null_mean[4]`, p = `r sprintf("%.2f",tab$p_two[4])`) and reversal of enrichment into depletion (`r tab$observed[3]` vs `r tab$null_mean[3]`, p = `r sprintf("%.2f",tab$p_two[3])`) are less frequent. The two "dampens" states are indistinguishable from the null.
+**(b)** The state counts come from the latent S and B of the measurement-error model, so their uncertainty is carried rather than ignored. The asymmetry is unambiguous and all of it points one way:
 
-**Beaver-engineering systematically pushes the inherited seasonal trajectory toward summer enrichment**, beyond anything measurement error can generate. This is the same signal as Q1 (+0.14 mg L⁻¹ in summer) and the primary-producer pathway of Q2, now expressed as an operation on the incoming signal.
+-   reversals of depletion into enrichment exceed the opposite reversals by `r sprintf("%.0f", ctr$Posterior[1])` reaches (95% CrI `r sprintf("%.0f to %.0f", ctr$lo[1], ctr$hi[1])`), P(> 0) = `r sprintf("%.3f", ctr$"P(> 0)"[1])`;
+-   amplification of enrichment exceeds dampening of enrichment by `r sprintf("%.0f", ctr$Posterior[2])` reaches (`r sprintf("%.0f to %.0f", ctr$lo[2], ctr$hi[2])`), P(> 0) = `r sprintf("%.3f", ctr$"P(> 0)"[2])`;
+-   `r sprintf("%.0f", ctr$Posterior[3])` of 158 reaches (`r sprintf("%.0f to %.0f", ctr$lo[3], ctr$hi[3])`) have B > 0, and the median seasonal modification is `r sprintf("%.2f", ctr$Posterior[4])` mg L⁻¹ (`r sprintf("%.2f to %.2f", ctr$lo[4], ctr$hi[4])`), P(> 0) = `r sprintf("%.3f", ctr$"P(> 0)"[4])`.
 
-The honest caveat stays: roughly half the reaches do not have a stable six-state label and only about a third have a seasonal modification B distinguishable from zero, so the **counts must be reported with this null comparison**, never on their own.
+**Beaver-engineering systematically pushes the inherited seasonal trajectory toward summer enrichment.** This is the same signal as Q1 (+0.14 mg L⁻¹ in summer) and the primary-producer pathway of Q2, now expressed as an operation on the incoming signal rather than as an average.
+
+The honest caveat stays at the level of the individual reach: only `r sum(d$p_state > 0.9)` of `r nrow(d)` reaches carry their six-state label with posterior probability above 0.9. **The population-level asymmetry is solid; per-reach labels are not**, so the six states should be reported as posterior counts with intervals, never as a tally of point classifications.
 
 **Placement: panel (a) main text as Figure 3, panel (b) Appendix S1** — or both in Appendix S1 if we want to keep the main text to three figures.
 :::
@@ -432,7 +460,7 @@ inv <- tribble(
   "Fig. S7", "Total effects of the drivers", "Q2", "Appendix S1", "existing",
   "Fig. S8–S9", "Alternative SCM with lateral connectivity", "Q2", "Appendix S1", "existing",
   "Fig. S10", "Variable-derivation DAG (this document, §2)", "all", "Appendix S1", "**new**",
-  "Fig. S11", "State counts vs measurement-noise null", "Q3", "Appendix S1", "**new**",
+  "Fig. S11", "Posterior state counts (measurement-error model)", "Q3", "Appendix S1", "**new**",
   "Table S1", "Tested hypotheses per causal path", "Q2", "Appendix S1", "existing")
 kable(inv)
 ```

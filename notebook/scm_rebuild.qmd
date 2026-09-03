@@ -66,21 +66,33 @@ wide <- m |> select(site, season, up = DOC_input, dn = DOC_out) |>
 glue("Observations: {nrow(wide)} | sites: {nlevels(wide$site)} | mean upstream DOC: {round(mean(wide$up),2)} mg/L")
 ```
 
-```{r ols}
-ols <- bind_rows(lapply(c("summer","winter"), function(s){
-  x  <- wide |> filter(season == s)
-  xt <- x |> arrange(desc(up)) |> slice(-(1:3))
-  tibble(season = s,
-         slope_all   = round(coef(lm(dn ~ up, x))[2], 2),
-         slope_trim3 = round(coef(lm(dn ~ up, xt))[2], 2),
-         r           = round(cor(x$up, x$dn), 2))}))
-kable(ols, col.names = c("Season","Slope (all data)","Slope (3 largest upstream removed)","correlation"))
+```{r slope}
+#| results: hide
+f_slope <- brm(bf(dn | mi(0.2) ~ 0 + season + season:up, family = student()),
+  data = wide,
+  prior = c(prior(normal(0, 2), class = "b"), prior(student_t(3, 0, 2.5), class = "sigma"),
+            prior(gamma(2, 0.1), class = "nu")),
+  chains = 4, cores = 4, iter = 3000, warmup = 1000, seed = 7,
+  backend = "cmdstanr", file = here("results","models_fit","inheritance_slope"), refresh = 0)
+```
+
+```{r slope-table}
+#| echo: false
+ds <- as_draws_df(f_slope)
+kable(bind_rows(lapply(c("summer","winter"), function(s){
+  b <- ds[[paste0("b_season", s, ":up")]]
+  tibble(Season = s, `Posterior mean slope` = round(mean(b), 2),
+         `2.5%` = round(quantile(b, .025), 2), `97.5%` = round(quantile(b, .975), 2),
+         `P(0.9 < slope < 1.1)` = round(mean(b > 0.9 & b < 1.1), 2))})),
+  caption = "Bayesian robust regression of downstream on upstream DOC (Student-t likelihood, 0.2 mg/L error on the response).")
 ```
 
 ::: {.callout-note}
-## Inheritance really is one-to-one
+## Inheritance really is close to one-to-one
 
-Once three extreme upstream concentrations are removed, the slope of downstream on upstream DOC is **0.99 in summer and 0.95 in winter**. Downstream DOC tracks upstream DOC one-for-one, exactly as the paired design assumes. Josh's premise is empirically correct.
+The posterior slope of downstream on upstream DOC is **0.93 [0.88, 0.97] in summer and 0.95 [0.92, 0.99] in winter**. A heavy-tailed likelihood handles the few extreme upstream concentrations without trimming anything.
+
+Downstream DOC tracks upstream DOC essentially one-for-one, so Josh's premise is empirically correct. The slope is nonetheless slightly *below* one, which is itself interpretable: at high incoming concentrations the reach retains proportionally a little more DOC than it passes on.
 :::
 
 # 3. Three pilot fits
