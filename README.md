@@ -10,27 +10,27 @@ Beaver dams turn flowing streams into ponds. Does this beaver-engineering change
 concentration of **dissolved organic carbon (DOC)** in streams — and if so, by how much, in which
 direction, and through which mechanisms?
 
-Using a nationwide dataset of 176 beaver-affected stream reaches in Switzerland (monthly sampling
+Using a nationwide dataset of 176 beaver-affected stream reaches in Switzerland (one winter and one summer sampling
 upstream and downstream of beaver dam complexes) we ask:
 
 1. **Direction** – Is the change in DOC across a beaver complex (ΔDOC = downstream − upstream)
    negligible, positive (beaver ponds as a DOC *source*) or negative (DOC *sink*)? Measurement-error
-   model on raw upstream/downstream DOC, by season → *Figure 2a*
+   model on raw upstream/downstream DOC, by season → *Figure 1a*
 2. **Pathways** – Through which causal paths (hydrology: water residence time, discharge, dam number
    and height; biology: macrophytes, plankton, litter cover; solar radiation, slope, DOC input) does
    beaver-engineering influence ΔDOC? → Structural causal model (DAG) + Bayesian multivariate
-   regression, *Figure 2b*
+   regression, *Figure 1b*
 3. **Magnitude relative to the floodplain** – How large is the beaver-mediated DOC change compared
    with natural DOC variation at the catchment/floodplain scale? → the *beaver amplification
-   factor M*, *Figure 3*
+   factor M*, *Figure 2*
 
 ## Repository structure
 
 | Path | Content |
 |---|---|
-| `notebook/notebook.qmd` | Quarto notebook with the **entire analysis** (data loading, DAG, priors, model fitting with `brms`, figures, Appendix S1 figures S1–S3) |
+| `notebook/notebook.qmd` | Quarto notebook with the **entire analysis** (data loading, DAG, priors, model fitting with `brms`, figures, Appendix S1 figures S1–S7) |
 | `notebook/notebook.html` | Rendered version of the notebook (open in a browser to read results without running code) |
-| `notebook/connectivity.qmd` / `.html` | Additional analysis: alternative SCM including lateral stream–wetland connectivity as a driver of water residence time (Appendix S1, Figures S5–S6) |
+| `notebook/connectivity.qmd` / `.html` | Additional analysis: alternative SCM including lateral stream–wetland connectivity as a driver of water residence time (Appendix S1, Figures S8–S9) |
 | `data/processed/m6.csv` | Site × month dataset used for the structural causal model (ΔDOC and standardized predictors) |
 | `data/processed/m12.csv` | Dataset used for the amplification-factor model |
 | `data/processed/later_connectivity_berger.csv` | Site-level lateral stream–wetland connectivity classification (K. Berger) |
@@ -57,8 +57,8 @@ upstream and downstream of beaver dam complexes) we ask:
    Model fitting uses `seed = 7` and 4 chains; fits are cached to `results/models_fit/*.rds`
    (first run ≈ tens of minutes depending on the machine; later runs reuse the cache).
 4. **Output**: `notebook.html` plus figures in `results/figures/`. Sections are numbered as in the
-   manuscript: *Figure 2a* (posterior of ΔDOC, ROPE ±0.5 mg/L), the amplification factor *M*
-   (*Figure 3*), and *Appendix S1* (priors, residuals, posterior predictive checks).
+   manuscript: *Figure 1a* (posterior of ΔDOC, ROPE ±0.5 mg/L), the amplification factor *M*
+   (*Figure 2*), and *Appendix S1* (priors, residuals, posterior predictive checks).
 
 ## License
 
