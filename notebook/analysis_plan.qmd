@@ -132,7 +132,64 @@ Sentence to add to the Results: of the `r sw$n` streams sampled in both seasons,
 
 **Manuscript placement: main text, Figure 1b (redrawn: the outcome is downstream DOC).**
 
-![**Drivers of downstream DOC.** Structural causal model with downstream DOC as the outcome (model `b1_downstream`) and the posterior mean standardized effects; the upstream-DOC path is the inheritance slope (0.95, mg per mg). Skyblue: positive and coral: negative effects with posterior probability above 0.90; dashed grey: no-evidence. Drawn by `notebook/figure_1b_downstream.R`.](../images/Figure_1b_downstream.png){#fig-q2}
+The chunk below draws the structural causal model as it will appear in the manuscript. The layout is fixed by hand (node positions and edge routing); the numbers are the posterior mean effects of model `b1_downstream`, and each edge's line type encodes the posterior probability of its direction.
+
+```{r fig-q2}
+#| fig-height: 5.6
+#| fig-cap: "**Drivers of downstream DOC.** Structural causal model with downstream DOC as the outcome (model `b1_downstream`) and the posterior mean standardized effects; the upstream-DOC path is the inheritance slope (0.95, mg per mg). Skyblue: positive and coral: negative effects with posterior probability above 0.90; dashed grey: no-evidence."
+# ---- node positions (x, y on a 0-10 canvas) --------------------------------
+nodes <- data.frame(
+  name = c("Max dam\nheight", "Number of\ndams", "Channel\ngradient", "Water\nresidence time",
+           "Solar\nradiation", "Macrophytes", "Phytoplankton", "Soil litter\ncover",
+           "Upstream\nDOC", "Downstream\nDOC"),
+  x = c(0.9, 0.9, 2.9, 3.2, 4.6, 6.6, 6.2, 6.2, 8.8, 8.8),
+  y = c(6.6, 4.6, 2.0, 5.0, 9.3, 7.2, 5.0, 2.9, 8.8, 5.4))
+rownames(nodes) <- c("dh", "nd", "gr", "wrt", "sol", "mac", "pla", "lit", "up", "out")
+# ---- edges: posterior mean effect (label), class by P > 0.90, curvature ----
+edges <- read.csv(text = 'from,to,label,class,curv,lx,ly
+dh,wrt,,none,0,0,0
+nd,wrt,0.06,pos,0,-0.1,0.35
+gr,wrt,-0.08,neg,0,0.45,0
+wrt,pla,0.11,pos,0,0,0.30
+wrt,mac,,none,0,0,0
+wrt,out,,none,0.18,0,0
+sol,mac,0.14,pos,-0.15,0.55,0.55
+sol,pla,0.19,pos,0.30,-0.85,0.10
+sol,lit,,none,0.30,0,0
+mac,out,0.08,pos,0,0,0.32
+pla,out,0.14,pos,0,0,0.30
+lit,out,0.07,pos,0,-0.2,0.32
+up,out,0.95,pos,0,0.45,0')
+# shorten each arrow so it starts/ends at the box border, not the centre
+a <- merge(edges, nodes, by.x = "from", by.y = "row.names")
+a <- merge(a, nodes, by.x = "to", by.y = "row.names", suffixes = c("", "2"))
+dx <- a$x2 - a$x; dy <- a$y2 - a$y; L <- sqrt(dx^2 + dy^2)
+a$x0 <- a$x + dx / L * 0.85; a$y0 <- a$y + dy / L * 0.55
+a$x1 <- a$x2 - dx / L * 0.90; a$y1 <- a$y2 - dy / L * 0.55
+a$xm <- (a$x0 + a$x1) / 2 + a$lx; a$ym <- (a$y0 + a$y1) / 2 + a$ly
+pal2 <- c(pos = "#3B9AD1", neg = "#E8603C", none = "grey55")   # skyblue / coral / grey
+lty2 <- c(pos = "solid",   neg = "solid",   none = "dashed")
+arr <- arrow(length = unit(0.16, "cm"), type = "closed")
+pq2 <- ggplot()
+st <- subset(a, curv == 0)   # straight and curved arrows drawn separately
+pq2 <- pq2 + geom_segment(data = st, aes(x = x0, y = y0, xend = x1, yend = y1),
+                          colour = pal2[st$class], linetype = lty2[st$class], linewidth = 0.7, arrow = arr)
+for (i in which(a$curv != 0))
+  pq2 <- pq2 + geom_curve(data = a[i, ], aes(x = x0, y = y0, xend = x1, yend = y1),
+                          curvature = a$curv[i], colour = pal2[a$class[i]],
+                          linetype = lty2[a$class[i]], linewidth = 0.7, arrow = arr)
+pq2 <- pq2 +
+  geom_text(data = subset(a, label != ""), aes(x = xm, y = ym, label = label), size = 4.2) +
+  geom_label(data = nodes[rownames(nodes) != "out", ], aes(x = x, y = y, label = name),
+             size = 4.1, label.padding = unit(0.3, "lines"), label.r = unit(0.05, "lines")) +
+  geom_label(data = nodes["out", ], aes(x = x, y = y, label = name), size = 4.4,
+             fontface = "bold", label.padding = unit(0.45, "lines"),
+             label.r = unit(0.9, "lines"), linewidth = 0.9, colour = "#C0208E") +
+  annotate("text", x = 0.15, y = 9.8, label = "(b)", size = 6.5, hjust = 0) +
+  xlim(0, 10) + ylim(1.2, 10) + theme_void()
+ggsave(here("images", "Figure_1b_downstream.png"), pq2, width = 9, height = 5.6, dpi = 300, bg = "white")
+pq2
+```
 
 ::: {.callout-note}
 ## Key message of @fig-q2
@@ -146,7 +203,7 @@ The direction of the local response is set by the context the pond receives: ups
 
 The analysis uses the **158 streams with both a winter and a summer sampling**; this is the only stream count reported anywhere in the manuscript (the sites visited but excluded during data cleaning are not mentioned).
 
-$R_s$, $B$ and $G$ are computed from posterior draws of each stream's concentrations (Bayesian measurement-error model, `notebook/concentrations_fit.R`; the model belongs in the Methods), so no derived quantity is ever formed from raw values and the uncertainty is carried through (`r nrow(readRDS(here("results","concentrations_thin.rds"))$S)` posterior draws per stream).
+$R_s$, $B$ and $G$ are computed from posterior draws of each stream's concentrations (Bayesian measurement-error model, `notebook/concentrations_fit.qmd`; the model belongs in the Methods), so no derived quantity is ever formed from raw values and the uncertainty is carried through (`r nrow(readRDS(here("results","concentrations_thin.rds"))$S)` posterior draws per stream).
 
 ```{r q3-compute}
 # LR holds one matrix per quantity: rows = 4000 posterior draws, columns = 158 streams
@@ -292,7 +349,34 @@ Sentence for the Discussion: the seasonal DOC contrast that streams inherit is o
 
 **Manuscript placement: main text, Figure 3 (both panels redrawn: panel a shows the 158 analysed streams, panel b shows $S$, $\Delta\text{DOC}_s$, $R_s$ and $F$ in place of the amplification-factor quantities).**
 
-![**Sampling design and derived variables.** (a) Sampling locations across Switzerland: the 158 analysed streams (red dots; redrawn by `notebook/figure_3a_map.R` so that map and analysis show the same set). The 16 streams where primary producer abundance was sampled are a separate campaign; their coordinates are not yet in the repository and must be added to place them on the redrawn map. The inset shows the sampling design at each stream: water was sampled upstream of the first and downstream of the last beaver dam. (b) Schematic of the derived variables: the inherited seasonal contrast $S$ is generated over the floodplain area $A_\text{floodplain}$; the local response $\Delta\text{DOC}_s$ is measured across the beaver-engineered stream of ponded area $A_\text{beaver}$; the relative response is $R_s = \Delta\text{DOC}_s / \lvert S \rvert$ and the footprint contrast is $F = A_\text{floodplain} / A_\text{beaver}$.](../results/figures/plan/fig_map_schematic.png){#fig-map}
+The chunk below draws panel (a) directly from the analysed data — the red dots are exactly the 158 streams, so map and analysis can never disagree — plus the 16 producer-abundance streams (black triangles; coordinates in `data/processed/producer_sites_coordinates.csv`, taken from the field-campaign site list). Panel (b) is the schematic of the derived variables.
+
+```{r fig-map}
+#| fig-height: 11
+#| fig-cap: "**Sampling design and derived variables.** (a) Sampling locations across Switzerland: red dots are the 158 analysed streams; black triangles are the 16 streams where primary producer abundance was sampled. Water was sampled upstream of the first and downstream of the last beaver dam of each stream, once in winter and once in summer. (b) Schematic of the derived variables: the inherited seasonal contrast $S$ is generated over the floodplain area $A_\\text{floodplain}$; the local response $\\Delta\\text{DOC}_s$ is measured across the beaver-engineered stream of ponded area $A_\\text{beaver}$; the relative response is $R_s = \\Delta\\text{DOC}_s / \\lvert S \\rvert$ and the footprint contrast is $F = A_\\text{floodplain} / A_\\text{beaver}$."
+# panel (a): the 158 analysed streams (d, from the Q1 chunk) with coordinates,
+# and the 16 producer-abundance streams from the field-campaign site list
+pts  <- d |> distinct(site) |>
+  left_join(read.csv(here("data", "processed", "m6.csv")) |> distinct(site, .keep_all = TRUE) |>
+              select(site, lon = x_upstream, lat = y_upstream), by = "site")
+prod <- read.csv(here("data", "processed", "producer_sites_coordinates.csv"))
+ch <- map_data("world", region = "Switzerland")   # Switzerland outline (maps package)
+pmap <- ggplot() +
+  geom_polygon(data = ch, aes(long, lat, group = group), fill = "grey96", colour = "grey40", linewidth = 0.4) +
+  geom_point(data = pts, aes(lon, lat), colour = "red", size = 1.7, alpha = 0.85) +
+  geom_point(data = prod, aes(longitude, latitude), colour = "black", size = 2.2, shape = 17) +
+  coord_quickmap() +
+  annotate("text", x = 5.99, y = 47.75, label = "(a)", size = 6.5, hjust = 0) +
+  theme_void()
+# panel (b): the schematic, included as an image below the map
+schem <- png::readPNG(here("results", "figures", "plan", "schematic_S_R_F.png"))
+psch  <- ggplot() + annotation_custom(grid::rasterGrob(schem)) +
+  annotate("text", x = 0.02, y = 0.97, label = "(b)", size = 6.5, hjust = 0) +
+  xlim(0, 1) + ylim(0, 1) + theme_void()
+fig3 <- pmap / psch + plot_layout(heights = c(1, 1.15))
+ggsave(here("results", "figures", "plan", "fig_map_schematic.png"), fig3, width = 9, height = 11, dpi = 300, bg = "white")
+fig3
+```
 
 # 8. Figures for the manuscript
 
@@ -324,6 +408,6 @@ kable(tribble(
 
 ```{r session}
 #| echo: false
-cat("Data: data/processed/m12.csv | concentration posteriors: notebook/concentrations_fit.R -> results/concentrations.rds (thinned copy concentrations_thin.rds is tracked)\n")
+cat("Data: data/processed/m12.csv | concentration posteriors: notebook/concentrations_fit.qmd -> results/concentrations.rds (thinned copy concentrations_thin.rds is tracked)\n")
 sessionInfo()$R.version$version.string
 ```
