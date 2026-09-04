@@ -8,13 +8,15 @@ format:
     toc: true
     code-fold: false
     embed-resources: true
+bibliography: references.bib
+csl: ecology-letters.csl
 execute:
   echo: true
   message: false
   warning: false
 ---
 
-Every derived quantity of the manuscript — the inherited seasonal contrast $S$, the beaver seasonal modification $B$, the seasonal gain $G$ and the relative response $R_s$ — is a difference or a ratio of measured DOC concentrations. Forming them directly from the raw values would ignore the 0.2 mg L$^{-1}$ instrument error and, for the ratios, let small denominators explode. This document fits one Bayesian hierarchical model per measured concentration and computes every derived quantity from the posterior draws, so the measurement uncertainty is carried through to the end.
+Every derived quantity of the manuscript — the inherited seasonal contrast $S$, the beaver seasonal modification $B$, the seasonal gain $G$ and the relative response $R_s$ — is a difference or a ratio of measured DOC concentrations. Forming them directly from the raw values would ignore the 0.2 mg L$^{-1}$ instrument error and, for the ratios, let small denominators explode. This document fits one Bayesian hierarchical model per measured concentration with brms [@brms] and computes every derived quantity from the posterior draws, so the measurement uncertainty is carried through to the end.
 
 Output: `results/concentrations.rds` (all draws; a thinned copy with 4000 draws, `results/concentrations_thin.rds`, is tracked in git and used by `analysis_plan.qmd`).
 
@@ -98,3 +100,8 @@ saveRDS(thin, here("results", "concentrations_thin.rds"))
 #| echo: false
 sessionInfo()$R.version$version.string
 ```
+
+# References
+
+::: {#refs}
+:::

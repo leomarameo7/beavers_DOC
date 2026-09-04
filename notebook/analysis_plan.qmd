@@ -12,6 +12,8 @@ format:
     embed-resources: true
     fig-width: 9
     fig-align: center
+bibliography: references.bib
+csl: ecology-letters.csl
 execute:
   echo: true
   message: false
@@ -77,13 +79,13 @@ kable(tribble(
 # 2. Research questions and hypotheses
 
 **Q1 — Direction.** *Does beaver-engineering consistently increase or decrease DOC downstream compared with upstream?*
-Hypothesis: if a stream is impounded by beaver dams, then the local response $\Delta\text{DOC}_s$ will not have a consistent sign across streams, because impoundment simultaneously starts DOC-producing processes — exudation and senescence of phytoplankton and macrophytes, leaching of litter and inundated soils (Søndergaard et al. 1985; Sell & Overbeck 1992; Aitkenhead et al. 1999) — and DOC-removing processes — microbial mineralization, photodegradation and sedimentation during the longer residence time (Johnston 2017; Nummi et al. 2018) — whose balance depends on the stream; syntheses accordingly report enrichment, no change and depletion (Larsen et al. 2021; Grudzinski et al. 2022). We further expect the balance to tilt toward enrichment in summer, when production exceeds removal (Mulholland & Hill 1997).
+Hypothesis: if a stream is impounded by beaver dams, then the local response $\Delta\text{DOC}_s$ will not have a consistent sign across streams, because impoundment simultaneously starts DOC-producing processes — exudation and senescence of phytoplankton and macrophytes, leaching of litter and inundated soils [@søndergaard1985; @sell1992; @aitkenhead1999] — and DOC-removing processes — microbial mineralization, photodegradation and sedimentation during the longer residence time [@johnston2017; @nummi2018] — whose balance depends on the stream; syntheses accordingly report enrichment, no change and depletion [@larsen2021; @grudzinski2022]. We further expect the balance to tilt toward enrichment in summer, when production exceeds removal [@mulholland1997].
 
 **Q2 — Drivers.** *Which abiotic and biotic drivers set the direction of the local response?*
-Hypothesis: if the number of dams increases, then water residence time increases because each dam impounds water and slows flow (Westbrook et al. 2006; Majerova et al. 2015); if water residence time and solar radiation increase, then phytoplankton and macrophyte abundance increase because nutrients are retained and light is available for photosynthesis (Reynolds 2006; Finger et al. 2007; Feuchtmayr et al. 2009); if primary producer abundance and soil litter cover increase, then $\Delta\text{DOC}_s$ increases because exudation, senescence and litter leaching release DOC (Reitsema et al. 2018; Gessner et al. 1999); if upstream DOC increases, then $\Delta\text{DOC}_s$ decreases because a larger incoming load is proportionally retained or mineralized within the pond (Larson et al. 2007; Wohl 2013). The thirteen path-specific hypotheses are in Appendix S1, Table S1.
+Hypothesis: if the number of dams increases, then water residence time increases because each dam impounds water and slows flow [@westbrook2006; @majerova2015]; if water residence time and solar radiation increase, then phytoplankton and macrophyte abundance increase because nutrients are retained and light is available for photosynthesis [@reynolds2006; @finger2007; @feuchtmayr2009]; if primary producer abundance and soil litter cover increase, then $\Delta\text{DOC}_s$ increases because exudation, senescence and litter leaching release DOC [@reitsema2018; @gessner1999]; if upstream DOC increases, then $\Delta\text{DOC}_s$ decreases because a larger incoming load is proportionally retained or mineralized within the pond [@larson2007; @wohl2013]. The thirteen path-specific hypotheses are in Appendix S1, Table S1.
 
 **Q3 — Magnitude and seasonal modification.** *How much does beaver-engineering add or remove DOC relative to the inherited seasonal contrast, and does it reinforce, dampen or reverse that contrast?*
-Hypothesis, magnitude: if the season is summer, then the relative response $R_{summer}$ will be positive and a substantial fraction of the inherited seasonal contrast, because higher light and temperature raise autochthonous DOC production inside the pond independently of the upstream corridor (Mulholland & Hill 1997; Battin et al. 2023); if the season is winter, then $R_{winter}$ will be close to zero because primary production is minimal.
+Hypothesis, magnitude: if the season is summer, then the relative response $R_{summer}$ will be positive and a substantial fraction of the inherited seasonal contrast, because higher light and temperature raise autochthonous DOC production inside the pond independently of the upstream corridor [@mulholland1997; @battin2023]; if the season is winter, then $R_{winter}$ will be close to zero because primary production is minimal.
 Hypothesis, modification: if the summer response exceeds the winter response ($B > 0$ where $S > 0$), then the seasonal gain $G$ will be positive and beaver-engineering will reinforce the inherited seasonal contrast; because the balance of DOC-producing and DOC-removing processes is stream-specific (Q1), we expect $G$ to be heterogeneous across streams, with reinforcement, dampening and reversal all present.
 Because $A_\text{beaver}$ is a very small part of $A_\text{floodplain}$ (footprint contrast $F \gg 1$), both responses arise on a footprint far smaller than the corridor that generates $S$.
 
@@ -353,21 +355,29 @@ The chunk below draws panel (a) directly from the analysed data — the red dots
 
 ```{r fig-map}
 #| fig-height: 11
-#| fig-cap: "**Sampling design and derived variables.** (a) Sampling locations across Switzerland: red dots are the 158 analysed streams; black triangles are the 16 streams where primary producer abundance was sampled. Water was sampled upstream of the first and downstream of the last beaver dam of each stream, once in winter and once in summer. (b) Schematic of the derived variables: the inherited seasonal contrast $S$ is generated over the floodplain area $A_\\text{floodplain}$; the local response $\\Delta\\text{DOC}_s$ is measured across the beaver-engineered stream of ponded area $A_\\text{beaver}$; the relative response is $R_s = \\Delta\\text{DOC}_s / \\lvert S \\rvert$ and the footprint contrast is $F = A_\\text{floodplain} / A_\\text{beaver}$."
+#| fig-cap: "**Sampling design and derived variables.** (a) Sampling locations across Switzerland (elevation background): red dots are the 158 analysed streams; black triangles are the 16 streams where primary producer abundance was sampled. Water was sampled upstream of the first and downstream of the last beaver dam of each stream, once in winter and once in summer. (b) Schematic of the derived variables: the inherited seasonal contrast $S$ is generated over the floodplain area $A_\\text{floodplain}$; the local response $\\Delta\\text{DOC}_s$ is measured across the beaver-engineered stream of ponded area $A_\\text{beaver}$; the relative response is $R_s = \\Delta\\text{DOC}_s / \\lvert S \\rvert$ and the footprint contrast is $F = A_\\text{floodplain} / A_\\text{beaver}$."
 # panel (a): the 158 analysed streams (d, from the Q1 chunk) with coordinates,
 # and the 16 producer-abundance streams from the field-campaign site list
 pts  <- d |> distinct(site) |>
   left_join(read.csv(here("data", "processed", "m6.csv")) |> distinct(site, .keep_all = TRUE) |>
               select(site, lon = x_upstream, lat = y_upstream), by = "site")
 prod <- read.csv(here("data", "processed", "producer_sites_coordinates.csv"))
-ch <- map_data("world", region = "Switzerland")   # Switzerland outline (maps package)
+# elevation background: Swiss DEM (30 arc-second, data/elevation/) with a
+# hillshade underlay and a hypsometric tint, as in the original map
+library(terra); library(tidyterra)
+dem    <- rast(here("data", "elevation", "CHE_elv_msk.tif"))
+hill   <- shade(terrain(dem, "slope", unit = "radians"),
+                terrain(dem, "aspect", unit = "radians"), 40, 270)
+greys  <- hcl.colors(1000, "Grays")
+hillcol <- greys[round(scales::rescale(values(hill), to = c(1, 1000)))]
 pmap <- ggplot() +
-  geom_polygon(data = ch, aes(long, lat, group = group), fill = "grey96", colour = "grey40", linewidth = 0.4) +
-  geom_point(data = pts, aes(lon, lat), colour = "red", size = 1.7, alpha = 0.85) +
+  geom_spatraster(data = hill, fill = hillcol, maxcell = Inf) +
+  geom_spatraster(data = dem, maxcell = Inf) +
+  scale_fill_hypso_tint_c(palette = "dem_poster", alpha = 0.5, na.value = NA, name = "Elevation (m)") +
+  geom_point(data = pts, aes(lon, lat), colour = "red", size = 1.7, alpha = 0.9) +
   geom_point(data = prod, aes(longitude, latitude), colour = "black", size = 2.2, shape = 17) +
-  coord_quickmap() +
   annotate("text", x = 5.99, y = 47.75, label = "(a)", size = 6.5, hjust = 0) +
-  theme_void()
+  theme_void() + theme(legend.position = "right")
 # panel (b): the schematic, included as an image below the map
 schem <- png::readPNG(here("results", "figures", "plan", "schematic_S_R_F.png"))
 psch  <- ggplot() + annotation_custom(grid::rasterGrob(schem)) +
@@ -411,3 +421,8 @@ kable(tribble(
 cat("Data: data/processed/m12.csv | concentration posteriors: notebook/concentrations_fit.qmd -> results/concentrations.rds (thinned copy concentrations_thin.rds is tracked)\n")
 sessionInfo()$R.version$version.string
 ```
+
+# References
+
+::: {#refs}
+:::

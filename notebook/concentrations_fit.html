@@ -57,7 +57,27 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+
+div.csl-bib-body { }
+div.csl-entry {
+clear: both;
+margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+margin-left:2em;
+text-indent:-2em;
+}
+div.csl-left-margin {
+min-width:2em;
+float:left;
+}
+div.csl-right-inline {
+margin-left:2em;
+padding-left:1em;
+}
+div.csl-indent {
+margin-left: 2em;
+}</style>
 
 
 <script>/*!
@@ -2353,6 +2373,7 @@ window.Quarto = {
   <li><a href="#derived-quantities-per-posterior-draw" id="toc-derived-quantities-per-posterior-draw" class="nav-link" data-scroll-target="#derived-quantities-per-posterior-draw">3. Derived quantities, per posterior draw</a></li>
   <li><a href="#thinned-copy-for-the-analysis-plan" id="toc-thinned-copy-for-the-analysis-plan" class="nav-link" data-scroll-target="#thinned-copy-for-the-analysis-plan">4. Thinned copy for the analysis plan</a></li>
   <li><a href="#reproducibility" id="toc-reproducibility" class="nav-link" data-scroll-target="#reproducibility">Reproducibility</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
   </ul>
 </nav>
 </div>
@@ -2390,7 +2411,7 @@ window.Quarto = {
 </header>
 
 
-<p>Every derived quantity of the manuscript — the inherited seasonal contrast <span class="math inline">\(S\)</span>, the beaver seasonal modification <span class="math inline">\(B\)</span>, the seasonal gain <span class="math inline">\(G\)</span> and the relative response <span class="math inline">\(R_s\)</span> — is a difference or a ratio of measured DOC concentrations. Forming them directly from the raw values would ignore the 0.2 mg L<span class="math inline">\(^{-1}\)</span> instrument error and, for the ratios, let small denominators explode. This document fits one Bayesian hierarchical model per measured concentration and computes every derived quantity from the posterior draws, so the measurement uncertainty is carried through to the end.</p>
+<p>Every derived quantity of the manuscript — the inherited seasonal contrast <span class="math inline">\(S\)</span>, the beaver seasonal modification <span class="math inline">\(B\)</span>, the seasonal gain <span class="math inline">\(G\)</span> and the relative response <span class="math inline">\(R_s\)</span> — is a difference or a ratio of measured DOC concentrations. Forming them directly from the raw values would ignore the 0.2 mg L<span class="math inline">\(^{-1}\)</span> instrument error and, for the ratios, let small denominators explode. This document fits one Bayesian hierarchical model per measured concentration with brms <span class="citation" data-cites="brms">(<a href="#ref-brms" role="doc-biblioref">Bürkner 2017</a>)</span> and computes every derived quantity from the posterior draws, so the measurement uncertainty is carried through to the end.</p>
 <p>Output: <code>results/concentrations.rds</code> (all draws; a thinned copy with 4000 draws, <code>results/concentrations_thin.rds</code>, is tracked in git and used by <code>analysis_plan.qmd</code>).</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressMessages</span>({<span class="fu">library</span>(brms); <span class="fu">library</span>(tidyverse); <span class="fu">library</span>(here)})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -2468,6 +2489,14 @@ window.Quarto = {
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] &quot;R version 4.6.1 (2026-06-24)&quot;</code></pre>
+</div>
+</div>
+</section>
+<section id="references" class="level1">
+<h1>References</h1>
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-brms" class="csl-entry" role="listitem">
+Bürkner, P.-C. (2017). <a href="https://doi.org/10.18637/jss.v080.i01"><span></span>Brms<span></span>: An <span></span>r<span></span> package for <span></span>bayesian<span></span> multilevel models using <span></span>stan<span></span></a>, 80.
 </div>
 </div>
 </section>
