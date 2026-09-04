@@ -23,6 +23,7 @@ editor: visual
 #| include: false
 library(tidyverse); library(brms); library(ggdist); library(patchwork)
 library(knitr); library(here); library(glue)
+invisible(Sys.setlocale("LC_CTYPE", "en_US.UTF-8"))  # so non-ASCII prints correctly
 OK <- c(blue="#0072B2", vermillion="#D55E00", green="#009E73", amber="#E69F00")
 ```
 
@@ -150,15 +151,15 @@ res <- bind_rows(lapply(c("summer","winter"), function(s){
            lo  = ifelse(s == "summer", 0.054, -0.064),
            hi  = ifelse(s == "summer", 0.223,  0.068)))}))
 kable(res |> mutate(across(c(est, lo, hi), ~round(.x, 3))),
-      col.names = c("Season","Model","ΔDOC (mg/L)","2.5%","97.5%"))
+      col.names = c("Season","Model","$\\Delta$DOC (mg L$^{-1}$)","2.5%","97.5%"))
 
 inh <- tibble(season = c("summer","winter"),
   inheritance = sapply(c("summer","winter"), \(s) mean(df[[paste0("bsp_season", s, ":meup0.2")]])),
   lo = sapply(c("summer","winter"), \(s) quantile(df[[paste0("bsp_season", s, ":meup0.2")]], .025)),
   hi = sapply(c("summer","winter"), \(s) quantile(df[[paste0("bsp_season", s, ":meup0.2")]], .975)))
 kable(inh |> mutate(across(-season, ~round(.x, 2))),
-      col.names = c("Season","Estimated inheritance slope β","2.5%","97.5%"),
-      caption = "Free-slope model: β should be near 1 if the model is recovering the paired contrast.")
+      col.names = c("Season","Estimated inheritance slope $\\beta$","2.5%","97.5%"),
+      caption = "Free-slope model: $\\beta$ should be near 1 if the model is recovering the paired contrast.")
 ```
 
 ```{r fig-compare}
@@ -213,12 +214,12 @@ bf(solar_z | mi() ~ 0 + season) + bf(dam_height_z | mi() ~ 1) +
 ```{r priors}
 #| echo: false
 kable(tribble(
-  ~Parameter, ~`Current (ΔDOC target, standardized)`, ~`Required (downstream DOC target, mg/L)`,
-  "Upstream DOC → outcome", "β₁ ~ Normal(0, 0.1), estimate −0.10", "inheritance fixed at 1 (offset), or Normal(1, 0.1) — a different quantity entirely",
-  "Intercept", "Normal(0, 2.5) on ΔDOC", "Normal(0, 1) on the mg/L offset; season-specific",
-  "Producer paths → outcome", "Normal(0.2, 0.075), standardized", "must be rescaled to mg/L per SD of the producer variable",
-  "σ of the outcome", "Student-t(3, 0, 2.5) on ΔDOC", "same family, but the residual now absorbs concentration-level variation",
-  "Site random intercept", "Normal(0, 2) on ΔDOC", "now absorbs site DOC level, so the prior must widen substantially"),
+  ~Parameter, ~`Current ($\\Delta$DOC target, standardized)`, ~`Required (downstream DOC target, mg L$^{-1}$)`,
+  "Upstream DOC $\\to$ outcome", "$\\beta_1 \\sim$ Normal(0, 0.1), estimate $-0.10$", "inheritance fixed at 1 (offset), or Normal(1, 0.1) — a different quantity entirely",
+  "Intercept", "Normal(0, 2.5) on $\\Delta$DOC", "Normal(0, 1) on the mg L$^{-1}$ offset; season-specific",
+  "Producer paths → outcome", "Normal(0.2, 0.075), standardized", "must be rescaled to mg L$^{-1}$ per SD of the producer variable",
+  "$\\sigma$ of the outcome", "Student-$t$(3, 0, 2.5) on $\\Delta$DOC", "same family, but the residual now absorbs concentration-level variation",
+  "Site random intercept", "Normal(0, 2) on $\\Delta$DOC", "now absorbs site DOC level, so the prior must widen substantially"),
   caption = "Every prior on the outcome equation changes meaning when the target changes.")
 ```
 

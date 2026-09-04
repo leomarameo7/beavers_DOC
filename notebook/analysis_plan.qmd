@@ -29,6 +29,8 @@ library(ggdist)
 library(knitr)
 library(here)
 
+invisible(Sys.setlocale("LC_CTYPE", "en_US.UTF-8"))  # so non-ASCII prints correctly
+
 set.seed(7)
 SD_M  <- 0.2      # analytical error of one DOC concentration (mg/L)
 NREP  <- 12000    # Monte Carlo replicates for measurement-error propagation
@@ -61,52 +63,52 @@ Every quantity in the paper, with its unit and the question it exists to answer.
 vars <- tribble(
   ~Symbol, ~Name, ~Definition, ~`Meaning (unit)`, ~`Question it answers`,
 
-  "DOC_up,s / DOC_down,s", "measured concentrations", "—",
-  "DOC concentration entering / leaving the beaver-engineered reach in season s (w = winter, s = summer) **(mg L⁻¹)**",
+  "$\\text{DOC}_{up,s}$, $\\text{DOC}_{down,s}$", "measured concentrations", "—",
+  "DOC concentration entering / leaving the beaver-engineered reach in season $s$ ($w$ = winter, $s$ = summer) **(mg L$^{-1}$)**",
   "What is the DOC concentration before and after the beaver-engineered reach in each season?",
 
-  "ΔDOC_s", "local response", "DOC_down,s − DOC_up,s",
-  "the change in DOC that beaver-engineering produces in season s; positive = enrichment, negative = depletion **(mg L⁻¹)**",
+  "$\\Delta\\text{DOC}_s$", "local response", "$\\text{DOC}_{down,s} - \\text{DOC}_{up,s}$",
+  "the change in DOC that beaver-engineering produces in season $s$; positive = enrichment, negative = depletion **(mg L$^{-1}$)**",
   "Does beaver-engineering increase or decrease DOC concentrations, and by how much, in each season?",
 
-  "**S**", "inherited **S**easonal signal", "DOC_up,summer − DOC_up,winter",
-  "the seasonal DOC trajectory the upstream river corridor delivers to the reach; S > 0 seasonal enrichment, S < 0 seasonal depletion **(mg L⁻¹)**",
+  "$\\mathbf{S}$", "inherited **S**easonal signal", "$\\text{DOC}_{up,summer} - \\text{DOC}_{up,winter}$",
+  "the seasonal DOC trajectory the upstream river corridor delivers to the reach; $S > 0$ seasonal enrichment, $S < 0$ seasonal depletion **(mg L$^{-1}$)**",
   "How does DOC change between winter and summer in the river *before* it reaches the beaver-engineered reach?",
 
-  "**B**", "**B**eaver seasonal modification", "ΔDOC_summer − ΔDOC_winter",
-  "how much beaver-engineering changes its own DOC response from winter to summer **(mg L⁻¹)**",
+  "$\\mathbf{B}$", "**B**eaver seasonal modification", "$\\Delta\\text{DOC}_{summer} - \\Delta\\text{DOC}_{winter}$",
+  "how much beaver-engineering changes its own DOC response from winter to summer **(mg L$^{-1}$)**",
   "Does the effect of beaver-engineering on DOC differ between winter and summer, and in which direction?",
 
-  "T", "downstream seasonal signal", "S + B (exact identity)",
-  "the seasonal DOC trajectory leaving the reach after beaver-engineering has modified it **(mg L⁻¹)**",
+  "$T$", "downstream seasonal signal", "$S + B$ (exact identity)",
+  "the seasonal DOC trajectory leaving the reach after beaver-engineering has modified it **(mg L$^{-1}$)**",
   "How does DOC change between winter and summer in the river *after* the beaver-engineered reach?",
 
-  "A_beaver / A_floodplain", "areas", "mapped",
-  "ponded footprint of the beaver-engineered reach; contributing catchment floodplain area generating S **(km²)**",
+  "$A_\\text{beaver}$, $A_\\text{floodplain}$", "areas", "mapped",
+  "ponded footprint of the beaver-engineered reach; contributing catchment floodplain area generating $S$ **(km$^2$)**",
   "How large is the beaver-engineered footprint, and how large is the floodplain area that generates the inherited seasonal signal?",
 
-  "**G**", "seasonal **G**ain", "B / S",
-  "how beaver-engineering modifies the seasonal DOC signal inherited from upstream (T = S(1 + G)): G > 0 reinforces, −1 < G < 0 dampens, G = −1 cancels, G < −1 reverses the inherited trajectory, whether enrichment (S > 0) or depletion (S < 0) **(dimensionless)**",
+  "$\\mathbf{G}$", "seasonal **G**ain", "$B / S$",
+  "how beaver-engineering modifies the seasonal DOC signal inherited from upstream ($T = S(1 + G)$): $G > 0$ reinforces, $-1 < G < 0$ dampens, $G = -1$ cancels, $G < -1$ reverses the inherited trajectory, whether enrichment ($S > 0$) or depletion ($S < 0$) **(dimensionless)**",
   "Does beaver-engineering reinforce, dampen or reverse the seasonal DOC trajectory inherited from upstream?",
 
-  "**F**", "**F**ootprint contrast", "A_floodplain / A_beaver",
-  "how much larger the floodplain area generating S is than the beaver-engineered footprint **(dimensionless)**",
+  "$\\mathbf{F}$", "**F**ootprint contrast", "$A_\\text{floodplain} / A_\\text{beaver}$",
+  "how much larger the floodplain area generating $S$ is than the beaver-engineered footprint **(dimensionless)**",
   "How small is the beaver-engineered footprint relative to the floodplain area that generates the inherited seasonal signal?",
 
-  "**L**", "**L**everage", "|G| · F",
+  "$\\mathbf{L}$", "**L**everage", "$\\lvert G \\rvert \\cdot F$",
   "magnitude of beaver-engineering's modification of the inherited seasonal signal, per unit of engineered footprint **(dimensionless)**",
   "How strongly does beaver-engineering modify the inherited seasonal DOC signal relative to the small area it occupies?",
 
-  "D_beaver,s", "area-normalised local response", "ΔDOC_s / A_beaver",
-  "beaver-engineering's DOC change per unit of its footprint, season s **(mg L⁻¹ km⁻²)**",
-  "How much DOC change does beaver-engineering produce per unit area of its footprint in season s?",
+  "$D_{beaver,s}$", "area-normalised local response", "$\\Delta\\text{DOC}_s / A_\\text{beaver}$",
+  "beaver-engineering's DOC change per unit of its footprint, season $s$ **(mg L$^{-1}$ km$^{-2}$)**",
+  "How much DOC change does beaver-engineering produce per unit area of its footprint in season $s$?",
 
-  "D_floodplain", "area-normalised seasonal signal", "S / A_floodplain",
-  "the upstream seasonal DOC change per unit of floodplain area **(mg L⁻¹ km⁻²)**",
+  "$D_\\text{floodplain}$", "area-normalised seasonal signal", "$S / A_\\text{floodplain}$",
+  "the upstream seasonal DOC change per unit of floodplain area **(mg L$^{-1}$ km$^{-2}$)**",
   "How much seasonal DOC change does the floodplain generate per unit of its area?",
 
-  "**M**", "amplification factor", "|D_beaver,s| / |D_floodplain| = (|ΔDOC_s| / |S|) · F",
-  "how much larger, per unit area, beaver-engineering's DOC change in season s is than the floodplain-scale seasonal DOC change **(dimensionless)**",
+  "$\\mathbf{M}$", "amplification factor", "$\\lvert D_{beaver,s} \\rvert / \\lvert D_\\text{floodplain} \\rvert = (\\lvert \\Delta\\text{DOC}_s \\rvert / \\lvert S \\rvert) \\cdot F$",
+  "how much larger, per unit area, beaver-engineering's DOC change in season $s$ is than the floodplain-scale seasonal DOC change **(dimensionless)**",
   "How many times larger, per unit area, is the DOC change produced by beaver-engineering than the seasonal DOC change generated by the floodplain?"
 )
 kable(vars)
@@ -136,9 +138,9 @@ The **same causal mechanism** operates in winter and summer. Downstream DOC inhe
 
 | \# | Research question | Hypothesis | Answered by |
 |-----------------|-------------------|------------------|------------------|
-| **Q1 Direction** | Does beaver-engineering consistently increase or decrease DOC concentrations downstream compared with upstream? | Beaver-engineering has **no consistent direction**: responses are variable and heavy-tailed, with a shift toward enrichment in summer when primary production is highest. | ΔDOC_s, B |
+| **Q1 Direction** | Does beaver-engineering consistently increase or decrease DOC concentrations downstream compared with upstream? | Beaver-engineering has **no consistent direction**: responses are variable and heavy-tailed, with a shift toward enrichment in summer when primary production is highest. | $\Delta$DOC$_s$, $B$ |
 | **Q2 Drivers** | Which abiotic and biotic drivers set the direction of the DOC change? | Dams increase water residence time, which promotes primary producers and thereby DOC; high upstream DOC favours retention. | Structural causal model |
-| **Q3 Magnitude** | Irrespective of direction, how large is the beaver-mediated DOC change per unit area relative to the seasonal floodplain-scale variation, and does it reinforce or oppose the inherited signal? | The change per unit area is orders of magnitude larger than the floodplain-scale seasonal signal, and beaver-engineering **modifies** (rather than merely adds to) the inherited seasonal trajectory. | M (magnitude), G (direction relative to inherited signal), F (spatial context) |
+| **Q3 Magnitude** | Irrespective of direction, how large is the beaver-mediated DOC change per unit area relative to the seasonal floodplain-scale variation, and does it reinforce or oppose the inherited signal? | The change per unit area is orders of magnitude larger than the floodplain-scale seasonal signal, and beaver-engineering **modifies** (rather than merely adds to) the inherited seasonal trajectory. | $M$ (magnitude), $G$ (direction relative to inherited signal), $F$ (spatial context) |
 
 # 4. Data used here
 
@@ -193,7 +195,7 @@ switches <- d |> summarise(
 kable(switches |> mutate(across(c(winter_pos, summer_pos), ~sprintf("%.0f%%", 100*.x)),
                          across(starts_with("med"), ~round(.x, 3))),
       col.names = c("winter enriching", "summer enriching",
-                    "median |ΔDOC| winter", "median |ΔDOC| summer",
+                    "median $\\lvert \\Delta$DOC$\\rvert$ winter", "median $\\lvert \\Delta$DOC$\\rvert$ summer",
                     "depletion → enrichment", "enrichment → depletion"))
 ```
 
@@ -259,8 +261,8 @@ p_dec
 ```{r m-numbers}
 #| echo: false
 kable(tibble(
-  Quantity = c("Concentration ratio |ΔDOC_summer| / |S|", "Footprint contrast F",
-               "Amplification factor M (summer)", "Beaver footprint as % of floodplain"),
+  Quantity = c("Concentration ratio $\\lvert \\Delta\\text{DOC}_{summer} \\rvert / \\lvert S \\rvert$", "Footprint contrast $F$",
+               "Amplification factor $M$ (summer)", "Beaver footprint as % of floodplain"),
   Median = c(sprintf("%.2f", median(d$ratio_s)), sprintf("%.0f", median(d$F)),
              sprintf("%.0f", median(d$M_s)), sprintf("%.2f%%", 100*median(1/d$F)))))
 ```
@@ -347,10 +349,10 @@ d$p_state  <- p_state
 d$B_strong <- colMeans(abs(Blat) > 0.5) > 0.9                    # ROPE on B, as elsewhere in the paper
 
 ctr <- tibble(
-  Contrast = c("Reverses depletion→enrichment  −  reverses enrichment→depletion",
-               "Amplifies enrichment  −  dampens enrichment",
-               "Number of reaches with B > 0 (out of 158)",
-               "Median B across reaches (mg L⁻¹)"),
+  Contrast = c("Reverses depletion $\\to$ enrichment $-$ reverses enrichment $\\to$ depletion",
+               "Amplifies enrichment $-$ dampens enrichment",
+               "Number of reaches with $B > 0$ (out of 158)",
+               "Median $B$ across reaches (mg L$^{-1}$)"),
   Posterior = c(mean(cnt[,6] - cnt[,3]), mean(cnt[,1] - cnt[,2]),
                 mean(rowSums(Blat > 0)), mean(apply(Blat, 1, median))),
   lo = c(quantile(cnt[,6]-cnt[,3], .025), quantile(cnt[,1]-cnt[,2], .025),
@@ -363,8 +365,8 @@ kable(ctr |> mutate(across(where(is.numeric), ~round(.x, 2))),
       caption = "Posterior contrasts. For the count of reaches with B > 0 the probability shown is P(more than half).")
 
 glue::glue(
-"Reaches whose six-state label carries posterior probability > 0.9: {sum(p_state>0.9)} of {nrow(d)} ({round(100*mean(p_state>0.9))}%)
-Reaches with P(|B| > 0.5 mg/L) > 0.9, i.e. a practically relevant seasonal modification: {sum(d$B_strong)} of {nrow(d)}
+"Reaches whose six-state label carries posterior probability above 0.9: {sum(p_state>0.9)} of {nrow(d)} ({round(100*mean(p_state>0.9))}%)
+Reaches with P(|B| above 0.5 mg/L) above 0.9, i.e. a practically relevant seasonal modification: {sum(d$B_strong)} of {nrow(d)}
 Between-reach SD of the true inherited signal S: {round(mean(as_draws_df(fS)$sd_reach__Intercept),2)} mg/L (measurement SD 0.283), so shrinkage is small")
 ```
 
@@ -448,15 +450,15 @@ The honest caveat stays at the level of the individual reach: only `r sum(d$p_st
 #| echo: false
 inv <- tribble(
   ~Figure, ~Content, ~`Answers`, ~Placement, ~Status,
-  "Fig. 1a", "Seasonal posterior predictive of ΔDOC", "Q1 Direction", "Main text", "existing",
+  "Fig. 1a", "Seasonal posterior predictive of $\\Delta$DOC", "Q1 Direction", "Main text", "existing",
   "Fig. 1b", "SCM with estimated paths", "Q2 Drivers", "Main text", "existing",
-  "Fig. 2a", "Decomposition of M: ratio × footprint", "Q3 Magnitude", "Main text", "**new**",
-  "Fig. 2b", "Model-based M by season", "Q3 Magnitude", "Main text", "existing",
-  "Fig. 3",  "Response space S–B", "Q3 Modification (G)", "Main text (or S1)", "**new**",
-  "Fig. 4",  "Map, sampling design and M schematic", "Methods", "Main text", "existing",
+  "Fig. 2a", "Decomposition of $M$: ratio $\\times$ footprint", "Q3 Magnitude", "Main text", "**new**",
+  "Fig. 2b", "Model-based $M$ by season", "Q3 Magnitude", "Main text", "existing",
+  "Fig. 3",  "Response space $S$–$B$", "Q3 Modification (G)", "Main text (or S1)", "**new**",
+  "Fig. 4",  "Map, sampling design and $M$ schematic", "Methods", "Main text", "existing",
   "Fig. S1", "Hypothesised DAG with numbered paths", "Q2", "Appendix S1", "existing",
   "Fig. S2–S5", "Priors, residuals, posterior checks, posterior parameters", "Q2", "Appendix S1", "existing",
-  "Fig. S6", "Stream-level classification of ΔDOC", "Q1", "Appendix S1", "existing",
+  "Fig. S6", "Stream-level classification of $\\Delta$DOC", "Q1", "Appendix S1", "existing",
   "Fig. S7", "Total effects of the drivers", "Q2", "Appendix S1", "existing",
   "Fig. S8–S9", "Alternative SCM with lateral connectivity", "Q2", "Appendix S1", "existing",
   "Fig. S10", "Variable-derivation DAG (this document, §2)", "all", "Appendix S1", "**new**",

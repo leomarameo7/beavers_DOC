@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Leonardo Capitani">
-<meta name="dcterms.date" content="2026-09-03">
+<meta name="dcterms.date" content="2026-09-04">
 
 <title>Option: rebuilding the SCM with downstream DOC as the target</title>
 <style>
@@ -2384,7 +2384,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">September 3, 2026</p>
+      <p class="date">September 4, 2026</p>
     </div>
   </div>
   
@@ -2579,17 +2579,17 @@ window.Quarto = {
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
 <colgroup>
-<col style="width: 8%">
-<col style="width: 54%">
-<col style="width: 22%">
-<col style="width: 8%">
+<col style="width: 7%">
+<col style="width: 50%">
+<col style="width: 27%">
+<col style="width: 7%">
 <col style="width: 6%">
 </colgroup>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Season</th>
 <th style="text-align: left;">Model</th>
-<th style="text-align: right;">&lt;U+0394&gt;DOC (mg/L)</th>
+<th style="text-align: right;"><span class="math inline">\(\Delta\)</span>DOC (mg L<span class="math inline">\(^{-1}\)</span>)</th>
 <th style="text-align: right;">2.5%</th>
 <th style="text-align: right;">97.5%</th>
 </tr>
@@ -2642,11 +2642,11 @@ window.Quarto = {
 </div>
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
-<caption>Free-slope model: &lt;U+03B2&gt; should be near 1 if the model is recovering the paired contrast.</caption>
+<caption>Free-slope model: <span class="math inline">\(\beta\)</span> should be near 1 if the model is recovering the paired contrast.</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Season</th>
-<th style="text-align: right;">Estimated inheritance slope &lt;U+03B2&gt;</th>
+<th style="text-align: right;">Estimated inheritance slope <span class="math inline">\(\beta\)</span></th>
 <th style="text-align: right;">2.5%</th>
 <th style="text-align: right;">97.5%</th>
 </tr>
@@ -2738,40 +2738,40 @@ Figure 1: Estimated average ΔDOC by season under the three formulations. The f
 <caption>Every prior on the outcome equation changes meaning when the target changes.</caption>
 <colgroup>
 <col style="width: 17%">
-<col style="width: 31%">
-<col style="width: 50%">
+<col style="width: 30%">
+<col style="width: 52%">
 </colgroup>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Parameter</th>
-<th style="text-align: left;">Current (&lt;U+0394&gt;DOC target, standardized)</th>
-<th style="text-align: left;">Required (downstream DOC target, mg/L)</th>
+<th style="text-align: left;">Current (<span class="math inline">\(\Delta\)</span>DOC target, standardized)</th>
+<th style="text-align: left;">Required (downstream DOC target, mg L<span class="math inline">\(^{-1}\)</span>)</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">Upstream DOC &lt;U+2192&gt; outcome</td>
-<td style="text-align: left;">&lt;U+03B2&gt;&lt;U+2081&gt; ~ Normal(0, 0.1), estimate &lt;U+2212&gt;0.10</td>
-<td style="text-align: left;">inheritance fixed at 1 (offset), or Normal(1, 0.1) &lt;U+2014&gt; a different quantity entirely</td>
+<td style="text-align: left;">Upstream DOC <span class="math inline">\(\to\)</span> outcome</td>
+<td style="text-align: left;"><span class="math inline">\(\beta_1 \sim\)</span> Normal(0, 0.1), estimate <span class="math inline">\(-0.10\)</span></td>
+<td style="text-align: left;">inheritance fixed at 1 (offset), or Normal(1, 0.1) — a different quantity entirely</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Intercept</td>
-<td style="text-align: left;">Normal(0, 2.5) on &lt;U+0394&gt;DOC</td>
-<td style="text-align: left;">Normal(0, 1) on the mg/L offset; season-specific</td>
+<td style="text-align: left;">Normal(0, 2.5) on <span class="math inline">\(\Delta\)</span>DOC</td>
+<td style="text-align: left;">Normal(0, 1) on the mg L<span class="math inline">\(^{-1}\)</span> offset; season-specific</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Producer paths &lt;U+2192&gt; outcome</td>
+<td style="text-align: left;">Producer paths → outcome</td>
 <td style="text-align: left;">Normal(0.2, 0.075), standardized</td>
-<td style="text-align: left;">must be rescaled to mg/L per SD of the producer variable</td>
+<td style="text-align: left;">must be rescaled to mg L<span class="math inline">\(^{-1}\)</span> per SD of the producer variable</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">&lt;U+03C3&gt; of the outcome</td>
-<td style="text-align: left;">Student-t(3, 0, 2.5) on &lt;U+0394&gt;DOC</td>
+<td style="text-align: left;"><span class="math inline">\(\sigma\)</span> of the outcome</td>
+<td style="text-align: left;">Student-<span class="math inline">\(t\)</span>(3, 0, 2.5) on <span class="math inline">\(\Delta\)</span>DOC</td>
 <td style="text-align: left;">same family, but the residual now absorbs concentration-level variation</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Site random intercept</td>
-<td style="text-align: left;">Normal(0, 2) on &lt;U+0394&gt;DOC</td>
+<td style="text-align: left;">Normal(0, 2) on <span class="math inline">\(\Delta\)</span>DOC</td>
 <td style="text-align: left;">now absorbs site DOC level, so the prior must widen substantially</td>
 </tr>
 </tbody>
@@ -2785,8 +2785,8 @@ Figure 1: Estimated average ΔDOC by season under the three formulations. The f
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
 <colgroup>
-<col style="width: 24%">
-<col style="width: 75%">
+<col style="width: 21%">
+<col style="width: 78%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -2801,14 +2801,14 @@ Figure 1: Estimated average ΔDOC by season under the three formulations. The f
 </tr>
 <tr class="even">
 <td style="text-align: left;">Table S1 (13 hypotheses)</td>
-<td style="text-align: left;">each hypothesis is phrased in terms of &lt;U+0394&gt;DOC</td>
+<td style="text-align: left;">each hypothesis is phrased in terms of ΔDOC</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Fig. S2 (priors)</td>
 <td style="text-align: left;">new prior set</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Figs. S3&lt;U+2013&gt;S4 (residuals, posterior predictive)</td>
+<td style="text-align: left;">Figs. S3–S4 (residuals, posterior predictive)</td>
 <td style="text-align: left;">new outcome</td>
 </tr>
 <tr class="odd">
@@ -2820,11 +2820,11 @@ Figure 1: Estimated average ΔDOC by season under the three formulations. The f
 <td style="text-align: left;">path tracing must be redone per season; upstream DOC is no longer a driver but an inherited baseline, so the largest current total effect disappears by construction</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Figs. S8&lt;U+2013&gt;S9 (connectivity SCM)</td>
+<td style="text-align: left;">Figs. S8–S9 (connectivity SCM)</td>
 <td style="text-align: left;">must be re-specified the same way for consistency</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Results &lt;U+00A7&gt;2 and Methods</td>
+<td style="text-align: left;">Results §2 and Methods</td>
 <td style="text-align: left;">every number and the causal wording</td>
 </tr>
 </tbody>
@@ -2839,8 +2839,8 @@ Figure 1: Estimated average ΔDOC by season under the three formulations. The f
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
 <colgroup>
-<col style="width: 85%">
-<col style="width: 14%">
+<col style="width: 88%">
+<col style="width: 11%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -2851,19 +2851,19 @@ Figure 1: Estimated average ΔDOC by season under the three formulations. The f
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">Re-specification and prior redesign, prior predictive checks</td>
-<td style="text-align: left;">2&lt;U+2013&gt;3</td>
+<td style="text-align: left;">2–3</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Fitting, convergence and identification troubleshooting (the pilot above already shows where it bites)</td>
-<td style="text-align: left;">2&lt;U+2013&gt;3</td>
+<td style="text-align: left;">2–3</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Re-deriving posterior quantities and regenerating 6&lt;U+2013&gt;8 figures</td>
-<td style="text-align: left;">2&lt;U+2013&gt;3</td>
+<td style="text-align: left;">Re-deriving posterior quantities and regenerating 6–8 figures</td>
+<td style="text-align: left;">2–3</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Rewriting Methods, Results and Appendix S1</td>
-<td style="text-align: left;">2&lt;U+2013&gt;3</td>
+<td style="text-align: left;">2–3</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Co-author review of a substantially changed analysis</td>
@@ -2871,7 +2871,7 @@ Figure 1: Estimated average ΔDOC by season under the three formulations. The f
 </tr>
 <tr class="even">
 <td style="text-align: left;"><strong>Total</strong></td>
-<td style="text-align: left;"><strong>10&lt;U+2013&gt;14</strong></td>
+<td style="text-align: left;"><strong>10–14</strong></td>
 </tr>
 </tbody>
 </table>
@@ -3393,257 +3393,258 @@ Figure 1: Estimated average ΔDOC by season under the three formulations. The f
 <span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a><span class="co">#| include: false</span></span>
 <span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse); <span class="fu">library</span>(brms); <span class="fu">library</span>(ggdist); <span class="fu">library</span>(patchwork)</span>
 <span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr); <span class="fu">library</span>(here); <span class="fu">library</span>(glue)</span>
-<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>OK <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="at">blue=</span><span class="st">&quot;#0072B2&quot;</span>, <span class="at">vermillion=</span><span class="st">&quot;#D55E00&quot;</span>, <span class="at">green=</span><span class="st">&quot;#009E73&quot;</span>, <span class="at">amber=</span><span class="st">&quot;#E69F00&quot;</span>)</span>
-<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip appearance=&quot;simple&quot;}</span>
-<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a><span class="fu">## The proposal being evaluated</span></span>
-<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; &quot;Could we try one more thing instead, which is to change the target variable from delta DOC to just the downstream DOC concentration? Upstream DOC would then still feed into this. We can then estimate delta DOC directly from the posteriors, winter and summer separately etc. That is: instead of using B as the target variable, retain winter and summer DOC as the target, and then use the posterior distributions to get distributions of B, gamma, lambda etc.&quot;</span></span>
-<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a><span class="at">&gt;</span></span>
-<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; — Josh Larsen</span></span>
-<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a>This document tests that proposal rather than describing it. **The short answer: the idea is correct, and the correct implementation of it is already what the manuscript does.** The free-slope version is not just expensive, it degrades the estimate. Evidence below.</span>
-<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a><span class="fu"># 1. What the proposal changes</span></span>
-<span id="cb10-40"><a href="#cb10-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-41"><a href="#cb10-41" aria-hidden="true" tabindex="-1"></a>The current analysis has two separate models:</span>
-<span id="cb10-42"><a href="#cb10-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-43"><a href="#cb10-43" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Model <span class="pp">|</span> Target <span class="pp">|</span> Purpose <span class="pp">|</span></span>
-<span id="cb10-44"><a href="#cb10-44" aria-hidden="true" tabindex="-1"></a><span class="pp">|------------------|------------------|-------------------------------------|</span></span>
-<span id="cb10-45"><a href="#cb10-45" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Q1 measurement-error model <span class="pp">|</span> raw upstream and downstream DOC, season × location <span class="pp">|</span> direction of ΔDOC <span class="pp">|</span></span>
-<span id="cb10-46"><a href="#cb10-46" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Q2 structural causal model <span class="pp">|</span> ΔDOC with propagated error 0.283 mg L⁻¹ <span class="pp">|</span> drivers <span class="pp">|</span></span>
-<span id="cb10-47"><a href="#cb10-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-48"><a href="#cb10-48" aria-hidden="true" tabindex="-1"></a>Josh&#39;s proposal merges them: one model with **downstream DOC as the target**, upstream DOC as a parent, season-specific paths, and every contrast (ΔDOC, B, S, G, M) derived from the posterior. Conceptually this is attractive: the contrasts inherit full uncertainty instead of being computed from point values.</span>
-<span id="cb10-49"><a href="#cb10-49" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-50"><a href="#cb10-50" aria-hidden="true" tabindex="-1"></a><span class="fu"># 2. The critical question: what does &quot;upstream DOC feeds into this&quot; mean?</span></span>
-<span id="cb10-51"><a href="#cb10-51" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-52"><a href="#cb10-52" aria-hidden="true" tabindex="-1"></a>There are two ways to let upstream DOC enter the downstream equation, and they are **different estimands**:</span>
-<span id="cb10-53"><a href="#cb10-53" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-54"><a href="#cb10-54" aria-hidden="true" tabindex="-1"></a>$$\text{(a) free slope: } \;\text{DOC}_{down} = \alpha_s + \beta_s \,\text{DOC}_{up} + \dots \qquad</span>
-<span id="cb10-55"><a href="#cb10-55" aria-hidden="true" tabindex="-1"></a>\text{(b) offset: }\; \text{DOC}_{down} = \alpha_s + 1\cdot\text{DOC}_{up} + \dots$$</span>
-<span id="cb10-56"><a href="#cb10-56" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-57"><a href="#cb10-57" aria-hidden="true" tabindex="-1"></a>Under (b), $\alpha_s$ **is** ΔDOC in season *s*. Under (a) there is no single ΔDOC: the implied difference $\alpha_s + (\beta_s - 1)\,\text{DOC}_{up}$ depends on how much DOC the stream was carrying. The paired design was chosen precisely to remove that dependence.</span>
-<span id="cb10-58"><a href="#cb10-58" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-59"><a href="#cb10-59" aria-hidden="true" tabindex="-1"></a>So the proposal only reproduces the intended quantity if $\beta \approx 1$. Let us check.</span>
-<span id="cb10-60"><a href="#cb10-60" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-61"><a href="#cb10-61" aria-hidden="true" tabindex="-1"></a><span class="in">```{r data}</span></span>
-<span id="cb10-62"><a href="#cb10-62" aria-hidden="true" tabindex="-1"></a>m <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="fu">here</span>(<span class="st">&quot;data&quot;</span>,<span class="st">&quot;processed&quot;</span>,<span class="st">&quot;m6.csv&quot;</span>))</span>
-<span id="cb10-63"><a href="#cb10-63" aria-hidden="true" tabindex="-1"></a>wide <span class="ot">&lt;-</span> m <span class="sc">|&gt;</span> <span class="fu">select</span>(site, season, <span class="at">up =</span> DOC_input, <span class="at">dn =</span> DOC_out) <span class="sc">|&gt;</span></span>
-<span id="cb10-64"><a href="#cb10-64" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(up), <span class="sc">!</span><span class="fu">is.na</span>(dn)) <span class="sc">|&gt;</span></span>
-<span id="cb10-65"><a href="#cb10-65" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">season =</span> <span class="fu">factor</span>(season), <span class="at">site =</span> <span class="fu">factor</span>(site))</span>
-<span id="cb10-66"><a href="#cb10-66" aria-hidden="true" tabindex="-1"></a><span class="fu">glue</span>(<span class="st">&quot;Observations: {nrow(wide)} | sites: {nlevels(wide$site)} | mean upstream DOC: {round(mean(wide$up),2)} mg/L&quot;</span>)</span>
-<span id="cb10-67"><a href="#cb10-67" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb10-68"><a href="#cb10-68" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-69"><a href="#cb10-69" aria-hidden="true" tabindex="-1"></a><span class="in">```{r slope}</span></span>
-<span id="cb10-70"><a href="#cb10-70" aria-hidden="true" tabindex="-1"></a><span class="co">#| results: hide</span></span>
-<span id="cb10-71"><a href="#cb10-71" aria-hidden="true" tabindex="-1"></a>f_slope <span class="ot">&lt;-</span> <span class="fu">brm</span>(<span class="fu">bf</span>(dn <span class="sc">|</span> <span class="fu">mi</span>(<span class="fl">0.2</span>) <span class="sc">~</span> <span class="dv">0</span> <span class="sc">+</span> season <span class="sc">+</span> season<span class="sc">:</span>up, <span class="at">family =</span> <span class="fu">student</span>()),</span>
-<span id="cb10-72"><a href="#cb10-72" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> wide,</span>
-<span id="cb10-73"><a href="#cb10-73" aria-hidden="true" tabindex="-1"></a>  <span class="at">prior =</span> <span class="fu">c</span>(<span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">0</span>, <span class="dv">2</span>), <span class="at">class =</span> <span class="st">&quot;b&quot;</span>), <span class="fu">prior</span>(<span class="fu">student_t</span>(<span class="dv">3</span>, <span class="dv">0</span>, <span class="fl">2.5</span>), <span class="at">class =</span> <span class="st">&quot;sigma&quot;</span>),</span>
-<span id="cb10-74"><a href="#cb10-74" aria-hidden="true" tabindex="-1"></a>            <span class="fu">prior</span>(<span class="fu">gamma</span>(<span class="dv">2</span>, <span class="fl">0.1</span>), <span class="at">class =</span> <span class="st">&quot;nu&quot;</span>)),</span>
-<span id="cb10-75"><a href="#cb10-75" aria-hidden="true" tabindex="-1"></a>  <span class="at">chains =</span> <span class="dv">4</span>, <span class="at">cores =</span> <span class="dv">4</span>, <span class="at">iter =</span> <span class="dv">3000</span>, <span class="at">warmup =</span> <span class="dv">1000</span>, <span class="at">seed =</span> <span class="dv">7</span>,</span>
-<span id="cb10-76"><a href="#cb10-76" aria-hidden="true" tabindex="-1"></a>  <span class="at">backend =</span> <span class="st">&quot;cmdstanr&quot;</span>, <span class="at">file =</span> <span class="fu">here</span>(<span class="st">&quot;results&quot;</span>,<span class="st">&quot;models_fit&quot;</span>,<span class="st">&quot;inheritance_slope&quot;</span>), <span class="at">refresh =</span> <span class="dv">0</span>)</span>
-<span id="cb10-77"><a href="#cb10-77" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb10-78"><a href="#cb10-78" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-79"><a href="#cb10-79" aria-hidden="true" tabindex="-1"></a><span class="in">```{r slope-table}</span></span>
-<span id="cb10-80"><a href="#cb10-80" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb10-81"><a href="#cb10-81" aria-hidden="true" tabindex="-1"></a>ds <span class="ot">&lt;-</span> <span class="fu">as_draws_df</span>(f_slope)</span>
-<span id="cb10-82"><a href="#cb10-82" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(<span class="fu">bind_rows</span>(<span class="fu">lapply</span>(<span class="fu">c</span>(<span class="st">&quot;summer&quot;</span>,<span class="st">&quot;winter&quot;</span>), <span class="cf">function</span>(s){</span>
-<span id="cb10-83"><a href="#cb10-83" aria-hidden="true" tabindex="-1"></a>  b <span class="ot">&lt;-</span> ds[[<span class="fu">paste0</span>(<span class="st">&quot;b_season&quot;</span>, s, <span class="st">&quot;:up&quot;</span>)]]</span>
-<span id="cb10-84"><a href="#cb10-84" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">Season =</span> s, <span class="st">`</span><span class="at">Posterior mean slope</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">round</span>(<span class="fu">mean</span>(b), <span class="dv">2</span>),</span>
-<span id="cb10-85"><a href="#cb10-85" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">2.5%</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">round</span>(<span class="fu">quantile</span>(b, .<span class="dv">025</span>), <span class="dv">2</span>), <span class="st">`</span><span class="at">97.5%</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">round</span>(<span class="fu">quantile</span>(b, .<span class="dv">975</span>), <span class="dv">2</span>),</span>
-<span id="cb10-86"><a href="#cb10-86" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">P(0.9 &lt; slope &lt; 1.1)</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">round</span>(<span class="fu">mean</span>(b <span class="sc">&gt;</span> <span class="fl">0.9</span> <span class="sc">&amp;</span> b <span class="sc">&lt;</span> <span class="fl">1.1</span>), <span class="dv">2</span>))})),</span>
-<span id="cb10-87"><a href="#cb10-87" aria-hidden="true" tabindex="-1"></a>  <span class="at">caption =</span> <span class="st">&quot;Bayesian robust regression of downstream on upstream DOC (Student-t likelihood, 0.2 mg/L error on the response).&quot;</span>)</span>
-<span id="cb10-88"><a href="#cb10-88" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb10-89"><a href="#cb10-89" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-90"><a href="#cb10-90" aria-hidden="true" tabindex="-1"></a>::: {.callout-note}</span>
-<span id="cb10-91"><a href="#cb10-91" aria-hidden="true" tabindex="-1"></a><span class="fu">## Inheritance really is close to one-to-one</span></span>
-<span id="cb10-92"><a href="#cb10-92" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-93"><a href="#cb10-93" aria-hidden="true" tabindex="-1"></a>The posterior slope of downstream on upstream DOC is **0.93 [0.88, 0.97] in summer and 0.95 [0.92, 0.99] in winter**. A heavy-tailed likelihood handles the few extreme upstream concentrations without trimming anything.</span>
-<span id="cb10-94"><a href="#cb10-94" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-95"><a href="#cb10-95" aria-hidden="true" tabindex="-1"></a>Downstream DOC tracks upstream DOC essentially one-for-one, so Josh&#39;s premise is empirically correct. The slope is nonetheless slightly *below* one, which is itself interpretable: at high incoming concentrations the reach retains proportionally a little more DOC than it passes on.</span>
-<span id="cb10-96"><a href="#cb10-96" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb10-97"><a href="#cb10-97" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-98"><a href="#cb10-98" aria-hidden="true" tabindex="-1"></a><span class="fu"># 3. Three pilot fits</span></span>
-<span id="cb10-99"><a href="#cb10-99" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-100"><a href="#cb10-100" aria-hidden="true" tabindex="-1"></a>All three use the same data, the same Student-*t* likelihood, the same site random intercept and the same 0.2 mg L⁻¹ instrument error on the response.</span>
-<span id="cb10-101"><a href="#cb10-101" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-102"><a href="#cb10-102" aria-hidden="true" tabindex="-1"></a><span class="in">```{r fits}</span></span>
-<span id="cb10-103"><a href="#cb10-103" aria-hidden="true" tabindex="-1"></a><span class="co">#| results: hide</span></span>
-<span id="cb10-104"><a href="#cb10-104" aria-hidden="true" tabindex="-1"></a><span class="co"># (a) FREE SLOPE, upstream as a measurement-error covariate -- the literal proposal</span></span>
-<span id="cb10-105"><a href="#cb10-105" aria-hidden="true" tabindex="-1"></a>f_free <span class="ot">&lt;-</span> <span class="fu">brm</span>(<span class="fu">bf</span>(dn <span class="sc">|</span> <span class="fu">mi</span>(<span class="fl">0.2</span>) <span class="sc">~</span> <span class="dv">0</span> <span class="sc">+</span> season <span class="sc">+</span> season<span class="sc">:</span><span class="fu">me</span>(up, <span class="fl">0.2</span>) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>site), <span class="at">family =</span> <span class="fu">student</span>()),</span>
-<span id="cb10-106"><a href="#cb10-106" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> wide,</span>
-<span id="cb10-107"><a href="#cb10-107" aria-hidden="true" tabindex="-1"></a>  <span class="at">prior =</span> <span class="fu">c</span>(<span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">class =</span> <span class="st">&quot;b&quot;</span>),</span>
-<span id="cb10-108"><a href="#cb10-108" aria-hidden="true" tabindex="-1"></a>            <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">1</span>, <span class="fl">0.3</span>), <span class="at">class =</span> <span class="st">&quot;b&quot;</span>, <span class="at">coef =</span> <span class="st">&quot;seasonsummer:meup0.2&quot;</span>),</span>
-<span id="cb10-109"><a href="#cb10-109" aria-hidden="true" tabindex="-1"></a>            <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">1</span>, <span class="fl">0.3</span>), <span class="at">class =</span> <span class="st">&quot;b&quot;</span>, <span class="at">coef =</span> <span class="st">&quot;seasonwinter:meup0.2&quot;</span>),</span>
-<span id="cb10-110"><a href="#cb10-110" aria-hidden="true" tabindex="-1"></a>            <span class="fu">prior</span>(<span class="fu">student_t</span>(<span class="dv">3</span>, <span class="dv">0</span>, <span class="fl">2.5</span>), <span class="at">class =</span> <span class="st">&quot;sigma&quot;</span>), <span class="fu">prior</span>(<span class="fu">gamma</span>(<span class="dv">2</span>, <span class="fl">0.1</span>), <span class="at">class =</span> <span class="st">&quot;nu&quot;</span>),</span>
-<span id="cb10-111"><a href="#cb10-111" aria-hidden="true" tabindex="-1"></a>            <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">class =</span> <span class="st">&quot;sd&quot;</span>),</span>
-<span id="cb10-112"><a href="#cb10-112" aria-hidden="true" tabindex="-1"></a>            <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="fl">2.5</span>, <span class="dv">2</span>), <span class="at">class =</span> <span class="st">&quot;meanme&quot;</span>), <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">0</span>, <span class="dv">3</span>), <span class="at">class =</span> <span class="st">&quot;sdme&quot;</span>)),</span>
-<span id="cb10-113"><a href="#cb10-113" aria-hidden="true" tabindex="-1"></a>  <span class="at">chains =</span> <span class="dv">4</span>, <span class="at">cores =</span> <span class="dv">4</span>, <span class="at">iter =</span> <span class="dv">3000</span>, <span class="at">warmup =</span> <span class="dv">1000</span>, <span class="at">seed =</span> <span class="dv">7</span>,</span>
-<span id="cb10-114"><a href="#cb10-114" aria-hidden="true" tabindex="-1"></a>  <span class="at">control =</span> <span class="fu">list</span>(<span class="at">adapt_delta =</span> <span class="fl">0.95</span>, <span class="at">max_treedepth =</span> <span class="dv">12</span>),</span>
-<span id="cb10-115"><a href="#cb10-115" aria-hidden="true" tabindex="-1"></a>  <span class="at">backend =</span> <span class="st">&quot;cmdstanr&quot;</span>, <span class="at">file =</span> <span class="fu">here</span>(<span class="st">&quot;results&quot;</span>,<span class="st">&quot;models_fit&quot;</span>,<span class="st">&quot;pilot_downstream_v2&quot;</span>), <span class="at">refresh =</span> <span class="dv">0</span>)</span>
-<span id="cb10-116"><a href="#cb10-116" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-117"><a href="#cb10-117" aria-hidden="true" tabindex="-1"></a><span class="co"># (b) OFFSET, inheritance fixed at 1 -- the paired contrast written as a downstream-DOC model</span></span>
-<span id="cb10-118"><a href="#cb10-118" aria-hidden="true" tabindex="-1"></a>f_off <span class="ot">&lt;-</span> <span class="fu">brm</span>(<span class="fu">bf</span>(dn <span class="sc">|</span> <span class="fu">mi</span>(<span class="fl">0.2</span>) <span class="sc">~</span> <span class="dv">0</span> <span class="sc">+</span> season <span class="sc">+</span> <span class="fu">offset</span>(up) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>site), <span class="at">family =</span> <span class="fu">student</span>()),</span>
-<span id="cb10-119"><a href="#cb10-119" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> wide,</span>
-<span id="cb10-120"><a href="#cb10-120" aria-hidden="true" tabindex="-1"></a>  <span class="at">prior =</span> <span class="fu">c</span>(<span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">class =</span> <span class="st">&quot;b&quot;</span>), <span class="fu">prior</span>(<span class="fu">student_t</span>(<span class="dv">3</span>, <span class="dv">0</span>, <span class="fl">2.5</span>), <span class="at">class =</span> <span class="st">&quot;sigma&quot;</span>),</span>
-<span id="cb10-121"><a href="#cb10-121" aria-hidden="true" tabindex="-1"></a>            <span class="fu">prior</span>(<span class="fu">gamma</span>(<span class="dv">2</span>, <span class="fl">0.1</span>), <span class="at">class =</span> <span class="st">&quot;nu&quot;</span>), <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">class =</span> <span class="st">&quot;sd&quot;</span>)),</span>
-<span id="cb10-122"><a href="#cb10-122" aria-hidden="true" tabindex="-1"></a>  <span class="at">chains =</span> <span class="dv">4</span>, <span class="at">cores =</span> <span class="dv">4</span>, <span class="at">iter =</span> <span class="dv">3000</span>, <span class="at">warmup =</span> <span class="dv">1000</span>, <span class="at">seed =</span> <span class="dv">7</span>,</span>
-<span id="cb10-123"><a href="#cb10-123" aria-hidden="true" tabindex="-1"></a>  <span class="at">backend =</span> <span class="st">&quot;cmdstanr&quot;</span>, <span class="at">file =</span> <span class="fu">here</span>(<span class="st">&quot;results&quot;</span>,<span class="st">&quot;models_fit&quot;</span>,<span class="st">&quot;pilot_offset&quot;</span>), <span class="at">refresh =</span> <span class="dv">0</span>)</span>
-<span id="cb10-124"><a href="#cb10-124" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb10-125"><a href="#cb10-125" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-126"><a href="#cb10-126" aria-hidden="true" tabindex="-1"></a><span class="in">```{r diag}</span></span>
-<span id="cb10-127"><a href="#cb10-127" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb10-128"><a href="#cb10-128" aria-hidden="true" tabindex="-1"></a>dg <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb10-129"><a href="#cb10-129" aria-hidden="true" tabindex="-1"></a>  <span class="at">Model =</span> <span class="fu">c</span>(<span class="st">&quot;(a) free slope, me(up, 0.2)&quot;</span>, <span class="st">&quot;(b) offset, inheritance = 1&quot;</span>),</span>
-<span id="cb10-130"><a href="#cb10-130" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">max R-hat</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="fu">round</span>(<span class="fu">max</span>(<span class="fu">rhat</span>(f_free), <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="dv">3</span>), <span class="fu">round</span>(<span class="fu">max</span>(<span class="fu">rhat</span>(f_off), <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="dv">3</span>)),</span>
-<span id="cb10-131"><a href="#cb10-131" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">min bulk ESS</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="fu">round</span>(<span class="fu">min</span>(<span class="fu">summary</span>(f_free)<span class="sc">$</span>fixed[,<span class="st">&quot;Bulk_ESS&quot;</span>])), <span class="fu">round</span>(<span class="fu">min</span>(<span class="fu">summary</span>(f_off)<span class="sc">$</span>fixed[,<span class="st">&quot;Bulk_ESS&quot;</span>]))))</span>
-<span id="cb10-132"><a href="#cb10-132" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(dg)</span>
-<span id="cb10-133"><a href="#cb10-133" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb10-134"><a href="#cb10-134" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-135"><a href="#cb10-135" aria-hidden="true" tabindex="-1"></a><span class="in">```{r estimates}</span></span>
-<span id="cb10-136"><a href="#cb10-136" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb10-137"><a href="#cb10-137" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">as_draws_df</span>(f_free); do <span class="ot">&lt;-</span> <span class="fu">as_draws_df</span>(f_off)</span>
-<span id="cb10-138"><a href="#cb10-138" aria-hidden="true" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(<span class="fu">lapply</span>(<span class="fu">c</span>(<span class="st">&quot;summer&quot;</span>,<span class="st">&quot;winter&quot;</span>), <span class="cf">function</span>(s){</span>
-<span id="cb10-139"><a href="#cb10-139" aria-hidden="true" tabindex="-1"></a>  ub <span class="ot">&lt;-</span> <span class="fu">mean</span>(wide<span class="sc">$</span>up[wide<span class="sc">$</span>season <span class="sc">==</span> s])</span>
-<span id="cb10-140"><a href="#cb10-140" aria-hidden="true" tabindex="-1"></a>  a  <span class="ot">&lt;-</span> df[[<span class="fu">paste0</span>(<span class="st">&quot;b_season&quot;</span>, s)]]; b <span class="ot">&lt;-</span> df[[<span class="fu">paste0</span>(<span class="st">&quot;bsp_season&quot;</span>, s, <span class="st">&quot;:meup0.2&quot;</span>)]]</span>
-<span id="cb10-141"><a href="#cb10-141" aria-hidden="true" tabindex="-1"></a>  free <span class="ot">&lt;-</span> a <span class="sc">+</span> (b <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span> ub</span>
-<span id="cb10-142"><a href="#cb10-142" aria-hidden="true" tabindex="-1"></a>  off  <span class="ot">&lt;-</span> do[[<span class="fu">paste0</span>(<span class="st">&quot;b_season&quot;</span>, s)]]</span>
-<span id="cb10-143"><a href="#cb10-143" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(</span>
-<span id="cb10-144"><a href="#cb10-144" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tibble</span>(<span class="at">season =</span> s, <span class="at">model =</span> <span class="st">&quot;(a) free slope, evaluated at mean upstream DOC&quot;</span>,</span>
-<span id="cb10-145"><a href="#cb10-145" aria-hidden="true" tabindex="-1"></a>           <span class="at">est =</span> <span class="fu">mean</span>(free), <span class="at">lo =</span> <span class="fu">quantile</span>(free, .<span class="dv">025</span>), <span class="at">hi =</span> <span class="fu">quantile</span>(free, .<span class="dv">975</span>)),</span>
-<span id="cb10-146"><a href="#cb10-146" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tibble</span>(<span class="at">season =</span> s, <span class="at">model =</span> <span class="st">&quot;(b) offset (inheritance = 1)&quot;</span>,</span>
-<span id="cb10-147"><a href="#cb10-147" aria-hidden="true" tabindex="-1"></a>           <span class="at">est =</span> <span class="fu">mean</span>(off),  <span class="at">lo =</span> <span class="fu">quantile</span>(off,  .<span class="dv">025</span>), <span class="at">hi =</span> <span class="fu">quantile</span>(off,  .<span class="dv">975</span>)),</span>
-<span id="cb10-148"><a href="#cb10-148" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tibble</span>(<span class="at">season =</span> s, <span class="at">model =</span> <span class="st">&quot;(c) current manuscript Q1 model&quot;</span>,</span>
-<span id="cb10-149"><a href="#cb10-149" aria-hidden="true" tabindex="-1"></a>           <span class="at">est =</span> <span class="fu">ifelse</span>(s <span class="sc">==</span> <span class="st">&quot;summer&quot;</span>, <span class="fl">0.137</span>, <span class="fl">0.003</span>),</span>
-<span id="cb10-150"><a href="#cb10-150" aria-hidden="true" tabindex="-1"></a>           <span class="at">lo  =</span> <span class="fu">ifelse</span>(s <span class="sc">==</span> <span class="st">&quot;summer&quot;</span>, <span class="fl">0.054</span>, <span class="sc">-</span><span class="fl">0.064</span>),</span>
-<span id="cb10-151"><a href="#cb10-151" aria-hidden="true" tabindex="-1"></a>           <span class="at">hi  =</span> <span class="fu">ifelse</span>(s <span class="sc">==</span> <span class="st">&quot;summer&quot;</span>, <span class="fl">0.223</span>,  <span class="fl">0.068</span>)))}))</span>
-<span id="cb10-152"><a href="#cb10-152" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(res <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(est, lo, hi), <span class="sc">~</span><span class="fu">round</span>(.x, <span class="dv">3</span>))),</span>
-<span id="cb10-153"><a href="#cb10-153" aria-hidden="true" tabindex="-1"></a>      <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">&quot;Season&quot;</span>,<span class="st">&quot;Model&quot;</span>,<span class="st">&quot;ΔDOC (mg/L)&quot;</span>,<span class="st">&quot;2.5%&quot;</span>,<span class="st">&quot;97.5%&quot;</span>))</span>
-<span id="cb10-154"><a href="#cb10-154" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-155"><a href="#cb10-155" aria-hidden="true" tabindex="-1"></a>inh <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">season =</span> <span class="fu">c</span>(<span class="st">&quot;summer&quot;</span>,<span class="st">&quot;winter&quot;</span>),</span>
-<span id="cb10-156"><a href="#cb10-156" aria-hidden="true" tabindex="-1"></a>  <span class="at">inheritance =</span> <span class="fu">sapply</span>(<span class="fu">c</span>(<span class="st">&quot;summer&quot;</span>,<span class="st">&quot;winter&quot;</span>), \(s) <span class="fu">mean</span>(df[[<span class="fu">paste0</span>(<span class="st">&quot;bsp_season&quot;</span>, s, <span class="st">&quot;:meup0.2&quot;</span>)]])),</span>
-<span id="cb10-157"><a href="#cb10-157" aria-hidden="true" tabindex="-1"></a>  <span class="at">lo =</span> <span class="fu">sapply</span>(<span class="fu">c</span>(<span class="st">&quot;summer&quot;</span>,<span class="st">&quot;winter&quot;</span>), \(s) <span class="fu">quantile</span>(df[[<span class="fu">paste0</span>(<span class="st">&quot;bsp_season&quot;</span>, s, <span class="st">&quot;:meup0.2&quot;</span>)]], .<span class="dv">025</span>)),</span>
-<span id="cb10-158"><a href="#cb10-158" aria-hidden="true" tabindex="-1"></a>  <span class="at">hi =</span> <span class="fu">sapply</span>(<span class="fu">c</span>(<span class="st">&quot;summer&quot;</span>,<span class="st">&quot;winter&quot;</span>), \(s) <span class="fu">quantile</span>(df[[<span class="fu">paste0</span>(<span class="st">&quot;bsp_season&quot;</span>, s, <span class="st">&quot;:meup0.2&quot;</span>)]], .<span class="dv">975</span>)))</span>
-<span id="cb10-159"><a href="#cb10-159" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(inh <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="sc">-</span>season, <span class="sc">~</span><span class="fu">round</span>(.x, <span class="dv">2</span>))),</span>
-<span id="cb10-160"><a href="#cb10-160" aria-hidden="true" tabindex="-1"></a>      <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">&quot;Season&quot;</span>,<span class="st">&quot;Estimated inheritance slope β&quot;</span>,<span class="st">&quot;2.5%&quot;</span>,<span class="st">&quot;97.5%&quot;</span>),</span>
-<span id="cb10-161"><a href="#cb10-161" aria-hidden="true" tabindex="-1"></a>      <span class="at">caption =</span> <span class="st">&quot;Free-slope model: β should be near 1 if the model is recovering the paired contrast.&quot;</span>)</span>
-<span id="cb10-162"><a href="#cb10-162" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb10-163"><a href="#cb10-163" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-164"><a href="#cb10-164" aria-hidden="true" tabindex="-1"></a><span class="in">```{r fig-compare}</span></span>
-<span id="cb10-165"><a href="#cb10-165" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 3.6</span></span>
-<span id="cb10-166"><a href="#cb10-166" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: &quot;Estimated average ΔDOC by season under the three formulations. The free-slope implementation of the proposal disagrees with both the offset formulation and the current manuscript model.&quot;</span></span>
-<span id="cb10-167"><a href="#cb10-167" aria-hidden="true" tabindex="-1"></a>res<span class="sc">$</span>model <span class="ot">&lt;-</span> <span class="fu">factor</span>(res<span class="sc">$</span>model, <span class="at">levels =</span> <span class="fu">rev</span>(<span class="fu">unique</span>(res<span class="sc">$</span>model)))</span>
-<span id="cb10-168"><a href="#cb10-168" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(res, <span class="fu">aes</span>(est, model, <span class="at">colour =</span> season)) <span class="sc">+</span></span>
-<span id="cb10-169"><a href="#cb10-169" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">&quot;dashed&quot;</span>, <span class="at">colour =</span> <span class="st">&quot;grey55&quot;</span>) <span class="sc">+</span></span>
-<span id="cb10-170"><a href="#cb10-170" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_pointrange</span>(<span class="fu">aes</span>(<span class="at">xmin =</span> lo, <span class="at">xmax =</span> hi), <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="at">width =</span> .<span class="dv">45</span>), <span class="at">size =</span> .<span class="dv">5</span>) <span class="sc">+</span></span>
-<span id="cb10-171"><a href="#cb10-171" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="at">summer =</span> OK[[<span class="st">&quot;vermillion&quot;</span>]], <span class="at">winter =</span> OK[[<span class="st">&quot;green&quot;</span>]]), <span class="at">name =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
-<span id="cb10-172"><a href="#cb10-172" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="fu">expression</span>(Delta<span class="sc">*</span><span class="st">&quot;DOC (mg &quot;</span><span class="sc">*</span>L<span class="sc">^-</span><span class="dv">1</span><span class="sc">*</span><span class="st">&quot;)&quot;</span>), <span class="at">y =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
-<span id="cb10-173"><a href="#cb10-173" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>(<span class="at">base_size =</span> <span class="dv">12</span>) <span class="sc">+</span></span>
-<span id="cb10-174"><a href="#cb10-174" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.grid.minor =</span> <span class="fu">element_blank</span>(), <span class="at">legend.position =</span> <span class="st">&quot;top&quot;</span>)</span>
-<span id="cb10-175"><a href="#cb10-175" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb10-176"><a href="#cb10-176" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-177"><a href="#cb10-177" aria-hidden="true" tabindex="-1"></a>::: {.callout-important}</span>
-<span id="cb10-178"><a href="#cb10-178" aria-hidden="true" tabindex="-1"></a><span class="fu">## The decisive result</span></span>
-<span id="cb10-179"><a href="#cb10-179" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-180"><a href="#cb10-180" aria-hidden="true" tabindex="-1"></a>**(b) and (c) agree exactly.** The offset formulation gives +0.12 mg L⁻¹ in summer and −0.00 in winter; the current manuscript model gives +0.14 and +0.00. They are the same estimand written two ways, and both sample cleanly (R-hat ≈ 1.00).</span>
-<span id="cb10-181"><a href="#cb10-181" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-182"><a href="#cb10-182" aria-hidden="true" tabindex="-1"></a>**(a) does not.** Despite a prior centred on 1, the free slope lands at about 0.44 with an interval spanning almost the whole plausible range, R-hat is above the 1.01 standard, and the implied ΔDOC at the mean upstream concentration is about **−1.3 mg L⁻¹ in summer** — the opposite sign to every other estimate we have. With two observations per site, a site random intercept and a latent upstream variable, the slope is competing with the site effects for the same information and the model is only weakly identified.</span>
-<span id="cb10-183"><a href="#cb10-183" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-184"><a href="#cb10-184" aria-hidden="true" tabindex="-1"></a>**Conclusion: &quot;keep downstream DOC as the target and let upstream feed in&quot; is already implemented in the manuscript.** The paired ΔDOC model *is* the downstream-DOC model with inheritance fixed at 1. Estimating that slope freely does not add information here, it removes it.</span>
-<span id="cb10-185"><a href="#cb10-185" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb10-186"><a href="#cb10-186" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-187"><a href="#cb10-187" aria-hidden="true" tabindex="-1"></a><span class="fu"># 4. What a full rebuild would still involve</span></span>
-<span id="cb10-188"><a href="#cb10-188" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-189"><a href="#cb10-189" aria-hidden="true" tabindex="-1"></a>The pilot settles the target-variable question but not the rest of Josh&#39;s proposal, which is to derive B, S, G and M from the posterior of a **season-specific SCM including the mediators**. That part remains a substantial job.</span>
-<span id="cb10-190"><a href="#cb10-190" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-191"><a href="#cb10-191" aria-hidden="true" tabindex="-1"></a><span class="fu">## 4.1 The model</span></span>
-<span id="cb10-192"><a href="#cb10-192" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-193"><a href="#cb10-193" aria-hidden="true" tabindex="-1"></a><span class="in">```{r spec}</span></span>
-<span id="cb10-194"><a href="#cb10-194" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb10-195"><a href="#cb10-195" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: false</span></span>
-<span id="cb10-196"><a href="#cb10-196" aria-hidden="true" tabindex="-1"></a><span class="co"># Sketch only -- NOT run. Every path needs a season interaction, and every</span></span>
-<span id="cb10-197"><a href="#cb10-197" aria-hidden="true" tabindex="-1"></a><span class="co"># predictor keeps its mi() imputation.</span></span>
-<span id="cb10-198"><a href="#cb10-198" aria-hidden="true" tabindex="-1"></a><span class="fu">bf</span>(DOC_down <span class="sc">|</span> <span class="fu">mi</span>(<span class="fl">0.2</span>) <span class="sc">~</span> <span class="dv">0</span> <span class="sc">+</span> season <span class="sc">+</span> <span class="fu">offset</span>(DOC_up) <span class="sc">+</span></span>
-<span id="cb10-199"><a href="#cb10-199" aria-hidden="true" tabindex="-1"></a>     season<span class="sc">:</span><span class="fu">mi</span>(macrophy_abun_z) <span class="sc">+</span> season<span class="sc">:</span><span class="fu">mi</span>(plankton_abun_z) <span class="sc">+</span></span>
-<span id="cb10-200"><a href="#cb10-200" aria-hidden="true" tabindex="-1"></a>     season<span class="sc">:</span><span class="fu">mi</span>(cover_litter_z)  <span class="sc">+</span> season<span class="sc">:</span><span class="fu">mi</span>(water_res_time_z) <span class="sc">+</span></span>
-<span id="cb10-201"><a href="#cb10-201" aria-hidden="true" tabindex="-1"></a>     (<span class="dv">1</span> <span class="sc">|</span> site), <span class="at">family =</span> <span class="fu">student</span>()) <span class="sc">+</span></span>
-<span id="cb10-202"><a href="#cb10-202" aria-hidden="true" tabindex="-1"></a><span class="fu">bf</span>(water_res_time_z <span class="sc">|</span> <span class="fu">mi</span>() <span class="sc">~</span> <span class="dv">0</span> <span class="sc">+</span> season <span class="sc">+</span> season<span class="sc">:</span>n_dams_z <span class="sc">+</span></span>
-<span id="cb10-203"><a href="#cb10-203" aria-hidden="true" tabindex="-1"></a>     season<span class="sc">:</span><span class="fu">mi</span>(dam_height_z) <span class="sc">+</span> season<span class="sc">:</span>slope_z) <span class="sc">+</span></span>
-<span id="cb10-204"><a href="#cb10-204" aria-hidden="true" tabindex="-1"></a><span class="fu">bf</span>(plankton_abun_z  <span class="sc">|</span> <span class="fu">mi</span>() <span class="sc">~</span> <span class="dv">0</span> <span class="sc">+</span> season <span class="sc">+</span> season<span class="sc">:</span><span class="fu">mi</span>(solar_z) <span class="sc">+</span> season<span class="sc">:</span><span class="fu">mi</span>(water_res_time_z)) <span class="sc">+</span></span>
-<span id="cb10-205"><a href="#cb10-205" aria-hidden="true" tabindex="-1"></a><span class="fu">bf</span>(macrophy_abun_z  <span class="sc">|</span> <span class="fu">mi</span>() <span class="sc">~</span> <span class="dv">0</span> <span class="sc">+</span> season <span class="sc">+</span> season<span class="sc">:</span><span class="fu">mi</span>(solar_z) <span class="sc">+</span> season<span class="sc">:</span><span class="fu">mi</span>(water_res_time_z)) <span class="sc">+</span></span>
-<span id="cb10-206"><a href="#cb10-206" aria-hidden="true" tabindex="-1"></a><span class="fu">bf</span>(cover_litter_z   <span class="sc">|</span> <span class="fu">mi</span>() <span class="sc">~</span> <span class="dv">0</span> <span class="sc">+</span> season <span class="sc">+</span> season<span class="sc">:</span><span class="fu">mi</span>(solar_z)) <span class="sc">+</span></span>
-<span id="cb10-207"><a href="#cb10-207" aria-hidden="true" tabindex="-1"></a><span class="fu">bf</span>(solar_z <span class="sc">|</span> <span class="fu">mi</span>() <span class="sc">~</span> <span class="dv">0</span> <span class="sc">+</span> season) <span class="sc">+</span> <span class="fu">bf</span>(dam_height_z <span class="sc">|</span> <span class="fu">mi</span>() <span class="sc">~</span> <span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb10-208"><a href="#cb10-208" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_rescor</span>(<span class="cn">FALSE</span>)</span>
-<span id="cb10-209"><a href="#cb10-209" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb10-210"><a href="#cb10-210" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-211"><a href="#cb10-211" aria-hidden="true" tabindex="-1"></a><span class="fu">## 4.2 The priors all move scale</span></span>
-<span id="cb10-212"><a href="#cb10-212" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-213"><a href="#cb10-213" aria-hidden="true" tabindex="-1"></a><span class="in">```{r priors}</span></span>
-<span id="cb10-214"><a href="#cb10-214" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb10-215"><a href="#cb10-215" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(<span class="fu">tribble</span>(</span>
-<span id="cb10-216"><a href="#cb10-216" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span>Parameter, <span class="sc">~</span><span class="st">`</span><span class="at">Current (ΔDOC target, standardized)</span><span class="st">`</span>, <span class="sc">~</span><span class="st">`</span><span class="at">Required (downstream DOC target, mg/L)</span><span class="st">`</span>,</span>
-<span id="cb10-217"><a href="#cb10-217" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Upstream DOC → outcome&quot;</span>, <span class="st">&quot;β₁ ~ Normal(0, 0.1), estimate −0.10&quot;</span>, <span class="st">&quot;inheritance fixed at 1 (offset), or Normal(1, 0.1) — a different quantity entirely&quot;</span>,</span>
-<span id="cb10-218"><a href="#cb10-218" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Intercept&quot;</span>, <span class="st">&quot;Normal(0, 2.5) on ΔDOC&quot;</span>, <span class="st">&quot;Normal(0, 1) on the mg/L offset; season-specific&quot;</span>,</span>
-<span id="cb10-219"><a href="#cb10-219" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Producer paths → outcome&quot;</span>, <span class="st">&quot;Normal(0.2, 0.075), standardized&quot;</span>, <span class="st">&quot;must be rescaled to mg/L per SD of the producer variable&quot;</span>,</span>
-<span id="cb10-220"><a href="#cb10-220" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;σ of the outcome&quot;</span>, <span class="st">&quot;Student-t(3, 0, 2.5) on ΔDOC&quot;</span>, <span class="st">&quot;same family, but the residual now absorbs concentration-level variation&quot;</span>,</span>
-<span id="cb10-221"><a href="#cb10-221" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Site random intercept&quot;</span>, <span class="st">&quot;Normal(0, 2) on ΔDOC&quot;</span>, <span class="st">&quot;now absorbs site DOC level, so the prior must widen substantially&quot;</span>),</span>
-<span id="cb10-222"><a href="#cb10-222" aria-hidden="true" tabindex="-1"></a>  <span class="at">caption =</span> <span class="st">&quot;Every prior on the outcome equation changes meaning when the target changes.&quot;</span>)</span>
-<span id="cb10-223"><a href="#cb10-223" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb10-224"><a href="#cb10-224" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-225"><a href="#cb10-225" aria-hidden="true" tabindex="-1"></a><span class="fu">## 4.3 Everything downstream of the model changes at once</span></span>
-<span id="cb10-226"><a href="#cb10-226" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-227"><a href="#cb10-227" aria-hidden="true" tabindex="-1"></a><span class="in">```{r cascade}</span></span>
-<span id="cb10-228"><a href="#cb10-228" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb10-229"><a href="#cb10-229" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(<span class="fu">tribble</span>(</span>
-<span id="cb10-230"><a href="#cb10-230" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span>Item, <span class="sc">~</span><span class="st">`</span><span class="at">Why it changes</span><span class="st">`</span>,</span>
-<span id="cb10-231"><a href="#cb10-231" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Figure 1b (SCM path estimates)&quot;</span>, <span class="st">&quot;all coefficients move to a new scale and gain a season dimension&quot;</span>,</span>
-<span id="cb10-232"><a href="#cb10-232" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Table S1 (13 hypotheses)&quot;</span>, <span class="st">&quot;each hypothesis is phrased in terms of ΔDOC&quot;</span>,</span>
-<span id="cb10-233"><a href="#cb10-233" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Fig. S2 (priors)&quot;</span>, <span class="st">&quot;new prior set&quot;</span>,</span>
-<span id="cb10-234"><a href="#cb10-234" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Figs. S3–S4 (residuals, posterior predictive)&quot;</span>, <span class="st">&quot;new outcome&quot;</span>,</span>
-<span id="cb10-235"><a href="#cb10-235" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Fig. S5 (posterior parameters)&quot;</span>, <span class="st">&quot;new parameters, doubled by season&quot;</span>,</span>
-<span id="cb10-236"><a href="#cb10-236" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Fig. S7 (total effects)&quot;</span>, <span class="st">&quot;path tracing must be redone per season; upstream DOC is no longer a driver but an inherited baseline, so the largest current total effect disappears by construction&quot;</span>,</span>
-<span id="cb10-237"><a href="#cb10-237" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Figs. S8–S9 (connectivity SCM)&quot;</span>, <span class="st">&quot;must be re-specified the same way for consistency&quot;</span>,</span>
-<span id="cb10-238"><a href="#cb10-238" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Results §2 and Methods&quot;</span>, <span class="st">&quot;every number and the causal wording&quot;</span>))</span>
-<span id="cb10-239"><a href="#cb10-239" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb10-240"><a href="#cb10-240" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-241"><a href="#cb10-241" aria-hidden="true" tabindex="-1"></a><span class="fu"># 5. Cost, risk and recommendation</span></span>
-<span id="cb10-242"><a href="#cb10-242" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-243"><a href="#cb10-243" aria-hidden="true" tabindex="-1"></a><span class="in">```{r cost}</span></span>
-<span id="cb10-244"><a href="#cb10-244" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb10-245"><a href="#cb10-245" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(<span class="fu">tribble</span>(</span>
-<span id="cb10-246"><a href="#cb10-246" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span>Stage, <span class="sc">~</span><span class="st">`</span><span class="at">Working days</span><span class="st">`</span>,</span>
-<span id="cb10-247"><a href="#cb10-247" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Re-specification and prior redesign, prior predictive checks&quot;</span>, <span class="st">&quot;2–3&quot;</span>,</span>
-<span id="cb10-248"><a href="#cb10-248" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Fitting, convergence and identification troubleshooting (the pilot above already shows where it bites)&quot;</span>, <span class="st">&quot;2–3&quot;</span>,</span>
-<span id="cb10-249"><a href="#cb10-249" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Re-deriving posterior quantities and regenerating 6–8 figures&quot;</span>, <span class="st">&quot;2–3&quot;</span>,</span>
-<span id="cb10-250"><a href="#cb10-250" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Rewriting Methods, Results and Appendix S1&quot;</span>, <span class="st">&quot;2–3&quot;</span>,</span>
-<span id="cb10-251"><a href="#cb10-251" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Co-author review of a substantially changed analysis&quot;</span>, <span class="st">&quot;2+&quot;</span>,</span>
-<span id="cb10-252"><a href="#cb10-252" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;**Total**&quot;</span>, <span class="st">&quot;**10–14**&quot;</span>))</span>
-<span id="cb10-253"><a href="#cb10-253" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb10-254"><a href="#cb10-254" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-255"><a href="#cb10-255" aria-hidden="true" tabindex="-1"></a>::: {.callout-warning}</span>
-<span id="cb10-256"><a href="#cb10-256" aria-hidden="true" tabindex="-1"></a><span class="fu">## Recommendation</span></span>
-<span id="cb10-257"><a href="#cb10-257" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-258"><a href="#cb10-258" aria-hidden="true" tabindex="-1"></a>**Do not rebuild before the 10 September submission.** Three reasons, in order of weight:</span>
-<span id="cb10-259"><a href="#cb10-259" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-260"><a href="#cb10-260" aria-hidden="true" tabindex="-1"></a><span class="ss">1.  </span>**The core of the proposal is already in the manuscript.** The pilot shows the paired ΔDOC model and the downstream-DOC model with inheritance 1 are the same thing, and that the free-slope alternative is worse identified and gives a contradictory answer.</span>
-<span id="cb10-261"><a href="#cb10-261" aria-hidden="true" tabindex="-1"></a><span class="ss">2.  </span>**The expensive remainder changes Q2, not Q1.** A season-specific mediator SCM is a genuinely different paper-level analysis; it would also delete the single largest total effect in the current results (upstream DOC) by turning it into an offset, which is a substantive reinterpretation, not a technical refinement.</span>
-<span id="cb10-262"><a href="#cb10-262" aria-hidden="true" tabindex="-1"></a><span class="ss">3.  </span>**Timing.** 10–14 working days against a 7-day window, with the corresponding author unavailable from 10 September to mid-November.</span>
-<span id="cb10-263"><a href="#cb10-263" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-264"><a href="#cb10-264" aria-hidden="true" tabindex="-1"></a>**What to do instead, at no analytical cost:** add one sentence to the Methods saying that ΔDOC is modelled as a paired contrast, equivalent to modelling downstream DOC with an inheritance coefficient of one, and that the free-slope alternative was not identifiable with two samplings per reach. That answers the question a methodological reviewer would ask, and it is now backed by the pilot in this document.</span>
-<span id="cb10-265"><a href="#cb10-265" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-266"><a href="#cb10-266" aria-hidden="true" tabindex="-1"></a>**What to keep for later:** the season-specific mediator SCM is the natural core of a follow-up paper, where the seasonal expression of the biological pathway is the question rather than a robustness check.</span>
-<span id="cb10-267"><a href="#cb10-267" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb10-268"><a href="#cb10-268" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-269"><a href="#cb10-269" aria-hidden="true" tabindex="-1"></a><span class="fu"># 6. Reproducibility</span></span>
-<span id="cb10-270"><a href="#cb10-270" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-271"><a href="#cb10-271" aria-hidden="true" tabindex="-1"></a><span class="in">```{r session}</span></span>
-<span id="cb10-272"><a href="#cb10-272" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb10-273"><a href="#cb10-273" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Pilot fits cached in results/models_fit/: pilot_downstream_v2.rds, pilot_offset.rds</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
-<span id="cb10-274"><a href="#cb10-274" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Data: data/processed/m6.csv</span><span class="sc">\n\n</span><span class="st">&quot;</span>)</span>
-<span id="cb10-275"><a href="#cb10-275" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()<span class="sc">$</span>R.version<span class="sc">$</span>version.string</span>
-<span id="cb10-276"><a href="#cb10-276" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal><i class="bi"></i></button></div>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">Sys.setlocale</span>(<span class="st">&quot;LC_CTYPE&quot;</span>, <span class="st">&quot;en_US.UTF-8&quot;</span>))  <span class="co"># so non-ASCII prints correctly</span></span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>OK <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="at">blue=</span><span class="st">&quot;#0072B2&quot;</span>, <span class="at">vermillion=</span><span class="st">&quot;#D55E00&quot;</span>, <span class="at">green=</span><span class="st">&quot;#009E73&quot;</span>, <span class="at">amber=</span><span class="st">&quot;#E69F00&quot;</span>)</span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip appearance=&quot;simple&quot;}</span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a><span class="fu">## The proposal being evaluated</span></span>
+<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; &quot;Could we try one more thing instead, which is to change the target variable from delta DOC to just the downstream DOC concentration? Upstream DOC would then still feed into this. We can then estimate delta DOC directly from the posteriors, winter and summer separately etc. That is: instead of using B as the target variable, retain winter and summer DOC as the target, and then use the posterior distributions to get distributions of B, gamma, lambda etc.&quot;</span></span>
+<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a><span class="at">&gt;</span></span>
+<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; — Josh Larsen</span></span>
+<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a>This document tests that proposal rather than describing it. **The short answer: the idea is correct, and the correct implementation of it is already what the manuscript does.** The free-slope version is not just expensive, it degrades the estimate. Evidence below.</span>
+<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-40"><a href="#cb10-40" aria-hidden="true" tabindex="-1"></a><span class="fu"># 1. What the proposal changes</span></span>
+<span id="cb10-41"><a href="#cb10-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-42"><a href="#cb10-42" aria-hidden="true" tabindex="-1"></a>The current analysis has two separate models:</span>
+<span id="cb10-43"><a href="#cb10-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-44"><a href="#cb10-44" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Model <span class="pp">|</span> Target <span class="pp">|</span> Purpose <span class="pp">|</span></span>
+<span id="cb10-45"><a href="#cb10-45" aria-hidden="true" tabindex="-1"></a><span class="pp">|------------------|------------------|-------------------------------------|</span></span>
+<span id="cb10-46"><a href="#cb10-46" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Q1 measurement-error model <span class="pp">|</span> raw upstream and downstream DOC, season × location <span class="pp">|</span> direction of ΔDOC <span class="pp">|</span></span>
+<span id="cb10-47"><a href="#cb10-47" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Q2 structural causal model <span class="pp">|</span> ΔDOC with propagated error 0.283 mg L⁻¹ <span class="pp">|</span> drivers <span class="pp">|</span></span>
+<span id="cb10-48"><a href="#cb10-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-49"><a href="#cb10-49" aria-hidden="true" tabindex="-1"></a>Josh&#39;s proposal merges them: one model with **downstream DOC as the target**, upstream DOC as a parent, season-specific paths, and every contrast (ΔDOC, B, S, G, M) derived from the posterior. Conceptually this is attractive: the contrasts inherit full uncertainty instead of being computed from point values.</span>
+<span id="cb10-50"><a href="#cb10-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-51"><a href="#cb10-51" aria-hidden="true" tabindex="-1"></a><span class="fu"># 2. The critical question: what does &quot;upstream DOC feeds into this&quot; mean?</span></span>
+<span id="cb10-52"><a href="#cb10-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-53"><a href="#cb10-53" aria-hidden="true" tabindex="-1"></a>There are two ways to let upstream DOC enter the downstream equation, and they are **different estimands**:</span>
+<span id="cb10-54"><a href="#cb10-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-55"><a href="#cb10-55" aria-hidden="true" tabindex="-1"></a>$$\text{(a) free slope: } \;\text{DOC}_{down} = \alpha_s + \beta_s \,\text{DOC}_{up} + \dots \qquad</span>
+<span id="cb10-56"><a href="#cb10-56" aria-hidden="true" tabindex="-1"></a>\text{(b) offset: }\; \text{DOC}_{down} = \alpha_s + 1\cdot\text{DOC}_{up} + \dots$$</span>
+<span id="cb10-57"><a href="#cb10-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-58"><a href="#cb10-58" aria-hidden="true" tabindex="-1"></a>Under (b), $\alpha_s$ **is** ΔDOC in season *s*. Under (a) there is no single ΔDOC: the implied difference $\alpha_s + (\beta_s - 1)\,\text{DOC}_{up}$ depends on how much DOC the stream was carrying. The paired design was chosen precisely to remove that dependence.</span>
+<span id="cb10-59"><a href="#cb10-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-60"><a href="#cb10-60" aria-hidden="true" tabindex="-1"></a>So the proposal only reproduces the intended quantity if $\beta \approx 1$. Let us check.</span>
+<span id="cb10-61"><a href="#cb10-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-62"><a href="#cb10-62" aria-hidden="true" tabindex="-1"></a><span class="in">```{r data}</span></span>
+<span id="cb10-63"><a href="#cb10-63" aria-hidden="true" tabindex="-1"></a>m <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="fu">here</span>(<span class="st">&quot;data&quot;</span>,<span class="st">&quot;processed&quot;</span>,<span class="st">&quot;m6.csv&quot;</span>))</span>
+<span id="cb10-64"><a href="#cb10-64" aria-hidden="true" tabindex="-1"></a>wide <span class="ot">&lt;-</span> m <span class="sc">|&gt;</span> <span class="fu">select</span>(site, season, <span class="at">up =</span> DOC_input, <span class="at">dn =</span> DOC_out) <span class="sc">|&gt;</span></span>
+<span id="cb10-65"><a href="#cb10-65" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(up), <span class="sc">!</span><span class="fu">is.na</span>(dn)) <span class="sc">|&gt;</span></span>
+<span id="cb10-66"><a href="#cb10-66" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">season =</span> <span class="fu">factor</span>(season), <span class="at">site =</span> <span class="fu">factor</span>(site))</span>
+<span id="cb10-67"><a href="#cb10-67" aria-hidden="true" tabindex="-1"></a><span class="fu">glue</span>(<span class="st">&quot;Observations: {nrow(wide)} | sites: {nlevels(wide$site)} | mean upstream DOC: {round(mean(wide$up),2)} mg/L&quot;</span>)</span>
+<span id="cb10-68"><a href="#cb10-68" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-69"><a href="#cb10-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-70"><a href="#cb10-70" aria-hidden="true" tabindex="-1"></a><span class="in">```{r slope}</span></span>
+<span id="cb10-71"><a href="#cb10-71" aria-hidden="true" tabindex="-1"></a><span class="co">#| results: hide</span></span>
+<span id="cb10-72"><a href="#cb10-72" aria-hidden="true" tabindex="-1"></a>f_slope <span class="ot">&lt;-</span> <span class="fu">brm</span>(<span class="fu">bf</span>(dn <span class="sc">|</span> <span class="fu">mi</span>(<span class="fl">0.2</span>) <span class="sc">~</span> <span class="dv">0</span> <span class="sc">+</span> season <span class="sc">+</span> season<span class="sc">:</span>up, <span class="at">family =</span> <span class="fu">student</span>()),</span>
+<span id="cb10-73"><a href="#cb10-73" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> wide,</span>
+<span id="cb10-74"><a href="#cb10-74" aria-hidden="true" tabindex="-1"></a>  <span class="at">prior =</span> <span class="fu">c</span>(<span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">0</span>, <span class="dv">2</span>), <span class="at">class =</span> <span class="st">&quot;b&quot;</span>), <span class="fu">prior</span>(<span class="fu">student_t</span>(<span class="dv">3</span>, <span class="dv">0</span>, <span class="fl">2.5</span>), <span class="at">class =</span> <span class="st">&quot;sigma&quot;</span>),</span>
+<span id="cb10-75"><a href="#cb10-75" aria-hidden="true" tabindex="-1"></a>            <span class="fu">prior</span>(<span class="fu">gamma</span>(<span class="dv">2</span>, <span class="fl">0.1</span>), <span class="at">class =</span> <span class="st">&quot;nu&quot;</span>)),</span>
+<span id="cb10-76"><a href="#cb10-76" aria-hidden="true" tabindex="-1"></a>  <span class="at">chains =</span> <span class="dv">4</span>, <span class="at">cores =</span> <span class="dv">4</span>, <span class="at">iter =</span> <span class="dv">3000</span>, <span class="at">warmup =</span> <span class="dv">1000</span>, <span class="at">seed =</span> <span class="dv">7</span>,</span>
+<span id="cb10-77"><a href="#cb10-77" aria-hidden="true" tabindex="-1"></a>  <span class="at">backend =</span> <span class="st">&quot;cmdstanr&quot;</span>, <span class="at">file =</span> <span class="fu">here</span>(<span class="st">&quot;results&quot;</span>,<span class="st">&quot;models_fit&quot;</span>,<span class="st">&quot;inheritance_slope&quot;</span>), <span class="at">refresh =</span> <span class="dv">0</span>)</span>
+<span id="cb10-78"><a href="#cb10-78" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-79"><a href="#cb10-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-80"><a href="#cb10-80" aria-hidden="true" tabindex="-1"></a><span class="in">```{r slope-table}</span></span>
+<span id="cb10-81"><a href="#cb10-81" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb10-82"><a href="#cb10-82" aria-hidden="true" tabindex="-1"></a>ds <span class="ot">&lt;-</span> <span class="fu">as_draws_df</span>(f_slope)</span>
+<span id="cb10-83"><a href="#cb10-83" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(<span class="fu">bind_rows</span>(<span class="fu">lapply</span>(<span class="fu">c</span>(<span class="st">&quot;summer&quot;</span>,<span class="st">&quot;winter&quot;</span>), <span class="cf">function</span>(s){</span>
+<span id="cb10-84"><a href="#cb10-84" aria-hidden="true" tabindex="-1"></a>  b <span class="ot">&lt;-</span> ds[[<span class="fu">paste0</span>(<span class="st">&quot;b_season&quot;</span>, s, <span class="st">&quot;:up&quot;</span>)]]</span>
+<span id="cb10-85"><a href="#cb10-85" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">Season =</span> s, <span class="st">`</span><span class="at">Posterior mean slope</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">round</span>(<span class="fu">mean</span>(b), <span class="dv">2</span>),</span>
+<span id="cb10-86"><a href="#cb10-86" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">2.5%</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">round</span>(<span class="fu">quantile</span>(b, .<span class="dv">025</span>), <span class="dv">2</span>), <span class="st">`</span><span class="at">97.5%</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">round</span>(<span class="fu">quantile</span>(b, .<span class="dv">975</span>), <span class="dv">2</span>),</span>
+<span id="cb10-87"><a href="#cb10-87" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">P(0.9 &lt; slope &lt; 1.1)</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">round</span>(<span class="fu">mean</span>(b <span class="sc">&gt;</span> <span class="fl">0.9</span> <span class="sc">&amp;</span> b <span class="sc">&lt;</span> <span class="fl">1.1</span>), <span class="dv">2</span>))})),</span>
+<span id="cb10-88"><a href="#cb10-88" aria-hidden="true" tabindex="-1"></a>  <span class="at">caption =</span> <span class="st">&quot;Bayesian robust regression of downstream on upstream DOC (Student-t likelihood, 0.2 mg/L error on the response).&quot;</span>)</span>
+<span id="cb10-89"><a href="#cb10-89" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-90"><a href="#cb10-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-91"><a href="#cb10-91" aria-hidden="true" tabindex="-1"></a>::: {.callout-note}</span>
+<span id="cb10-92"><a href="#cb10-92" aria-hidden="true" tabindex="-1"></a><span class="fu">## Inheritance really is close to one-to-one</span></span>
+<span id="cb10-93"><a href="#cb10-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-94"><a href="#cb10-94" aria-hidden="true" tabindex="-1"></a>The posterior slope of downstream on upstream DOC is **0.93 [0.88, 0.97] in summer and 0.95 [0.92, 0.99] in winter**. A heavy-tailed likelihood handles the few extreme upstream concentrations without trimming anything.</span>
+<span id="cb10-95"><a href="#cb10-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-96"><a href="#cb10-96" aria-hidden="true" tabindex="-1"></a>Downstream DOC tracks upstream DOC essentially one-for-one, so Josh&#39;s premise is empirically correct. The slope is nonetheless slightly *below* one, which is itself interpretable: at high incoming concentrations the reach retains proportionally a little more DOC than it passes on.</span>
+<span id="cb10-97"><a href="#cb10-97" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb10-98"><a href="#cb10-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-99"><a href="#cb10-99" aria-hidden="true" tabindex="-1"></a><span class="fu"># 3. Three pilot fits</span></span>
+<span id="cb10-100"><a href="#cb10-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-101"><a href="#cb10-101" aria-hidden="true" tabindex="-1"></a>All three use the same data, the same Student-*t* likelihood, the same site random intercept and the same 0.2 mg L⁻¹ instrument error on the response.</span>
+<span id="cb10-102"><a href="#cb10-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-103"><a href="#cb10-103" aria-hidden="true" tabindex="-1"></a><span class="in">```{r fits}</span></span>
+<span id="cb10-104"><a href="#cb10-104" aria-hidden="true" tabindex="-1"></a><span class="co">#| results: hide</span></span>
+<span id="cb10-105"><a href="#cb10-105" aria-hidden="true" tabindex="-1"></a><span class="co"># (a) FREE SLOPE, upstream as a measurement-error covariate -- the literal proposal</span></span>
+<span id="cb10-106"><a href="#cb10-106" aria-hidden="true" tabindex="-1"></a>f_free <span class="ot">&lt;-</span> <span class="fu">brm</span>(<span class="fu">bf</span>(dn <span class="sc">|</span> <span class="fu">mi</span>(<span class="fl">0.2</span>) <span class="sc">~</span> <span class="dv">0</span> <span class="sc">+</span> season <span class="sc">+</span> season<span class="sc">:</span><span class="fu">me</span>(up, <span class="fl">0.2</span>) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>site), <span class="at">family =</span> <span class="fu">student</span>()),</span>
+<span id="cb10-107"><a href="#cb10-107" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> wide,</span>
+<span id="cb10-108"><a href="#cb10-108" aria-hidden="true" tabindex="-1"></a>  <span class="at">prior =</span> <span class="fu">c</span>(<span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">class =</span> <span class="st">&quot;b&quot;</span>),</span>
+<span id="cb10-109"><a href="#cb10-109" aria-hidden="true" tabindex="-1"></a>            <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">1</span>, <span class="fl">0.3</span>), <span class="at">class =</span> <span class="st">&quot;b&quot;</span>, <span class="at">coef =</span> <span class="st">&quot;seasonsummer:meup0.2&quot;</span>),</span>
+<span id="cb10-110"><a href="#cb10-110" aria-hidden="true" tabindex="-1"></a>            <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">1</span>, <span class="fl">0.3</span>), <span class="at">class =</span> <span class="st">&quot;b&quot;</span>, <span class="at">coef =</span> <span class="st">&quot;seasonwinter:meup0.2&quot;</span>),</span>
+<span id="cb10-111"><a href="#cb10-111" aria-hidden="true" tabindex="-1"></a>            <span class="fu">prior</span>(<span class="fu">student_t</span>(<span class="dv">3</span>, <span class="dv">0</span>, <span class="fl">2.5</span>), <span class="at">class =</span> <span class="st">&quot;sigma&quot;</span>), <span class="fu">prior</span>(<span class="fu">gamma</span>(<span class="dv">2</span>, <span class="fl">0.1</span>), <span class="at">class =</span> <span class="st">&quot;nu&quot;</span>),</span>
+<span id="cb10-112"><a href="#cb10-112" aria-hidden="true" tabindex="-1"></a>            <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">class =</span> <span class="st">&quot;sd&quot;</span>),</span>
+<span id="cb10-113"><a href="#cb10-113" aria-hidden="true" tabindex="-1"></a>            <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="fl">2.5</span>, <span class="dv">2</span>), <span class="at">class =</span> <span class="st">&quot;meanme&quot;</span>), <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">0</span>, <span class="dv">3</span>), <span class="at">class =</span> <span class="st">&quot;sdme&quot;</span>)),</span>
+<span id="cb10-114"><a href="#cb10-114" aria-hidden="true" tabindex="-1"></a>  <span class="at">chains =</span> <span class="dv">4</span>, <span class="at">cores =</span> <span class="dv">4</span>, <span class="at">iter =</span> <span class="dv">3000</span>, <span class="at">warmup =</span> <span class="dv">1000</span>, <span class="at">seed =</span> <span class="dv">7</span>,</span>
+<span id="cb10-115"><a href="#cb10-115" aria-hidden="true" tabindex="-1"></a>  <span class="at">control =</span> <span class="fu">list</span>(<span class="at">adapt_delta =</span> <span class="fl">0.95</span>, <span class="at">max_treedepth =</span> <span class="dv">12</span>),</span>
+<span id="cb10-116"><a href="#cb10-116" aria-hidden="true" tabindex="-1"></a>  <span class="at">backend =</span> <span class="st">&quot;cmdstanr&quot;</span>, <span class="at">file =</span> <span class="fu">here</span>(<span class="st">&quot;results&quot;</span>,<span class="st">&quot;models_fit&quot;</span>,<span class="st">&quot;pilot_downstream_v2&quot;</span>), <span class="at">refresh =</span> <span class="dv">0</span>)</span>
+<span id="cb10-117"><a href="#cb10-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-118"><a href="#cb10-118" aria-hidden="true" tabindex="-1"></a><span class="co"># (b) OFFSET, inheritance fixed at 1 -- the paired contrast written as a downstream-DOC model</span></span>
+<span id="cb10-119"><a href="#cb10-119" aria-hidden="true" tabindex="-1"></a>f_off <span class="ot">&lt;-</span> <span class="fu">brm</span>(<span class="fu">bf</span>(dn <span class="sc">|</span> <span class="fu">mi</span>(<span class="fl">0.2</span>) <span class="sc">~</span> <span class="dv">0</span> <span class="sc">+</span> season <span class="sc">+</span> <span class="fu">offset</span>(up) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>site), <span class="at">family =</span> <span class="fu">student</span>()),</span>
+<span id="cb10-120"><a href="#cb10-120" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> wide,</span>
+<span id="cb10-121"><a href="#cb10-121" aria-hidden="true" tabindex="-1"></a>  <span class="at">prior =</span> <span class="fu">c</span>(<span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">class =</span> <span class="st">&quot;b&quot;</span>), <span class="fu">prior</span>(<span class="fu">student_t</span>(<span class="dv">3</span>, <span class="dv">0</span>, <span class="fl">2.5</span>), <span class="at">class =</span> <span class="st">&quot;sigma&quot;</span>),</span>
+<span id="cb10-122"><a href="#cb10-122" aria-hidden="true" tabindex="-1"></a>            <span class="fu">prior</span>(<span class="fu">gamma</span>(<span class="dv">2</span>, <span class="fl">0.1</span>), <span class="at">class =</span> <span class="st">&quot;nu&quot;</span>), <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">class =</span> <span class="st">&quot;sd&quot;</span>)),</span>
+<span id="cb10-123"><a href="#cb10-123" aria-hidden="true" tabindex="-1"></a>  <span class="at">chains =</span> <span class="dv">4</span>, <span class="at">cores =</span> <span class="dv">4</span>, <span class="at">iter =</span> <span class="dv">3000</span>, <span class="at">warmup =</span> <span class="dv">1000</span>, <span class="at">seed =</span> <span class="dv">7</span>,</span>
+<span id="cb10-124"><a href="#cb10-124" aria-hidden="true" tabindex="-1"></a>  <span class="at">backend =</span> <span class="st">&quot;cmdstanr&quot;</span>, <span class="at">file =</span> <span class="fu">here</span>(<span class="st">&quot;results&quot;</span>,<span class="st">&quot;models_fit&quot;</span>,<span class="st">&quot;pilot_offset&quot;</span>), <span class="at">refresh =</span> <span class="dv">0</span>)</span>
+<span id="cb10-125"><a href="#cb10-125" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-126"><a href="#cb10-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-127"><a href="#cb10-127" aria-hidden="true" tabindex="-1"></a><span class="in">```{r diag}</span></span>
+<span id="cb10-128"><a href="#cb10-128" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb10-129"><a href="#cb10-129" aria-hidden="true" tabindex="-1"></a>dg <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb10-130"><a href="#cb10-130" aria-hidden="true" tabindex="-1"></a>  <span class="at">Model =</span> <span class="fu">c</span>(<span class="st">&quot;(a) free slope, me(up, 0.2)&quot;</span>, <span class="st">&quot;(b) offset, inheritance = 1&quot;</span>),</span>
+<span id="cb10-131"><a href="#cb10-131" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">max R-hat</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="fu">round</span>(<span class="fu">max</span>(<span class="fu">rhat</span>(f_free), <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="dv">3</span>), <span class="fu">round</span>(<span class="fu">max</span>(<span class="fu">rhat</span>(f_off), <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="dv">3</span>)),</span>
+<span id="cb10-132"><a href="#cb10-132" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">min bulk ESS</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="fu">round</span>(<span class="fu">min</span>(<span class="fu">summary</span>(f_free)<span class="sc">$</span>fixed[,<span class="st">&quot;Bulk_ESS&quot;</span>])), <span class="fu">round</span>(<span class="fu">min</span>(<span class="fu">summary</span>(f_off)<span class="sc">$</span>fixed[,<span class="st">&quot;Bulk_ESS&quot;</span>]))))</span>
+<span id="cb10-133"><a href="#cb10-133" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(dg)</span>
+<span id="cb10-134"><a href="#cb10-134" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-135"><a href="#cb10-135" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-136"><a href="#cb10-136" aria-hidden="true" tabindex="-1"></a><span class="in">```{r estimates}</span></span>
+<span id="cb10-137"><a href="#cb10-137" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb10-138"><a href="#cb10-138" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">as_draws_df</span>(f_free); do <span class="ot">&lt;-</span> <span class="fu">as_draws_df</span>(f_off)</span>
+<span id="cb10-139"><a href="#cb10-139" aria-hidden="true" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(<span class="fu">lapply</span>(<span class="fu">c</span>(<span class="st">&quot;summer&quot;</span>,<span class="st">&quot;winter&quot;</span>), <span class="cf">function</span>(s){</span>
+<span id="cb10-140"><a href="#cb10-140" aria-hidden="true" tabindex="-1"></a>  ub <span class="ot">&lt;-</span> <span class="fu">mean</span>(wide<span class="sc">$</span>up[wide<span class="sc">$</span>season <span class="sc">==</span> s])</span>
+<span id="cb10-141"><a href="#cb10-141" aria-hidden="true" tabindex="-1"></a>  a  <span class="ot">&lt;-</span> df[[<span class="fu">paste0</span>(<span class="st">&quot;b_season&quot;</span>, s)]]; b <span class="ot">&lt;-</span> df[[<span class="fu">paste0</span>(<span class="st">&quot;bsp_season&quot;</span>, s, <span class="st">&quot;:meup0.2&quot;</span>)]]</span>
+<span id="cb10-142"><a href="#cb10-142" aria-hidden="true" tabindex="-1"></a>  free <span class="ot">&lt;-</span> a <span class="sc">+</span> (b <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span> ub</span>
+<span id="cb10-143"><a href="#cb10-143" aria-hidden="true" tabindex="-1"></a>  off  <span class="ot">&lt;-</span> do[[<span class="fu">paste0</span>(<span class="st">&quot;b_season&quot;</span>, s)]]</span>
+<span id="cb10-144"><a href="#cb10-144" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(</span>
+<span id="cb10-145"><a href="#cb10-145" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tibble</span>(<span class="at">season =</span> s, <span class="at">model =</span> <span class="st">&quot;(a) free slope, evaluated at mean upstream DOC&quot;</span>,</span>
+<span id="cb10-146"><a href="#cb10-146" aria-hidden="true" tabindex="-1"></a>           <span class="at">est =</span> <span class="fu">mean</span>(free), <span class="at">lo =</span> <span class="fu">quantile</span>(free, .<span class="dv">025</span>), <span class="at">hi =</span> <span class="fu">quantile</span>(free, .<span class="dv">975</span>)),</span>
+<span id="cb10-147"><a href="#cb10-147" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tibble</span>(<span class="at">season =</span> s, <span class="at">model =</span> <span class="st">&quot;(b) offset (inheritance = 1)&quot;</span>,</span>
+<span id="cb10-148"><a href="#cb10-148" aria-hidden="true" tabindex="-1"></a>           <span class="at">est =</span> <span class="fu">mean</span>(off),  <span class="at">lo =</span> <span class="fu">quantile</span>(off,  .<span class="dv">025</span>), <span class="at">hi =</span> <span class="fu">quantile</span>(off,  .<span class="dv">975</span>)),</span>
+<span id="cb10-149"><a href="#cb10-149" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tibble</span>(<span class="at">season =</span> s, <span class="at">model =</span> <span class="st">&quot;(c) current manuscript Q1 model&quot;</span>,</span>
+<span id="cb10-150"><a href="#cb10-150" aria-hidden="true" tabindex="-1"></a>           <span class="at">est =</span> <span class="fu">ifelse</span>(s <span class="sc">==</span> <span class="st">&quot;summer&quot;</span>, <span class="fl">0.137</span>, <span class="fl">0.003</span>),</span>
+<span id="cb10-151"><a href="#cb10-151" aria-hidden="true" tabindex="-1"></a>           <span class="at">lo  =</span> <span class="fu">ifelse</span>(s <span class="sc">==</span> <span class="st">&quot;summer&quot;</span>, <span class="fl">0.054</span>, <span class="sc">-</span><span class="fl">0.064</span>),</span>
+<span id="cb10-152"><a href="#cb10-152" aria-hidden="true" tabindex="-1"></a>           <span class="at">hi  =</span> <span class="fu">ifelse</span>(s <span class="sc">==</span> <span class="st">&quot;summer&quot;</span>, <span class="fl">0.223</span>,  <span class="fl">0.068</span>)))}))</span>
+<span id="cb10-153"><a href="#cb10-153" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(res <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(est, lo, hi), <span class="sc">~</span><span class="fu">round</span>(.x, <span class="dv">3</span>))),</span>
+<span id="cb10-154"><a href="#cb10-154" aria-hidden="true" tabindex="-1"></a>      <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">&quot;Season&quot;</span>,<span class="st">&quot;Model&quot;</span>,<span class="st">&quot;$</span><span class="sc">\\</span><span class="st">Delta$DOC (mg L$^{-1}$)&quot;</span>,<span class="st">&quot;2.5%&quot;</span>,<span class="st">&quot;97.5%&quot;</span>))</span>
+<span id="cb10-155"><a href="#cb10-155" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-156"><a href="#cb10-156" aria-hidden="true" tabindex="-1"></a>inh <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">season =</span> <span class="fu">c</span>(<span class="st">&quot;summer&quot;</span>,<span class="st">&quot;winter&quot;</span>),</span>
+<span id="cb10-157"><a href="#cb10-157" aria-hidden="true" tabindex="-1"></a>  <span class="at">inheritance =</span> <span class="fu">sapply</span>(<span class="fu">c</span>(<span class="st">&quot;summer&quot;</span>,<span class="st">&quot;winter&quot;</span>), \(s) <span class="fu">mean</span>(df[[<span class="fu">paste0</span>(<span class="st">&quot;bsp_season&quot;</span>, s, <span class="st">&quot;:meup0.2&quot;</span>)]])),</span>
+<span id="cb10-158"><a href="#cb10-158" aria-hidden="true" tabindex="-1"></a>  <span class="at">lo =</span> <span class="fu">sapply</span>(<span class="fu">c</span>(<span class="st">&quot;summer&quot;</span>,<span class="st">&quot;winter&quot;</span>), \(s) <span class="fu">quantile</span>(df[[<span class="fu">paste0</span>(<span class="st">&quot;bsp_season&quot;</span>, s, <span class="st">&quot;:meup0.2&quot;</span>)]], .<span class="dv">025</span>)),</span>
+<span id="cb10-159"><a href="#cb10-159" aria-hidden="true" tabindex="-1"></a>  <span class="at">hi =</span> <span class="fu">sapply</span>(<span class="fu">c</span>(<span class="st">&quot;summer&quot;</span>,<span class="st">&quot;winter&quot;</span>), \(s) <span class="fu">quantile</span>(df[[<span class="fu">paste0</span>(<span class="st">&quot;bsp_season&quot;</span>, s, <span class="st">&quot;:meup0.2&quot;</span>)]], .<span class="dv">975</span>)))</span>
+<span id="cb10-160"><a href="#cb10-160" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(inh <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="sc">-</span>season, <span class="sc">~</span><span class="fu">round</span>(.x, <span class="dv">2</span>))),</span>
+<span id="cb10-161"><a href="#cb10-161" aria-hidden="true" tabindex="-1"></a>      <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">&quot;Season&quot;</span>,<span class="st">&quot;Estimated inheritance slope $</span><span class="sc">\\</span><span class="st">beta$&quot;</span>,<span class="st">&quot;2.5%&quot;</span>,<span class="st">&quot;97.5%&quot;</span>),</span>
+<span id="cb10-162"><a href="#cb10-162" aria-hidden="true" tabindex="-1"></a>      <span class="at">caption =</span> <span class="st">&quot;Free-slope model: $</span><span class="sc">\\</span><span class="st">beta$ should be near 1 if the model is recovering the paired contrast.&quot;</span>)</span>
+<span id="cb10-163"><a href="#cb10-163" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-164"><a href="#cb10-164" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-165"><a href="#cb10-165" aria-hidden="true" tabindex="-1"></a><span class="in">```{r fig-compare}</span></span>
+<span id="cb10-166"><a href="#cb10-166" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 3.6</span></span>
+<span id="cb10-167"><a href="#cb10-167" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: &quot;Estimated average ΔDOC by season under the three formulations. The free-slope implementation of the proposal disagrees with both the offset formulation and the current manuscript model.&quot;</span></span>
+<span id="cb10-168"><a href="#cb10-168" aria-hidden="true" tabindex="-1"></a>res<span class="sc">$</span>model <span class="ot">&lt;-</span> <span class="fu">factor</span>(res<span class="sc">$</span>model, <span class="at">levels =</span> <span class="fu">rev</span>(<span class="fu">unique</span>(res<span class="sc">$</span>model)))</span>
+<span id="cb10-169"><a href="#cb10-169" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(res, <span class="fu">aes</span>(est, model, <span class="at">colour =</span> season)) <span class="sc">+</span></span>
+<span id="cb10-170"><a href="#cb10-170" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">&quot;dashed&quot;</span>, <span class="at">colour =</span> <span class="st">&quot;grey55&quot;</span>) <span class="sc">+</span></span>
+<span id="cb10-171"><a href="#cb10-171" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_pointrange</span>(<span class="fu">aes</span>(<span class="at">xmin =</span> lo, <span class="at">xmax =</span> hi), <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="at">width =</span> .<span class="dv">45</span>), <span class="at">size =</span> .<span class="dv">5</span>) <span class="sc">+</span></span>
+<span id="cb10-172"><a href="#cb10-172" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="at">summer =</span> OK[[<span class="st">&quot;vermillion&quot;</span>]], <span class="at">winter =</span> OK[[<span class="st">&quot;green&quot;</span>]]), <span class="at">name =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb10-173"><a href="#cb10-173" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="fu">expression</span>(Delta<span class="sc">*</span><span class="st">&quot;DOC (mg &quot;</span><span class="sc">*</span>L<span class="sc">^-</span><span class="dv">1</span><span class="sc">*</span><span class="st">&quot;)&quot;</span>), <span class="at">y =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb10-174"><a href="#cb10-174" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>(<span class="at">base_size =</span> <span class="dv">12</span>) <span class="sc">+</span></span>
+<span id="cb10-175"><a href="#cb10-175" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.grid.minor =</span> <span class="fu">element_blank</span>(), <span class="at">legend.position =</span> <span class="st">&quot;top&quot;</span>)</span>
+<span id="cb10-176"><a href="#cb10-176" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-177"><a href="#cb10-177" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-178"><a href="#cb10-178" aria-hidden="true" tabindex="-1"></a>::: {.callout-important}</span>
+<span id="cb10-179"><a href="#cb10-179" aria-hidden="true" tabindex="-1"></a><span class="fu">## The decisive result</span></span>
+<span id="cb10-180"><a href="#cb10-180" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-181"><a href="#cb10-181" aria-hidden="true" tabindex="-1"></a>**(b) and (c) agree exactly.** The offset formulation gives +0.12 mg L⁻¹ in summer and −0.00 in winter; the current manuscript model gives +0.14 and +0.00. They are the same estimand written two ways, and both sample cleanly (R-hat ≈ 1.00).</span>
+<span id="cb10-182"><a href="#cb10-182" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-183"><a href="#cb10-183" aria-hidden="true" tabindex="-1"></a>**(a) does not.** Despite a prior centred on 1, the free slope lands at about 0.44 with an interval spanning almost the whole plausible range, R-hat is above the 1.01 standard, and the implied ΔDOC at the mean upstream concentration is about **−1.3 mg L⁻¹ in summer** — the opposite sign to every other estimate we have. With two observations per site, a site random intercept and a latent upstream variable, the slope is competing with the site effects for the same information and the model is only weakly identified.</span>
+<span id="cb10-184"><a href="#cb10-184" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-185"><a href="#cb10-185" aria-hidden="true" tabindex="-1"></a>**Conclusion: &quot;keep downstream DOC as the target and let upstream feed in&quot; is already implemented in the manuscript.** The paired ΔDOC model *is* the downstream-DOC model with inheritance fixed at 1. Estimating that slope freely does not add information here, it removes it.</span>
+<span id="cb10-186"><a href="#cb10-186" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb10-187"><a href="#cb10-187" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-188"><a href="#cb10-188" aria-hidden="true" tabindex="-1"></a><span class="fu"># 4. What a full rebuild would still involve</span></span>
+<span id="cb10-189"><a href="#cb10-189" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-190"><a href="#cb10-190" aria-hidden="true" tabindex="-1"></a>The pilot settles the target-variable question but not the rest of Josh&#39;s proposal, which is to derive B, S, G and M from the posterior of a **season-specific SCM including the mediators**. That part remains a substantial job.</span>
+<span id="cb10-191"><a href="#cb10-191" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-192"><a href="#cb10-192" aria-hidden="true" tabindex="-1"></a><span class="fu">## 4.1 The model</span></span>
+<span id="cb10-193"><a href="#cb10-193" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-194"><a href="#cb10-194" aria-hidden="true" tabindex="-1"></a><span class="in">```{r spec}</span></span>
+<span id="cb10-195"><a href="#cb10-195" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb10-196"><a href="#cb10-196" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: false</span></span>
+<span id="cb10-197"><a href="#cb10-197" aria-hidden="true" tabindex="-1"></a><span class="co"># Sketch only -- NOT run. Every path needs a season interaction, and every</span></span>
+<span id="cb10-198"><a href="#cb10-198" aria-hidden="true" tabindex="-1"></a><span class="co"># predictor keeps its mi() imputation.</span></span>
+<span id="cb10-199"><a href="#cb10-199" aria-hidden="true" tabindex="-1"></a><span class="fu">bf</span>(DOC_down <span class="sc">|</span> <span class="fu">mi</span>(<span class="fl">0.2</span>) <span class="sc">~</span> <span class="dv">0</span> <span class="sc">+</span> season <span class="sc">+</span> <span class="fu">offset</span>(DOC_up) <span class="sc">+</span></span>
+<span id="cb10-200"><a href="#cb10-200" aria-hidden="true" tabindex="-1"></a>     season<span class="sc">:</span><span class="fu">mi</span>(macrophy_abun_z) <span class="sc">+</span> season<span class="sc">:</span><span class="fu">mi</span>(plankton_abun_z) <span class="sc">+</span></span>
+<span id="cb10-201"><a href="#cb10-201" aria-hidden="true" tabindex="-1"></a>     season<span class="sc">:</span><span class="fu">mi</span>(cover_litter_z)  <span class="sc">+</span> season<span class="sc">:</span><span class="fu">mi</span>(water_res_time_z) <span class="sc">+</span></span>
+<span id="cb10-202"><a href="#cb10-202" aria-hidden="true" tabindex="-1"></a>     (<span class="dv">1</span> <span class="sc">|</span> site), <span class="at">family =</span> <span class="fu">student</span>()) <span class="sc">+</span></span>
+<span id="cb10-203"><a href="#cb10-203" aria-hidden="true" tabindex="-1"></a><span class="fu">bf</span>(water_res_time_z <span class="sc">|</span> <span class="fu">mi</span>() <span class="sc">~</span> <span class="dv">0</span> <span class="sc">+</span> season <span class="sc">+</span> season<span class="sc">:</span>n_dams_z <span class="sc">+</span></span>
+<span id="cb10-204"><a href="#cb10-204" aria-hidden="true" tabindex="-1"></a>     season<span class="sc">:</span><span class="fu">mi</span>(dam_height_z) <span class="sc">+</span> season<span class="sc">:</span>slope_z) <span class="sc">+</span></span>
+<span id="cb10-205"><a href="#cb10-205" aria-hidden="true" tabindex="-1"></a><span class="fu">bf</span>(plankton_abun_z  <span class="sc">|</span> <span class="fu">mi</span>() <span class="sc">~</span> <span class="dv">0</span> <span class="sc">+</span> season <span class="sc">+</span> season<span class="sc">:</span><span class="fu">mi</span>(solar_z) <span class="sc">+</span> season<span class="sc">:</span><span class="fu">mi</span>(water_res_time_z)) <span class="sc">+</span></span>
+<span id="cb10-206"><a href="#cb10-206" aria-hidden="true" tabindex="-1"></a><span class="fu">bf</span>(macrophy_abun_z  <span class="sc">|</span> <span class="fu">mi</span>() <span class="sc">~</span> <span class="dv">0</span> <span class="sc">+</span> season <span class="sc">+</span> season<span class="sc">:</span><span class="fu">mi</span>(solar_z) <span class="sc">+</span> season<span class="sc">:</span><span class="fu">mi</span>(water_res_time_z)) <span class="sc">+</span></span>
+<span id="cb10-207"><a href="#cb10-207" aria-hidden="true" tabindex="-1"></a><span class="fu">bf</span>(cover_litter_z   <span class="sc">|</span> <span class="fu">mi</span>() <span class="sc">~</span> <span class="dv">0</span> <span class="sc">+</span> season <span class="sc">+</span> season<span class="sc">:</span><span class="fu">mi</span>(solar_z)) <span class="sc">+</span></span>
+<span id="cb10-208"><a href="#cb10-208" aria-hidden="true" tabindex="-1"></a><span class="fu">bf</span>(solar_z <span class="sc">|</span> <span class="fu">mi</span>() <span class="sc">~</span> <span class="dv">0</span> <span class="sc">+</span> season) <span class="sc">+</span> <span class="fu">bf</span>(dam_height_z <span class="sc">|</span> <span class="fu">mi</span>() <span class="sc">~</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb10-209"><a href="#cb10-209" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_rescor</span>(<span class="cn">FALSE</span>)</span>
+<span id="cb10-210"><a href="#cb10-210" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-211"><a href="#cb10-211" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-212"><a href="#cb10-212" aria-hidden="true" tabindex="-1"></a><span class="fu">## 4.2 The priors all move scale</span></span>
+<span id="cb10-213"><a href="#cb10-213" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-214"><a href="#cb10-214" aria-hidden="true" tabindex="-1"></a><span class="in">```{r priors}</span></span>
+<span id="cb10-215"><a href="#cb10-215" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb10-216"><a href="#cb10-216" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(<span class="fu">tribble</span>(</span>
+<span id="cb10-217"><a href="#cb10-217" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span>Parameter, <span class="sc">~</span><span class="st">`</span><span class="at">Current ($</span><span class="sc">\\</span><span class="at">Delta$DOC target, standardized)</span><span class="st">`</span>, <span class="sc">~</span><span class="st">`</span><span class="at">Required (downstream DOC target, mg L$^{-1}$)</span><span class="st">`</span>,</span>
+<span id="cb10-218"><a href="#cb10-218" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Upstream DOC $</span><span class="sc">\\</span><span class="st">to$ outcome&quot;</span>, <span class="st">&quot;$</span><span class="sc">\\</span><span class="st">beta_1 </span><span class="sc">\\</span><span class="st">sim$ Normal(0, 0.1), estimate $-0.10$&quot;</span>, <span class="st">&quot;inheritance fixed at 1 (offset), or Normal(1, 0.1) — a different quantity entirely&quot;</span>,</span>
+<span id="cb10-219"><a href="#cb10-219" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Intercept&quot;</span>, <span class="st">&quot;Normal(0, 2.5) on $</span><span class="sc">\\</span><span class="st">Delta$DOC&quot;</span>, <span class="st">&quot;Normal(0, 1) on the mg L$^{-1}$ offset; season-specific&quot;</span>,</span>
+<span id="cb10-220"><a href="#cb10-220" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Producer paths → outcome&quot;</span>, <span class="st">&quot;Normal(0.2, 0.075), standardized&quot;</span>, <span class="st">&quot;must be rescaled to mg L$^{-1}$ per SD of the producer variable&quot;</span>,</span>
+<span id="cb10-221"><a href="#cb10-221" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;$</span><span class="sc">\\</span><span class="st">sigma$ of the outcome&quot;</span>, <span class="st">&quot;Student-$t$(3, 0, 2.5) on $</span><span class="sc">\\</span><span class="st">Delta$DOC&quot;</span>, <span class="st">&quot;same family, but the residual now absorbs concentration-level variation&quot;</span>,</span>
+<span id="cb10-222"><a href="#cb10-222" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Site random intercept&quot;</span>, <span class="st">&quot;Normal(0, 2) on $</span><span class="sc">\\</span><span class="st">Delta$DOC&quot;</span>, <span class="st">&quot;now absorbs site DOC level, so the prior must widen substantially&quot;</span>),</span>
+<span id="cb10-223"><a href="#cb10-223" aria-hidden="true" tabindex="-1"></a>  <span class="at">caption =</span> <span class="st">&quot;Every prior on the outcome equation changes meaning when the target changes.&quot;</span>)</span>
+<span id="cb10-224"><a href="#cb10-224" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-225"><a href="#cb10-225" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-226"><a href="#cb10-226" aria-hidden="true" tabindex="-1"></a><span class="fu">## 4.3 Everything downstream of the model changes at once</span></span>
+<span id="cb10-227"><a href="#cb10-227" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-228"><a href="#cb10-228" aria-hidden="true" tabindex="-1"></a><span class="in">```{r cascade}</span></span>
+<span id="cb10-229"><a href="#cb10-229" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb10-230"><a href="#cb10-230" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(<span class="fu">tribble</span>(</span>
+<span id="cb10-231"><a href="#cb10-231" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span>Item, <span class="sc">~</span><span class="st">`</span><span class="at">Why it changes</span><span class="st">`</span>,</span>
+<span id="cb10-232"><a href="#cb10-232" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Figure 1b (SCM path estimates)&quot;</span>, <span class="st">&quot;all coefficients move to a new scale and gain a season dimension&quot;</span>,</span>
+<span id="cb10-233"><a href="#cb10-233" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Table S1 (13 hypotheses)&quot;</span>, <span class="st">&quot;each hypothesis is phrased in terms of ΔDOC&quot;</span>,</span>
+<span id="cb10-234"><a href="#cb10-234" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Fig. S2 (priors)&quot;</span>, <span class="st">&quot;new prior set&quot;</span>,</span>
+<span id="cb10-235"><a href="#cb10-235" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Figs. S3–S4 (residuals, posterior predictive)&quot;</span>, <span class="st">&quot;new outcome&quot;</span>,</span>
+<span id="cb10-236"><a href="#cb10-236" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Fig. S5 (posterior parameters)&quot;</span>, <span class="st">&quot;new parameters, doubled by season&quot;</span>,</span>
+<span id="cb10-237"><a href="#cb10-237" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Fig. S7 (total effects)&quot;</span>, <span class="st">&quot;path tracing must be redone per season; upstream DOC is no longer a driver but an inherited baseline, so the largest current total effect disappears by construction&quot;</span>,</span>
+<span id="cb10-238"><a href="#cb10-238" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Figs. S8–S9 (connectivity SCM)&quot;</span>, <span class="st">&quot;must be re-specified the same way for consistency&quot;</span>,</span>
+<span id="cb10-239"><a href="#cb10-239" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Results §2 and Methods&quot;</span>, <span class="st">&quot;every number and the causal wording&quot;</span>))</span>
+<span id="cb10-240"><a href="#cb10-240" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-241"><a href="#cb10-241" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-242"><a href="#cb10-242" aria-hidden="true" tabindex="-1"></a><span class="fu"># 5. Cost, risk and recommendation</span></span>
+<span id="cb10-243"><a href="#cb10-243" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-244"><a href="#cb10-244" aria-hidden="true" tabindex="-1"></a><span class="in">```{r cost}</span></span>
+<span id="cb10-245"><a href="#cb10-245" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb10-246"><a href="#cb10-246" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(<span class="fu">tribble</span>(</span>
+<span id="cb10-247"><a href="#cb10-247" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span>Stage, <span class="sc">~</span><span class="st">`</span><span class="at">Working days</span><span class="st">`</span>,</span>
+<span id="cb10-248"><a href="#cb10-248" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Re-specification and prior redesign, prior predictive checks&quot;</span>, <span class="st">&quot;2–3&quot;</span>,</span>
+<span id="cb10-249"><a href="#cb10-249" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Fitting, convergence and identification troubleshooting (the pilot above already shows where it bites)&quot;</span>, <span class="st">&quot;2–3&quot;</span>,</span>
+<span id="cb10-250"><a href="#cb10-250" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Re-deriving posterior quantities and regenerating 6–8 figures&quot;</span>, <span class="st">&quot;2–3&quot;</span>,</span>
+<span id="cb10-251"><a href="#cb10-251" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Rewriting Methods, Results and Appendix S1&quot;</span>, <span class="st">&quot;2–3&quot;</span>,</span>
+<span id="cb10-252"><a href="#cb10-252" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Co-author review of a substantially changed analysis&quot;</span>, <span class="st">&quot;2+&quot;</span>,</span>
+<span id="cb10-253"><a href="#cb10-253" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;**Total**&quot;</span>, <span class="st">&quot;**10–14**&quot;</span>))</span>
+<span id="cb10-254"><a href="#cb10-254" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-255"><a href="#cb10-255" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-256"><a href="#cb10-256" aria-hidden="true" tabindex="-1"></a>::: {.callout-warning}</span>
+<span id="cb10-257"><a href="#cb10-257" aria-hidden="true" tabindex="-1"></a><span class="fu">## Recommendation</span></span>
+<span id="cb10-258"><a href="#cb10-258" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-259"><a href="#cb10-259" aria-hidden="true" tabindex="-1"></a>**Do not rebuild before the 10 September submission.** Three reasons, in order of weight:</span>
+<span id="cb10-260"><a href="#cb10-260" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-261"><a href="#cb10-261" aria-hidden="true" tabindex="-1"></a><span class="ss">1.  </span>**The core of the proposal is already in the manuscript.** The pilot shows the paired ΔDOC model and the downstream-DOC model with inheritance 1 are the same thing, and that the free-slope alternative is worse identified and gives a contradictory answer.</span>
+<span id="cb10-262"><a href="#cb10-262" aria-hidden="true" tabindex="-1"></a><span class="ss">2.  </span>**The expensive remainder changes Q2, not Q1.** A season-specific mediator SCM is a genuinely different paper-level analysis; it would also delete the single largest total effect in the current results (upstream DOC) by turning it into an offset, which is a substantive reinterpretation, not a technical refinement.</span>
+<span id="cb10-263"><a href="#cb10-263" aria-hidden="true" tabindex="-1"></a><span class="ss">3.  </span>**Timing.** 10–14 working days against a 7-day window, with the corresponding author unavailable from 10 September to mid-November.</span>
+<span id="cb10-264"><a href="#cb10-264" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-265"><a href="#cb10-265" aria-hidden="true" tabindex="-1"></a>**What to do instead, at no analytical cost:** add one sentence to the Methods saying that ΔDOC is modelled as a paired contrast, equivalent to modelling downstream DOC with an inheritance coefficient of one, and that the free-slope alternative was not identifiable with two samplings per reach. That answers the question a methodological reviewer would ask, and it is now backed by the pilot in this document.</span>
+<span id="cb10-266"><a href="#cb10-266" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-267"><a href="#cb10-267" aria-hidden="true" tabindex="-1"></a>**What to keep for later:** the season-specific mediator SCM is the natural core of a follow-up paper, where the seasonal expression of the biological pathway is the question rather than a robustness check.</span>
+<span id="cb10-268"><a href="#cb10-268" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb10-269"><a href="#cb10-269" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-270"><a href="#cb10-270" aria-hidden="true" tabindex="-1"></a><span class="fu"># 6. Reproducibility</span></span>
+<span id="cb10-271"><a href="#cb10-271" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-272"><a href="#cb10-272" aria-hidden="true" tabindex="-1"></a><span class="in">```{r session}</span></span>
+<span id="cb10-273"><a href="#cb10-273" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb10-274"><a href="#cb10-274" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Pilot fits cached in results/models_fit/: pilot_downstream_v2.rds, pilot_offset.rds</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb10-275"><a href="#cb10-275" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Data: data/processed/m6.csv</span><span class="sc">\n\n</span><span class="st">&quot;</span>)</span>
+<span id="cb10-276"><a href="#cb10-276" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()<span class="sc">$</span>R.version<span class="sc">$</span>version.string</span>
+<span id="cb10-277"><a href="#cb10-277" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 
