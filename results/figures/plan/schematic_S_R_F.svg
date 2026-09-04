@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="900" viewBox="0 0 1500 900" font-family="Helvetica, Arial, sans-serif">
+  <rect width="1500" height="900" fill="white"/>
+  <defs><marker id="arr" markerWidth="12" markerHeight="12" refX="6" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 Z" fill="#222"/></marker></defs>
+  <!-- catchment -->
+  <path d="M 200 70 C 60 180, 30 430, 130 620 C 220 790, 560 880, 800 840 C 900 820, 930 760, 960 700 C 1010 580, 1030 320, 920 160 C 800 40, 380 10, 200 70 Z" fill="#eef2e6" stroke="#6b7a55" stroke-width="3" stroke-dasharray="12 8"/>
+  <text x="150" y="70" font-size="28" fill="#4a5a35">Catchment</text>
+  <!-- floodplain band -->
+  <path d="M 330 110 C 280 220, 300 330, 390 420 C 470 500, 520 560, 560 610 L 720 610 C 680 540, 640 480, 570 400 C 480 310, 440 200, 480 110 Z" fill="#cfe3b5" stroke="#6f9a3a" stroke-width="3"/>
+  <text x="130" y="330" font-size="26" fill="#3f6b1c" font-weight="bold">Floodplain area</text>
+  <text x="130" y="366" font-size="26" fill="#3f6b1c" font-style="italic">A<tspan font-size="18" dy="7">floodplain</tspan></text>
+  <line x1="300" y1="372" x2="360" y2="400" stroke="#3f6b1c" stroke-width="2"/>
+  <!-- river upstream -->
+  <path d="M 400 100 C 370 210, 410 320, 480 410 C 550 490, 600 540, 640 610" fill="none" stroke="#2b5fb3" stroke-width="14" stroke-linecap="round"/>
+  <!-- ponds + dams -->
+  <path d="M 640 610 C 600 650, 600 690, 650 720 C 700 750, 740 730, 760 690 C 780 650, 740 630, 700 610 Z" fill="#2b5fb3"/>
+  <path d="M 700 735 C 675 765, 685 800, 725 820 C 765 840, 795 820, 800 785 C 805 750, 765 735, 735 730 Z" fill="#2b5fb3"/>
+  <path d="M 770 828 C 765 850, 785 868, 815 870" fill="none" stroke="#2b5fb3" stroke-width="14" stroke-linecap="round"/>
+  <line x1="650" y1="720" x2="760" y2="690" stroke="#6b3d1e" stroke-width="10" stroke-linecap="round"/>
+  <line x1="735" y1="828" x2="800" y2="785" stroke="#6b3d1e" stroke-width="10" stroke-linecap="round"/>
+  <!-- sampling points -->
+  <circle cx="640" cy="600" r="11" fill="#e0245e" stroke="white" stroke-width="3"/>
+  <circle cx="817" cy="870" r="11" fill="#e0245e" stroke="white" stroke-width="3"/>
+  <text x="615" y="585" font-size="22" fill="#e0245e" text-anchor="end">upstream sampling (DOC<tspan font-size="15" dy="6">up</tspan><tspan dy="-6">)</tspan></text>
+  <text x="840" y="877" font-size="22" fill="#e0245e">downstream sampling (DOC<tspan font-size="15" dy="6">down</tspan><tspan dy="-6">)</tspan></text>
+  <!-- reach label -->
+  <line x1="765" y1="680" x2="840" y2="640" stroke="#444" stroke-width="2"/>
+  <text x="850" y="640" font-size="24" fill="#222" font-weight="bold">Beaver-engineered stream</text>
+  <text x="850" y="670" font-size="24" fill="#222">ponded area <tspan font-style="italic">A</tspan><tspan font-size="17" font-style="italic" dy="6">beaver</tspan></text>
+  <!-- flow arrow -->
+  <path d="M 200 640 L 200 740" stroke="#222" stroke-width="3" marker-end="url(#arr)"/>
+  <text x="215" y="695" font-size="22" fill="#222">flow</text>
+  <!-- formulas box -->
+  <rect x="1040" y="60" width="440" height="500" rx="12" fill="#fafafa" stroke="#999" stroke-width="2"/>
+  <text x="1065" y="100" font-size="24" font-weight="bold" fill="#222">Derived variables</text>
+  <text x="1065" y="150" font-size="22" fill="#3f6b1c" font-weight="bold">Inherited seasonal contrast</text>
+  <text x="1065" y="180" font-size="19" fill="#333">(winter-to-summer change of upstream DOC)</text>
+  <text x="1065" y="222" font-size="23" fill="#222" font-style="italic">S = DOC<tspan font-size="15" dy="6">up,summer</tspan><tspan dy="-6"> − DOC</tspan><tspan font-size="15" dy="6">up,winter</tspan></text>
+  <text x="1065" y="280" font-size="22" fill="#2b5fb3" font-weight="bold">Local response, season s</text>
+  <text x="1065" y="322" font-size="23" fill="#222" font-style="italic">ΔDOC<tspan font-size="15" dy="6">s</tspan><tspan dy="-6"> = DOC</tspan><tspan font-size="15" dy="6">down,s</tspan><tspan dy="-6"> − DOC</tspan><tspan font-size="15" dy="6">up,s</tspan></text>
+  <text x="1065" y="380" font-size="22" fill="#222" font-weight="bold">Relative response</text>
+  <text x="1065" y="420" font-size="24" fill="#222" font-style="italic">R<tspan font-size="16" dy="7">s</tspan><tspan dy="-7"> = ΔDOC</tspan><tspan font-size="16" dy="7">s</tspan><tspan dy="-7"> / |S|</tspan></text>
+  <text x="1065" y="478" font-size="22" fill="#222" font-weight="bold">Footprint contrast</text>
+  <text x="1065" y="518" font-size="24" fill="#222" font-style="italic">F = A<tspan font-size="16" dy="7">floodplain</tspan><tspan dy="-7"> / A</tspan><tspan font-size="16" dy="7">beaver</tspan></text>
+</svg>

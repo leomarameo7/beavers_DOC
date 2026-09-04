@@ -1,6 +1,6 @@
 ---
 title: "Beaver DOC: analysis plan for the revised submission"
-subtitle: "The research questions, the variables that answer them, and the figures that go into the Overleaf manuscript"
+subtitle: "The research questions, the variables that answer them, and the figures that go into the manuscript"
 author: "Leonardo Capitani"
 date: last-modified
 format:
@@ -24,57 +24,74 @@ editor: visual
 library(tidyverse); library(scales); library(patchwork); library(ggdist); library(knitr); library(here)
 invisible(Sys.setlocale("LC_CTYPE", "en_US.UTF-8"))
 set.seed(7)
-OK <- c(blue = "#0072B2", vermillion = "#D55E00", green = "#009E73")
+# One colour per meaning, used in every figure: DOC added (source) = skyblue, DOC removed (sink) = coral,
+# negligible / undetermined = lightgrey. Never used for anything else.
+PAL <- c(add = "skyblue", remove = "coral", none = "lightgrey")
 dir.create(here("results", "figures", "plan"), recursive = TRUE, showWarnings = FALSE)
 ```
 
 ::: {.callout-tip appearance="simple"}
 ## Purpose
 
-This document fixes the story of the manuscript: three research questions, the variables that answer them, and the figures that go into the Overleaf main text. Everything not listed here is left out of the manuscript. All numbers are computed live from `data/processed/`.
+This document fixes the story of the manuscript: three research questions, the variables that answer them, and the figures that go into the main text and into Appendix S1. Everything not listed here is left out. Figure numbers in this document (Figure 1, 2, …) are its own; the manuscript figure each one becomes is written in bold above it.
 :::
 
 # 1. The variables
 
-The subject of every effect statement is **beaver-engineering**, the physical modification beavers create, because the upstream–downstream contrast measures the reach as a whole.
+The subject of every effect statement is **beaver-engineering**, the physical modification beavers create, because the upstream–downstream contrast measures the whole beaver-engineered stream. The unit of analysis is the stream.
 
 ```{r variable-table}
 #| echo: false
 kable(tribble(
   ~Symbol, ~Name, ~Definition, ~`Meaning (unit)`, ~`Question it answers`,
   "$\\text{DOC}_{up,s}$, $\\text{DOC}_{down,s}$", "upstream DOC, downstream DOC", "measured",
-  "DOC concentration entering / leaving the beaver-engineered reach in season $s$ ($w$ = winter, $s$ = summer) **(mg L$^{-1}$)**",
-  "What is the DOC concentration before and after the beaver-engineered reach in each season?",
+  "DOC concentration entering / leaving the beaver-engineered stream in season $s$ ($w$ = winter, $s$ = summer) **(mg L$^{-1}$)**",
+  "What is the DOC concentration before and after the beaver-engineered stream in each season?",
   "$\\Delta\\text{DOC}_s$", "local response", "$\\text{DOC}_{down,s} - \\text{DOC}_{up,s}$",
   "the change in DOC that beaver-engineering produces in season $s$; positive = enrichment, negative = depletion **(mg L$^{-1}$)**",
   "Does beaver-engineering increase or decrease DOC, and by how much, in each season?",
   "$S$", "inherited seasonal contrast", "$\\text{DOC}_{up,summer} - \\text{DOC}_{up,winter}$",
-  "the winter-to-summer change of upstream DOC, i.e. what the upstream river corridor delivers to the reach **(mg L$^{-1}$)**",
-  "How much does DOC change between winter and summer in the river before it reaches the beaver-engineered reach?",
+  "the winter-to-summer change of upstream DOC, i.e. what the upstream river corridor delivers to the stream **(mg L$^{-1}$)**",
+  "How much does DOC change between winter and summer in the river before it reaches the beaver-engineered stream?",
   "$R_s$", "relative response", "$\\Delta\\text{DOC}_s / \\lvert S \\rvert$",
   "how much DOC beaver-engineering adds ($R_s > 0$) or removes ($R_s < 0$) in season $s$, as a fraction of the inherited seasonal contrast **(dimensionless)**",
   "How much does beaver-engineering add or remove DOC, relative to the inherited seasonal contrast?",
   "$A_\\text{beaver}$, $A_\\text{floodplain}$", "areas", "mapped",
-  "ponded footprint of the beaver-engineered reach; contributing catchment floodplain area **(km$^2$)**",
+  "ponded footprint of the beaver-engineered stream; contributing catchment floodplain area **(km$^2$)**",
   "How large is the beaver-engineered footprint, and how large is the floodplain that generates $S$?",
   "$F$", "footprint contrast", "$A_\\text{floodplain} / A_\\text{beaver}$",
   "how much larger the floodplain area is than the beaver-engineered footprint **(dimensionless)**",
   "How small is the beaver-engineered footprint relative to the floodplain that generates $S$?"))
 ```
 
+**Manuscript placement: Appendix S1 (Figure S10).**
+
 ![**Derivation of the variables.** Top: the same causal structure operates in winter and summer; downstream DOC inherits upstream DOC and is modified by local hydrological and biological processes. Bottom (dashed): $\Delta\text{DOC}_s$, $S$, $R_s$ and $F$ are calculations from the observed or latent concentrations, not causal nodes. Solid arrows are causal pathways; the green arrow is the persistence of the hydrologic template between seasons.](../images/DAG_variable_derivation.png){#fig-dag}
 
 # 2. Research questions and hypotheses
 
-| \# | Research question | Hypothesis | Answered by | Figure |
-|-------------|-----------------|-----------------|-------------|-------------|
-| **Q1 Direction** | Does beaver-engineering consistently increase or decrease DOC downstream compared with upstream? | No consistent direction: responses are variable and heavy-tailed, shifted toward enrichment in summer when primary production is highest. | $\Delta\text{DOC}_s$ | Fig. 1a |
-| **Q2 Drivers** | Which abiotic and biotic drivers set the direction of the local response? | Dams increase water residence time, which promotes primary producers and thereby DOC; high upstream DOC favours retention. | structural causal model | Fig. 1b |
-| **Q3 Magnitude** | How much does beaver-engineering add or remove DOC, relative to the inherited seasonal contrast? | In summer the local response is a substantial fraction of the inherited seasonal contrast; in winter it is negligible. | $R_s$, with $F$ as spatial context | Fig. 2 |
+**Q1 — Direction.** *Does beaver-engineering consistently increase or decrease DOC downstream compared with upstream?*
+Hypothesis: if a stream is impounded by beaver dams, then the local response $\Delta\text{DOC}_s$ will not have a consistent sign across streams, because impoundment simultaneously starts DOC-producing processes — exudation and senescence of phytoplankton and macrophytes, leaching of litter and inundated soils (Søndergaard et al. 1985; Sell & Overbeck 1992; Aitkenhead et al. 1999) — and DOC-removing processes — microbial mineralization, photodegradation and sedimentation during the longer residence time (Johnston 2017; Nummi et al. 2018) — whose balance depends on the stream; syntheses accordingly report enrichment, no change and depletion (Larsen et al. 2021; Grudzinski et al. 2022). We further expect the balance to tilt toward enrichment in summer, when production exceeds removal (Mulholland & Hill 1997).
+
+**Q2 — Drivers.** *Which abiotic and biotic drivers set the direction of the local response?*
+Hypothesis: if the number of dams increases, then water residence time increases because each dam impounds water and slows flow (Westbrook et al. 2006; Majerova et al. 2015); if water residence time and solar radiation increase, then phytoplankton and macrophyte abundance increase because nutrients are retained and light is available for photosynthesis (Reynolds 2006; Finger et al. 2007; Feuchtmayr et al. 2009); if primary producer abundance and soil litter cover increase, then $\Delta\text{DOC}_s$ increases because exudation, senescence and litter leaching release DOC (Reitsema et al. 2018; Gessner et al. 1999); if upstream DOC increases, then $\Delta\text{DOC}_s$ decreases because a larger incoming load is proportionally retained or mineralized within the pond (Larson et al. 2007; Wohl 2013). The thirteen path-specific hypotheses are in Appendix S1, Table S1.
+
+**Q3 — Magnitude.** *How much does beaver-engineering add or remove DOC, relative to the inherited seasonal contrast?*
+Hypothesis: if the season is summer, then the relative response $R_{summer}$ will be positive and a substantial fraction of the inherited seasonal contrast, because higher light and temperature raise autochthonous DOC production inside the pond independently of the upstream corridor (Mulholland & Hill 1997; Battin et al. 2023); if the season is winter, then $R_{winter}$ will be close to zero because primary production is minimal. Because $A_\text{beaver}$ is a very small part of $A_\text{floodplain}$ (footprint contrast $F \gg 1$), this response arises on a footprint far smaller than the corridor that generates $S$.
+
+| Question | Answered by | This document | Manuscript |
+|---|---|---|---|
+| Q1 Direction | $\Delta\text{DOC}_s$ | @fig-q1 | Figure 1a (main text) |
+| Q2 Drivers | structural causal model | @fig-q2 | Figure 1b (main text) |
+| Q3 Magnitude | $R_s$, with $F$ as context | @fig-R | Figure 2 (main text) |
+| Methods | sampling design; $S$, $\Delta\text{DOC}_s$, $R_s$, $F$ | @fig-map | Figure 3 (main text) |
+| Derivation of the variables | — | @fig-dag | Figure S10 (Appendix S1) |
 
 # 3. Q1 — Direction
 
-![**Figure 1a. Direction of the local response.** Posterior predictive distribution of $\Delta\text{DOC}_s$ for a single sampling of a beaver-engineered stream, in winter and summer, from the measurement-error model on the raw upstream and downstream concentrations. Shaded areas: posterior predictive probability of depletion ($\Delta\text{DOC}_s < -0.5$ mg L$^{-1}$, coral), of a negligible response (ROPE $\pm 0.5$ mg L$^{-1}$, grey) and of enrichment ($\Delta\text{DOC}_s > 0.5$ mg L$^{-1}$, blue). Point: median; bars: 66% and 95% intervals.](../overleaf/figures/media/Figure_2a.png){#fig-q1}
+**Manuscript placement: main text, Figure 1a (existing, unchanged).**
+
+![**Direction of the local response.** Posterior predictive distribution of $\Delta\text{DOC}_s$ for a single sampling of a beaver-engineered stream, in winter and summer, from the measurement-error model on the raw upstream and downstream concentrations. Coral: posterior predictive probability of depletion ($\Delta\text{DOC}_s < -0.5$ mg L$^{-1}$); grey: negligible response (ROPE $\pm 0.5$ mg L$^{-1}$); skyblue: enrichment ($\Delta\text{DOC}_s > 0.5$ mg L$^{-1}$). Point: median; bars: 66% and 95% intervals.](../overleaf/figures/media/Figure_2a.png){#fig-q1}
 
 ```{r q1-data}
 m <- read.csv(here("data", "processed", "m12.csv"))
@@ -92,70 +109,67 @@ sw <- d |> summarise(n = n(), winter_enrich = mean(dw > 0), summer_enrich = mean
 
 Beaver-engineering does **not** change DOC in a consistent direction. The average local response is negligible (+0.14 mg L$^{-1}$ in summer, 0.00 in winter, both inside the ROPE), but a single sampling is broad and heavy-tailed: about 76% negligible, 12–16% enrichment, 9–12% depletion, with a slight prevalence of enrichment in summer.
 
-One sentence to add to the Results: of the `r sw$n` reaches with both seasons, `r sprintf("%.0f%%", 100*sw$winter_enrich)` show enrichment in winter and `r sprintf("%.0f%%", 100*sw$summer_enrich)` in summer; `r sw$dep_to_enr` reaches switch from winter depletion to summer enrichment, `r sw$enr_to_dep` the other way.
-
-**Placement: main text, Figure 1a** (unchanged).
+Sentence to add to the Results: of the `r sw$n` streams sampled in both seasons, `r sprintf("%.0f%%", 100*sw$winter_enrich)` show enrichment in winter and `r sprintf("%.0f%%", 100*sw$summer_enrich)` in summer; `r sw$dep_to_enr` streams switch from winter depletion to summer enrichment, `r sw$enr_to_dep` the other way.
 :::
 
 # 4. Q2 — Drivers
 
-![**Figure 1b. Drivers of the local response.** Structural causal model with the estimated standardized effects; solid edges carry at least 90% posterior probability of a directional effect, dashed edges are inconclusive.](../images/Capitani_Figure_2b.png){#fig-q2}
+**Manuscript placement: main text, Figure 1b (existing, unchanged).**
+
+![**Drivers of the local response.** Structural causal model with the estimated standardized effects; solid edges carry at least 90% posterior probability of a directional effect, dashed edges are inconclusive.](../images/Capitani_Figure_2b.png){#fig-q2}
 
 ::: {.callout-note}
 ## Key message of @fig-q2
 
-The direction of the local response is set by the context the pond receives: upstream DOC has the largest total effect (−0.10; high upstream DOC favours retention), followed by solar radiation acting through the primary producers (+0.04). The number of dams and the dam height act only weakly, through water residence time. Beaver-engineering creates the conditions; the inputs decide the sign.
-
-**Placement: main text, Figure 1b** (unchanged). Supporting material stays in Appendix S1 (hypotheses table, priors, checks, total effects, alternative connectivity model).
+The direction of the local response is set by the context the pond receives: upstream DOC has the largest total effect (−0.10; high upstream DOC favours retention), followed by solar radiation acting through the primary producers (+0.04). The number of dams and the dam height act only weakly, through water residence time. Beaver-engineering creates the conditions; the inputs decide the sign. Supporting material stays in Appendix S1 (Table S1, Figures S1–S9).
 :::
 
 # 5. Q3 — Magnitude: the relative response $R_s$
 
-$R_s$ is computed from the **latent** concentrations of a Bayesian hierarchical measurement-error model (one model per measured concentration, log scale, 0.2 mg L$^{-1}$ instrument error; `notebook/latent_concentrations_fit.R`), so the ratio is never formed from raw values and its uncertainty is carried through. Draws below: `r nrow(readRDS(here("results","latent_R_thin.rds"))$S)` posterior draws per reach.
+$R_s$ is computed from the **latent** concentrations of a Bayesian hierarchical measurement-error model (one model per measured concentration, log scale, 0.2 mg L$^{-1}$ instrument error; `notebook/latent_concentrations_fit.R`), so the ratio is never formed from raw values and its uncertainty is carried through (`r nrow(readRDS(here("results","latent_R_thin.rds"))$S)` posterior draws per stream).
 
 ```{r q3-compute}
-LR <- readRDS(here("results", "latent_R_thin.rds"))     # thinned copy of results/latent_R.rds
+LR <- readRDS(here("results", "latent_R_thin.rds"))
 R_s <- LR$R_s; R_w <- LR$R_w; S_lat <- LR$S
-medR  <- function(R, keep = rep(TRUE, ncol(R))) apply(R[, keep, drop = FALSE], 1, median)
-absS  <- apply(abs(S_lat), 2, median)
-qf    <- function(x) sprintf("%.2f [%.2f, %.2f]", median(x), quantile(x, .025), quantile(x, .975))
+medR <- function(R, keep = rep(TRUE, ncol(R))) apply(R[, keep, drop = FALSE], 1, median)
+absS <- apply(abs(S_lat), 2, median)
+qf   <- function(x) sprintf("%.2f [%.2f, %.2f]", median(x), quantile(x, .025), quantile(x, .975))
 q3 <- tibble(
-  Quantity = c("Median $R_{summer}$ across reaches", "Median $R_{winter}$ across reaches",
-               "$R_{summer} - R_{winter}$",
+  Quantity = c("Median $R_{summer}$ across streams", "Median $R_{winter}$ across streams", "$R_{summer} - R_{winter}$",
                "Median $R_{summer}$, excluding the 20% smallest $\\lvert S \\rvert$ (ratio-stability check)"),
-  `Posterior median [95% CrI]` = c(qf(medR(R_s)), qf(medR(R_w)), qf(medR(R_s) - medR(R_w)),
-                                   qf(medR(R_s, absS > quantile(absS, .2)))),
+  `Posterior median [95% CrI]` = c(qf(medR(R_s)), qf(medR(R_w)), qf(medR(R_s) - medR(R_w)), qf(medR(R_s, absS > quantile(absS, .2)))),
   `P(> 0)` = sprintf("%.3f", c(mean(medR(R_s) > 0), mean(medR(R_w) > 0), mean(medR(R_s) - medR(R_w) > 0),
                                mean(medR(R_s, absS > quantile(absS, .2)) > 0))))
 kable(q3)
 n_add <- sum(colMeans(R_s > 0) > 0.9); n_rem <- sum(colMeans(R_s < 0) > 0.9)
 ```
 
+**Manuscript placement: main text, Figure 2 (new; replaces the amplification-factor figure).**
+
 ```{r fig-R}
 #| fig-height: 8.5
-#| fig-cap: "**Figure 2. Relative response $R_s$ of beaver-engineering, by season.** (a) Posterior distribution of the median relative response across the 158 reaches, in winter and summer; point: posterior median, bars: 66% and 95% credible intervals; the dashed line marks no response. (b) Relative response of each reach in summer: posterior median and 90% credible interval, reaches ranked by their median. Blue: beaver-engineering adds DOC with posterior probability above 0.9; vermillion: removes DOC with probability above 0.9; grey: undetermined. The grey band marks $\\lvert R_{summer} \\rvert < 0.1$. Pseudo-log axis."
+#| fig-cap: "**Relative response $R_s$ of beaver-engineering.** (a) Posterior distribution of the median relative response across the 158 streams, in winter and summer; point: posterior median, bars: 66% and 95% credible intervals; dashed line: no response. (b) Relative response of each stream in summer: posterior median and 90% credible interval, streams ranked by their median; the grey band marks $\\lvert R_{summer} \\rvert < 0.1$; pseudo-log axis. In both panels skyblue means beaver-engineering adds DOC with posterior probability above 0.9, coral means it removes DOC with probability above 0.9, and grey means undetermined — the same colours as in the direction figure."
+cls <- function(p_add) case_when(p_add > 0.9 ~ "add", p_add < 0.1 ~ "remove", TRUE ~ "none")
+lab <- c(add = "adds DOC (P > 0.9)", remove = "removes DOC (P > 0.9)", none = "undetermined")
 pop <- bind_rows(tibble(season = "summer", v = medR(R_s)), tibble(season = "winter", v = medR(R_w))) |>
-  mutate(season = factor(season, levels = c("winter", "summer")))
-pa <- ggplot(pop, aes(x = v, y = season, fill = season)) +
+  mutate(season = factor(season, levels = c("winter", "summer"))) |>
+  group_by(season) |> mutate(class = cls(mean(v > 0))) |> ungroup()
+pa <- ggplot(pop, aes(x = v, y = season, fill = class)) +
   geom_vline(xintercept = 0, linetype = "dashed", colour = "grey45") +
-  stat_halfeye(.width = c(.66, .95), point_interval = "median_qi", alpha = .85, show.legend = FALSE) +
-  scale_fill_manual(values = c(summer = OK[["vermillion"]], winter = OK[["green"]])) +
-  labs(x = expression("Median relative response across reaches,  "*R[s]*" = "*Delta*DOC[s]*" / |S|"), y = NULL) +
-  theme_bw(base_size = 12) + theme(panel.grid.minor = element_blank())
-
+  stat_halfeye(.width = c(.66, .95), point_interval = "median_qi", alpha = .9) +
+  scale_fill_manual(values = PAL, labels = lab, breaks = names(lab), name = NULL, drop = FALSE) +
+  labs(x = expression("Median relative response across streams,  "*R[s]*" = "*Delta*DOC[s]*" / |S|"), y = NULL) +
+  theme_bw(base_size = 12) + theme(panel.grid.minor = element_blank(), legend.position = "top")
 per <- tibble(med = apply(R_s, 2, median), lo = apply(R_s, 2, quantile, .05), hi = apply(R_s, 2, quantile, .95),
-              p_add = colMeans(R_s > 0)) |>
-  mutate(class = case_when(p_add > 0.9 ~ "adds DOC (P > 0.9)", p_add < 0.1 ~ "removes DOC (P > 0.9)", TRUE ~ "undetermined")) |>
-  arrange(med) |> mutate(rank = row_number())
+              class = cls(colMeans(R_s > 0))) |> arrange(med) |> mutate(rank = row_number())
 psl <- pseudo_log_trans(sigma = 0.1, base = 10)
 pb <- ggplot(per, aes(x = rank, y = med, colour = class)) +
   annotate("rect", xmin = -Inf, xmax = Inf, ymin = -0.1, ymax = 0.1, fill = "grey88", alpha = .8) +
   geom_hline(yintercept = 0, colour = "grey45") +
-  geom_linerange(aes(ymin = lo, ymax = hi), alpha = .55) + geom_point(size = 1.4) +
-  scale_colour_manual(values = c("adds DOC (P > 0.9)" = OK[["blue"]], "removes DOC (P > 0.9)" = OK[["vermillion"]],
-                                 "undetermined" = "grey55"), name = NULL) +
+  geom_linerange(aes(ymin = lo, ymax = hi), alpha = .6) + geom_point(size = 1.6) +
+  scale_colour_manual(values = c(add = "#3B9AD1", remove = "#E8603C", none = "grey60"), labels = lab, breaks = names(lab), name = NULL) +
   scale_y_continuous(trans = psl, breaks = c(-10, -1, -0.1, 0, 0.1, 1, 10)) +
-  labs(x = "Reach (ranked by posterior median)", y = expression(R[summer]*" (pseudo-log axis)")) +
+  labs(x = "Stream (ranked by posterior median)", y = expression(R[summer]*" (pseudo-log axis)")) +
   theme_bw(base_size = 12) + theme(panel.grid.minor = element_blank(), legend.position = "top")
 fig2 <- pa / pb + plot_layout(heights = c(1, 1.3)) + plot_annotation(tag_levels = "a")
 ggsave(here("results", "figures", "plan", "fig_R.png"), fig2, width = 9, height = 8.5, dpi = 300)
@@ -165,39 +179,44 @@ fig2
 ::: {.callout-important}
 ## Key message of @fig-R
 
-**In summer, beaver-engineering adds DOC equal to about one fifth of the inherited seasonal contrast; in winter it adds nothing.** The median relative response across reaches is `r sprintf("%.2f", median(medR(R_s)))` in summer (95% CrI `r sprintf("%.2f to %.2f", quantile(medR(R_s), .025), quantile(medR(R_s), .975))`, P(> 0) = `r sprintf("%.3f", mean(medR(R_s) > 0))`) and `r sprintf("%.2f", median(medR(R_w)))` in winter. This average conceals two-sided behaviour: in summer `r n_add` reaches add DOC and `r n_rem` remove it with posterior probability above 0.9. The result holds when the reaches with the smallest inherited seasonal contrast are excluded, so it is not driven by small denominators.
+**In summer, beaver-engineering adds DOC equal to about one fifth of the inherited seasonal contrast; in winter it adds nothing.** The median relative response across streams is `r sprintf("%.2f", median(medR(R_s)))` in summer (95% CrI `r sprintf("%.2f to %.2f", quantile(medR(R_s), .025), quantile(medR(R_s), .975))`, P(> 0) = `r sprintf("%.3f", mean(medR(R_s) > 0))`) and `r sprintf("%.2f", median(medR(R_w)))` in winter. This average conceals two-sided behaviour: in summer `r n_add` streams add DOC and `r n_rem` remove it with posterior probability above 0.9. The result holds when the streams with the smallest inherited seasonal contrast are excluded, so it is not driven by small denominators.
 
 Spatial context, one sentence in the text: the beaver-engineered footprint is at the median `r sprintf("%.2f%%", 100 * median(1 / d$F))` of the floodplain area that generates the inherited seasonal contrast ($F$ = `r sprintf("%.0f", median(d$F))`).
-
-**Placement: main text, Figure 2.** It replaces the amplification-factor figure.
 :::
 
-# 6. Figures for the Overleaf manuscript
+# 6. Methods figure
+
+**Manuscript placement: main text, Figure 3 (existing map; panel b redrawn with $S$, $\Delta\text{DOC}_s$, $R_s$ and $F$ in place of the amplification-factor quantities).**
+
+![**Sampling design and derived variables.** (a) Sampling locations across Switzerland. Red dots (n = 176) denote streams where water samples were collected, black dots (n = 16) denote streams where water samples and primary producer abundance were sampled. The inset shows the sampling design at each stream: water was sampled upstream of the first and downstream of the last beaver dam. (b) Schematic of the derived variables: the inherited seasonal contrast $S$ is generated over the floodplain area $A_\text{floodplain}$; the local response $\Delta\text{DOC}_s$ is measured across the beaver-engineered stream of ponded area $A_\text{beaver}$; the relative response is $R_s = \Delta\text{DOC}_s / \lvert S \rvert$ and the footprint contrast is $F = A_\text{floodplain} / A_\text{beaver}$.](../results/figures/plan/fig_map_schematic.png){#fig-map}
+
+# 7. Figures for the manuscript
 
 ```{r inventory}
 #| echo: false
 kable(tribble(
-  ~Figure, ~Content, ~Answers, ~Status,
-  "Fig. 1a", "Posterior predictive distribution of $\\Delta\\text{DOC}_s$ by season", "Q1", "existing",
-  "Fig. 1b", "Structural causal model with estimated effects", "Q2", "existing",
-  "Fig. 2",  "Relative response $R_s$ by season (a) and by reach (b)", "Q3", "**new — replaces the amplification-factor figure**",
-  "Fig. 3",  "Map, sampling design and reach schematic", "Methods", "existing (schematic to be updated to $S$, $R_s$, $F$)",
-  "Fig. S1–S9", "Hypothesised DAG, priors, checks, stream-level classification, total effects, connectivity model", "Q2 support", "existing",
-  "Fig. S10", "Variable-derivation DAG (this document, §1)", "all", "**new**"))
+  ~`Manuscript figure`, ~Content, ~Answers, ~`This document`, ~Status,
+  "Figure 1a", "Posterior predictive distribution of $\\Delta\\text{DOC}_s$ by season", "Q1", "@fig-q1", "existing",
+  "Figure 1b", "Structural causal model with estimated effects", "Q2", "@fig-q2", "existing",
+  "Figure 2",  "Relative response $R_s$: across streams (a) and by stream (b)", "Q3", "@fig-R", "**new — replaces the amplification-factor figure**",
+  "Figure 3",  "Map, sampling design and schematic of $S$, $\\Delta\\text{DOC}_s$, $R_s$, $F$", "Methods", "@fig-map", "panel b **redrawn**",
+  "Figure S1–S9", "Hypothesised DAG, priors, checks, stream-level classification, total effects, connectivity model", "Q2 support", "—", "existing",
+  "Figure S10", "Derivation of the variables", "all", "@fig-dag", "**new**"))
 ```
 
 ::: {.callout-warning}
 ## What changes in the manuscript
 
-1.  The amplification factor $M$ and its figure are removed; Q3 is answered by $R_s$ with $F$ stated once as context.
-2.  The abstract sentence "amplified DOC concentration changes 141 times in summer and 33 times in winter" is replaced by the $R_s$ statement above.
-3.  The Methods gain the definitions of $S$ and $R_s$ and the latent-concentration model; the $M$ equations are dropped.
+1.  **Abstract.** The sentence *"Compared to floodplain-scale DOC variation, beaver-engineering amplified DOC concentration changes 141 times in summer and 33 times in winter."* is replaced by: *"Relative to the inherited seasonal contrast of upstream DOC, beaver-engineering added DOC in summer (median relative response `r sprintf("%.2f", median(medR(R_s)))`, 95% credible interval `r sprintf("%.2f–%.2f", quantile(medR(R_s), .025), quantile(medR(R_s), .975))`) and had no net effect in winter (`r sprintf("%.2f", median(medR(R_w)))`), on a footprint of about `r sprintf("%.1f%%", 100 * median(1 / d$F))` of the floodplain area."*
+2.  **Results.** The amplification-factor section and its figure are removed; Q3 is answered by $R_s$ (Figure 2) with the footprint sentence above.
+3.  **Methods.** The definitions of $S$, $R_s$ and $F$ and the latent-concentration model replace the amplification-factor equations; Figure 3b is redrawn.
+4.  **Appendix S1.** Figure S10 (derivation of the variables) is added.
 :::
 
-# 7. Reproducibility
+# 8. Reproducibility
 
 ```{r session}
 #| echo: false
-cat("Data: data/processed/m12.csv | latent concentrations: notebook/latent_concentrations_fit.R -> results/latent_R.rds (thinned copy tracked)\n")
+cat("Data: data/processed/m12.csv | latent concentrations: notebook/latent_concentrations_fit.R -> results/latent_R.rds (thinned copy latent_R_thin.rds is tracked)\n")
 sessionInfo()$R.version$version.string
 ```
