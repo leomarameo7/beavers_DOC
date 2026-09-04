@@ -25,7 +25,7 @@ library(tidyverse); library(scales); library(patchwork); library(ggdist); librar
 invisible(Sys.setlocale("LC_CTYPE", "en_US.UTF-8"))
 set.seed(7)
 # One colour per meaning, used in every figure: DOC added (source) = skyblue, DOC removed (sink) = coral,
-# negligible / undetermined = lightgrey. Never used for anything else.
+# negligible / no-evidence = lightgrey. Never used for anything else.
 PAL <- c(add = "skyblue", remove = "coral", none = "lightgrey")
 dir.create(here("results", "figures", "plan"), recursive = TRUE, showWarnings = FALSE)
 ```
@@ -72,7 +72,7 @@ kable(tribble(
 
 **Manuscript placement: Appendix S1 (Figure S10).**
 
-![**Derivation of the variables.** Top: the same causal structure operates in winter and summer; downstream DOC inherits upstream DOC and is modified by local hydrological and biological processes. Bottom (dashed): $\Delta\text{DOC}_s$, $S$, $R_s$ and $F$ are calculations from the error-corrected concentrations, not causal nodes. Solid arrows are causal pathways; the green arrow is the persistence of the hydrologic template between seasons.](../images/DAG_variable_derivation.png){#fig-dag}
+![**Derivation of the variables.** Top: the same causal structure operates in winter and summer; downstream DOC inherits upstream DOC and is modified by local hydrological and biological processes. Bottom (dashed): $\Delta\text{DOC}_s$, $S$, $R_s$ and $F$ are calculations from the concentrations, not causal nodes. Solid arrows are causal pathways; the green arrow is the persistence of the hydrologic template between seasons.](../images/DAG_variable_derivation.png){#fig-dag}
 
 # 2. Research questions and hypotheses
 
@@ -105,12 +105,17 @@ The division of labour between the two quantities is fixed: **$R_s$ answers "how
 ![**Direction of the local response.** Posterior predictive distribution of $\Delta\text{DOC}_s$ for a single sampling of a beaver-engineered stream, in winter and summer, from the measurement-error model on the raw upstream and downstream concentrations. Coral: posterior predictive probability of depletion ($\Delta\text{DOC}_s < -0.5$ mg L$^{-1}$); grey: negligible response (ROPE $\pm 0.5$ mg L$^{-1}$); skyblue: enrichment ($\Delta\text{DOC}_s > 0.5$ mg L$^{-1}$). Point: median; bars: 66% and 95% intervals.](../overleaf/figures/media/Figure_2a.png){#fig-q1}
 
 ```{r q1-data}
+# raw data: one row per sampling; pair each stream's winter and summer sampling
 m <- read.csv(here("data", "processed", "m12.csv"))
 w <- m |> filter(season == "winter") |> select(site, beaver_territory, up_w = DOC_input, dn_w = DOC_out,
                                                  Afp = A_floodplain_km2, Abv = A_beaver_km2)
 s <- m |> filter(season == "summer") |> select(site, beaver_territory, up_s = DOC_input, dn_s = DOC_out)
+# streams with both seasons complete (158 of 176); local responses and footprint contrast
 d <- inner_join(w, s, by = c("site", "beaver_territory")) |> filter(complete.cases(up_w, dn_w, up_s, dn_s)) |>
-  mutate(dw = dn_w - up_w, ds = dn_s - up_s, F = Afp / Abv)
+  mutate(dw = dn_w - up_w,      # local response in winter
+         ds = dn_s - up_s,      # local response in summer
+         F  = Afp / Abv)        # footprint contrast
+# shares of enrichment by season, and streams that switch direction between seasons
 sw <- d |> summarise(n = n(), winter_enrich = mean(dw > 0), summer_enrich = mean(ds > 0),
                      dep_to_enr = sum(dw < 0 & ds > 0), enr_to_dep = sum(dw > 0 & ds < 0))
 ```
@@ -125,9 +130,9 @@ Sentence to add to the Results: of the `r sw$n` streams sampled in both seasons,
 
 # 4. Q2 — Drivers
 
-**Manuscript placement: main text, Figure 1b (existing, unchanged).**
+**Manuscript placement: main text, Figure 1b (redrawn: the outcome is downstream DOC).**
 
-![**Drivers of the local response.** Structural causal model with the estimated standardized effects; solid edges carry at least 90% posterior probability of a directional effect, dashed edges are inconclusive.](../images/Capitani_Figure_2b.png){#fig-q2}
+![**Drivers of downstream DOC.** Structural causal model with downstream DOC as the outcome (model `b1_downstream`) and the posterior mean standardized effects; the upstream-DOC path is the inheritance slope (0.95, mg per mg). Skyblue: positive effect with posterior probability above 0.90; coral: negative effect with posterior probability above 0.90; dashed grey: no-evidence. Drawn by `notebook/figure_1b_downstream.R`.](../images/Figure_1b_downstream.png){#fig-q2}
 
 ::: {.callout-note}
 ## Key message of @fig-q2
@@ -135,17 +140,26 @@ Sentence to add to the Results: of the `r sw$n` streams sampled in both seasons,
 The direction of the local response is set by the context the pond receives: upstream DOC has the largest total effect (−0.10; high upstream DOC favours retention), followed by solar radiation acting through the primary producers (+0.04). The number of dams and the dam height act only weakly, through water residence time. Beaver-engineering creates the conditions; the inputs decide the sign. Supporting material stays in Appendix S1 (Table S1, Figures S1–S9).
 :::
 
-**Parameterization (Josh's request, adopted).** The structural causal model is reported with **downstream DOC as the outcome**: upstream DOC enters as the inherited incoming state with a freely estimated inheritance slope, and $\Delta\text{DOC}_s$ is computed from the posterior afterwards as $\text{DOC}_{down,s} - \text{DOC}_{up,s}$, so upstream DOC is never both a predictor and part of the outcome. This model (`b1_downstream`, `notebook/scm_rebuild.qmd`) is the $\Delta$DOC model in a different parameterization: every mediator effect agrees to the second decimal, and the upstream-DOC path is re-read as an inheritance slope of **0.95 [0.92, 0.98]** — downstream DOC inherits 95% of the upstream concentration, mg per mg. Figure 1b is unchanged; the Methods gain one sentence stating the parameterization and the inheritance slope.
+**Parameterization (Josh's request, adopted).** The structural causal model is reported with **downstream DOC as the outcome**: upstream DOC enters as the inherited incoming state with a freely estimated inheritance slope, and $\Delta\text{DOC}_s$ is computed from the posterior afterwards as $\text{DOC}_{down,s} - \text{DOC}_{up,s}$, so upstream DOC is never both a predictor and part of the outcome. This model (`b1_downstream`, `notebook/scm_rebuild.qmd`) is the $\Delta$DOC model in a different parameterization: every mediator effect agrees to the second decimal, and the upstream-DOC path is re-read as an inheritance slope of **0.95 [0.92, 0.98]** — downstream DOC inherits 95% of the upstream concentration, mg per mg. Figure 1b is redrawn accordingly (@fig-q2); the Methods gain one sentence stating the parameterization and the inheritance slope.
 
 # 5. Q3 — Magnitude and seasonal modification: $R_s$ and $G$
 
-$R_s$, $B$ and $G$ are computed from the **error-corrected** concentrations of a Bayesian hierarchical measurement-error model (one model per measured concentration, log scale, 0.2 mg L$^{-1}$ instrument error; `notebook/latent_concentrations_fit.R`): the model estimates each stream's true concentration under the instrument error, so no derived quantity is ever formed from raw values and the uncertainty is carried through (`r nrow(readRDS(here("results","latent_R_thin.rds"))$S)` posterior draws per stream).
+Of the 176 streams sampled, **158 have both a winter and a summer sampling**; every seasonal quantity ($S$, $B$, $G$, $R_s$) uses these 158 streams. State this once in the Methods, so the two numbers never appear unexplained side by side.
+
+$R_s$, $B$ and $G$ are computed from posterior draws of each stream's concentrations (Bayesian measurement-error model, `notebook/concentrations_fit.R`; the model belongs in the Methods), so no derived quantity is ever formed from raw values and the uncertainty is carried through (`r nrow(readRDS(here("results","concentrations_thin.rds"))$S)` posterior draws per stream).
 
 ```{r q3-compute}
-LR <- readRDS(here("results", "latent_R_thin.rds"))
-R_s <- LR$R_s; R_w <- LR$R_w; S_lat <- LR$S
+# LR holds one matrix per quantity: rows = 4000 posterior draws, columns = 158 streams
+LR <- readRDS(here("results", "concentrations_thin.rds"))
+R_s <- LR$R_s   # relative response in summer, per draw and stream
+R_w <- LR$R_w   # relative response in winter
+S_m <- LR$S     # inherited seasonal contrast
+# medR: for each posterior draw, the median across streams -> a posterior
+# distribution of the across-stream median (optionally on a subset of streams)
 medR <- function(R, keep = rep(TRUE, ncol(R))) apply(R[, keep, drop = FALSE], 1, median)
-absS <- apply(abs(S_lat), 2, median)
+# per-stream median |S|, used only for the small-denominator stability check
+absS <- apply(abs(S_m), 2, median)
+# qf: format a posterior as "median [95% credible interval]"
 qf   <- function(x) sprintf("%.2f [%.2f, %.2f]", median(x), quantile(x, .025), quantile(x, .975))
 q3 <- tibble(
   Quantity = c("Median $R_{summer}$ across streams", "Median $R_{winter}$ across streams", "$R_{summer} - R_{winter}$",
@@ -154,44 +168,61 @@ q3 <- tibble(
   `P(> 0)` = sprintf("%.3f", c(mean(medR(R_s) > 0), mean(medR(R_w) > 0), mean(medR(R_s) - medR(R_w) > 0),
                                mean(medR(R_s, absS > quantile(absS, .2)) > 0))))
 kable(q3)
-n_add <- sum(colMeans(R_s > 0) > 0.9); n_rem <- sum(colMeans(R_s < 0) > 0.9)
+# streams whose summer relative response is positive (or negative) with P > 0.90
+n_add <- sum(colMeans(R_s > 0) > 0.90); n_rem <- sum(colMeans(R_s < 0) > 0.90); n_str <- ncol(R_s)
 # Seasonal gain G = B / S, per stream, from the same posterior draws
-B_lat <- LR$ds - LR$dw
-G_lat <- B_lat / S_lat
-g_lab <- apply(G_lat, 2, function(g) {
+# beaver seasonal modification B = summer response - winter response, per draw
+B_m <- LR$ds - LR$dw
+# seasonal gain G = B / S: does beaver-engineering reinforce (G > 0),
+# dampen (-1 < G < 0) or reverse (G < -1) the inherited seasonal contrast?
+G_m <- B_m / S_m
+# classify each stream by the posterior probability of its gain category
+g_lab <- apply(G_m, 2, function(g) {
   p <- c(reinforce = mean(g > 0), dampen = mean(g > -1 & g < 0), reverse = mean(g < -1))
-  if (max(p) > 0.9) names(p)[which.max(p)] else "undetermined"
+  if (max(p) > 0.90) names(p)[which.max(p)] else "no-evidence"  # classify only when P > 0.90
 })
-g_n <- table(factor(g_lab, levels = c("reinforce", "dampen", "reverse", "undetermined")))
-g_med <- median(apply(G_lat, 1, function(g) median(g)))
+g_n <- table(factor(g_lab, levels = c("reinforce", "dampen", "reverse", "no-evidence")))
+g_med <- median(apply(G_m, 1, function(g) median(g)))  # posterior median of the across-stream median gain
 ```
 
 **Manuscript placement: main text, Figure 2 (new; replaces the amplification-factor figure).**
 
 ```{r fig-R}
 #| fig-height: 8.5
-#| fig-cap: "**Relative response $R_s$ of beaver-engineering.** (a) Posterior distribution of the median relative response across the 158 streams, in winter and summer; point: posterior median, bars: 66% and 95% credible intervals; dashed line: no response. (b) Relative response of each stream in summer: posterior median and 90% credible interval, streams ranked by their median; the grey band marks $\\lvert R_{summer} \\rvert < 0.1$; pseudo-log axis. In both panels skyblue means beaver-engineering adds DOC with posterior probability above 0.9, coral means it removes DOC with probability above 0.9, and grey means undetermined — the same colours as in the direction figure."
-cls <- function(p_add) case_when(p_add > 0.9 ~ "add", p_add < 0.1 ~ "remove", TRUE ~ "none")
-lab <- c(add = "adds DOC (P > 0.9)", remove = "removes DOC (P > 0.9)", none = "undetermined")
+#| fig-cap: "**Relative response $R_s$ of beaver-engineering.** (a) Posterior distribution of the median relative response across the 158 streams, in winter and summer; point: posterior median, bars: 66% and 95% credible intervals; dashed line: no response. (b) Relative response of each stream in summer: posterior median with 66% (thick) and 95% (thin) credible intervals, streams ranked by their median; the grey band marks $\\lvert R_{summer} \\rvert < 0.1$. The vertical axis is linear between $-0.1$ and $0.1$ and logarithmic beyond, so small and large responses are both readable. In both panels skyblue means beaver-engineering adds DOC with posterior probability above 0.90, coral means it removes DOC with posterior probability above 0.90, and grey means no-evidence (posterior probability below 0.90 in both directions) — the same colours as in the direction figure."
+# classify by posterior probability: add if P(R > 0) > 0.90, remove if P(R < 0) > 0.90, else no-evidence
+cls <- function(p_add) case_when(p_add > 0.90 ~ "add", p_add < 0.10 ~ "remove", TRUE ~ "none")
+lab <- c(add = "adds DOC (P > 0.90)", remove = "removes DOC (P > 0.90)", none = "no-evidence")
+
+# ---- panel (a): across-stream median, winter and summer --------------------
 pop <- bind_rows(tibble(season = "summer", v = medR(R_s)), tibble(season = "winter", v = medR(R_w))) |>
   mutate(season = factor(season, levels = c("winter", "summer"))) |>
   group_by(season) |> mutate(class = cls(mean(v > 0))) |> ungroup()
 pa <- ggplot(pop, aes(x = v, y = season, fill = class)) +
   geom_vline(xintercept = 0, linetype = "dashed", colour = "grey45") +
-  stat_halfeye(.width = c(.66, .95), point_interval = "median_qi", alpha = .9) +
+  stat_halfeye(.width = c(.66, .95), point_interval = "median_qi", alpha = .9) +  # 66% and 95% intervals
   scale_fill_manual(values = PAL, labels = lab, breaks = names(lab), name = NULL, drop = FALSE) +
   labs(x = expression("Median relative response across streams,  "*R[s]*" = "*Delta*DOC[s]*" / |S|"), y = NULL) +
   theme_bw(base_size = 12) + theme(panel.grid.minor = element_blank(), legend.position = "top")
-per <- tibble(med = apply(R_s, 2, median), lo = apply(R_s, 2, quantile, .05), hi = apply(R_s, 2, quantile, .95),
+
+# ---- panel (b): each stream's summer relative response, ranked -------------
+# per stream: posterior median, 66% and 95% credible intervals, and its class
+per <- tibble(med  = apply(R_s, 2, median),
+              lo95 = apply(R_s, 2, quantile, .025), hi95 = apply(R_s, 2, quantile, .975),
+              lo66 = apply(R_s, 2, quantile, .17),  hi66 = apply(R_s, 2, quantile, .83),
               class = cls(colMeans(R_s > 0))) |> arrange(med) |> mutate(rank = row_number())
+# axis transform: linear inside [-0.1, 0.1], logarithmic beyond
 psl <- pseudo_log_trans(sigma = 0.1, base = 10)
 pb <- ggplot(per, aes(x = rank, y = med, colour = class)) +
   annotate("rect", xmin = -Inf, xmax = Inf, ymin = -0.1, ymax = 0.1, fill = "grey88", alpha = .8) +
   geom_hline(yintercept = 0, colour = "grey45") +
-  geom_linerange(aes(ymin = lo, ymax = hi), alpha = .6) + geom_point(size = 1.6) +
+  geom_linerange(aes(ymin = lo95, ymax = hi95), alpha = .45, linewidth = 0.4) +  # 95% interval (thin)
+  geom_linerange(aes(ymin = lo66, ymax = hi66), alpha = .8, linewidth = 0.9) +   # 66% interval (thick)
+  geom_point(size = 1.6) +
   scale_colour_manual(values = c(add = "#3B9AD1", remove = "#E8603C", none = "grey60"), labels = lab, breaks = names(lab), name = NULL) +
   scale_y_continuous(trans = psl, breaks = c(-10, -1, -0.1, 0, 0.1, 1, 10)) +
-  labs(x = "Stream (ranked by posterior median)", y = expression(R[summer]*" (pseudo-log axis)")) +
+  labs(x = "Stream (ranked by posterior median)",
+       y = expression(R[summer]*"  (axis linear in [-0.1, 0.1], logarithmic beyond)")) +
   theme_bw(base_size = 12) + theme(panel.grid.minor = element_blank(), legend.position = "top")
 fig2 <- pa / pb + plot_layout(heights = c(1, 1.3)) + plot_annotation(tag_levels = "a")
 ggsave(here("results", "figures", "plan", "fig_R.png"), fig2, width = 9, height = 8.5, dpi = 300)
@@ -201,35 +232,42 @@ fig2
 ::: {.callout-important}
 ## Key message of @fig-R
 
-**In summer, beaver-engineering adds DOC equal to about one fifth of the inherited seasonal contrast; in winter it adds nothing.** The median relative response across streams is `r sprintf("%.2f", median(medR(R_s)))` in summer (95% CrI `r sprintf("%.2f to %.2f", quantile(medR(R_s), .025), quantile(medR(R_s), .975))`, P(> 0) = `r sprintf("%.3f", mean(medR(R_s) > 0))`) and `r sprintf("%.2f", median(medR(R_w)))` in winter. This average conceals two-sided behaviour: in summer `r n_add` streams add DOC and `r n_rem` remove it with posterior probability above 0.9. The result holds when the streams with the smallest inherited seasonal contrast are excluded, so it is not driven by small denominators.
+**In summer, beaver-engineering adds DOC equal to about one fifth of the inherited seasonal contrast; in winter it adds nothing.** The median relative response across streams is `r sprintf("%.2f", median(medR(R_s)))` in summer (95% CrI `r sprintf("%.2f to %.2f", quantile(medR(R_s), .025), quantile(medR(R_s), .975))`, P(> 0) = `r sprintf("%.3f", mean(medR(R_s) > 0))`) and `r sprintf("%.2f", median(medR(R_w)))` in winter. This average conceals two-sided behaviour: in summer `r n_add` of the `r n_str` streams (`r sprintf("%.0f%%", 100 * n_add / n_str)`) add DOC and `r n_rem` (`r sprintf("%.0f%%", 100 * n_rem / n_str)`) remove it with posterior probability above 0.90. The result holds when the streams with the smallest inherited seasonal contrast are excluded, so it is not driven by small denominators.
 
-Seasonal gain, two sentences in the text (no figure): the seasonal gain is heterogeneous — with posterior probability above 0.9, `r g_n["reinforce"]` streams reinforce the inherited seasonal contrast, `r g_n["dampen"]` dampen it and `r g_n["reverse"]` reverse it, while `r g_n["undetermined"]` are undetermined; the median gain across streams is `r sprintf("%.2f", g_med)`, a mild dampening on average. Beaver-engineering does not shift the seasonal contrast in one direction; it redistributes it stream by stream.
+Seasonal gain, two sentences in the text (no figure): the seasonal gain is heterogeneous — with posterior probability above 0.90, `r g_n["reinforce"]` of the `r n_str` streams (`r sprintf("%.0f%%", 100 * g_n["reinforce"] / n_str)`) reinforce the inherited seasonal contrast, `r g_n["dampen"]` (`r sprintf("%.0f%%", 100 * g_n["dampen"] / n_str)`) dampen it and `r g_n["reverse"]` (`r sprintf("%.0f%%", 100 * g_n["reverse"] / n_str)`) reverse it, while `r g_n["no-evidence"]` (`r sprintf("%.0f%%", 100 * g_n["no-evidence"] / n_str)`) are no-evidence; the median gain across streams is `r sprintf("%.2f", g_med)`, a mild dampening on average. Beaver-engineering does not shift the seasonal contrast in one direction; it redistributes it stream by stream.
 
 Spatial context, one sentence in the text: the beaver-engineered footprint is at the median `r sprintf("%.2f%%", 100 * median(1 / d$F))` of the floodplain area that generates the inherited seasonal contrast ($F$ = `r sprintf("%.0f", median(d$F))`).
 :::
 
-# 6. Spatial coherence of the seasonal contrasts
+# 6. Spatial coherence: is the beaver seasonal modification regional or local?
 
-*Where is each quantity organised in space?* For each stream we correlate its value with the mean of its 8 nearest neighbours (Spearman), computed on every posterior draw of the error-corrected concentrations, so the coherence estimate carries the full uncertainty. $T = \text{DOC}_{down,summer} - \text{DOC}_{down,winter}$ is the **downstream seasonal contrast** ($T = S + B$).
+**Question (Discussion support):** *the inherited seasonal contrast is generated over whole floodplains — is the modification that beaver-engineering imposes on it organised at the same regional scale, or is it stream-specific?* The answer decides how the Discussion frames beaver-engineering: if $B$ were regionally coherent, beaver-engineered streams would act together as a landscape-scale control on the seasonal DOC signal; if $B$ is spatially incoherent, each beaver-engineered stream is an independent local control point on a regional signal — the framing the manuscript title claims.
+
+For each stream we correlate its value with the mean of its 8 nearest neighbours (Spearman), computed on every posterior draw of the concentrations, so the coherence estimate carries the full uncertainty. $T = \text{DOC}_{down,summer} - \text{DOC}_{down,winter}$ is the **downstream seasonal contrast** ($T = S + B$).
 
 **Manuscript placement: Appendix S1 (Figure S11), plus one sentence in the Discussion.**
 
 ```{r fig-spatial}
 #| fig-height: 3.5
-#| fig-cap: "**Spatial coherence of the inherited seasonal contrast $S$, the beaver seasonal modification $B$ and the downstream seasonal contrast $T$.** Posterior distribution of the Spearman correlation between each stream's value and the mean of its 8 nearest neighbours, computed on every posterior draw of the error-corrected concentrations. Point: median; bars: 66% and 95% credible intervals; dashed line: no spatial coherence."
+#| fig-cap: "**Spatial coherence of the inherited seasonal contrast $S$, the beaver seasonal modification $B$ and the downstream seasonal contrast $T$.** Posterior distribution of the Spearman correlation between each stream's value and the mean of its 8 nearest neighbours, computed on every posterior draw of the concentrations. Point: median; bars: 66% and 95% credible intervals; dashed line: no spatial coherence."
+# stream coordinates (longitude, latitude of the upstream sampling point)
 co <- read.csv(here("data", "processed", "m6.csv")) |> distinct(site, .keep_all = TRUE) |>
   select(site, lon = x_upstream, lat = y_upstream)
 d2 <- left_join(LR$d, co, by = "site")
+# planar distances in km (adequate at the scale of Switzerland)
 kmx <- (d2$lon - mean(d2$lon)) * 111.32 * cos(mean(d2$lat) * pi / 180)
 kmy <- (d2$lat - mean(d2$lat)) * 110.57
 D <- as.matrix(dist(cbind(kmx, kmy))); diag(D) <- Inf
+# for each stream, the indices of its 8 nearest neighbours (fixed across draws)
 nb <- t(apply(D, 1, function(r) order(r)[1:8]))
+# mean of the neighbours' values, for one vector of stream values
 nbmean <- function(v) rowMeans(matrix(v[as.vector(nb)], nrow = length(v)))
+# one Spearman correlation per posterior draw -> a posterior distribution of coherence
 rho_draw <- function(M) apply(M, 1, function(v) cor(v, nbmean(v), method = "spearman"))
-T_lat <- S_lat + B_lat
-sp <- bind_rows(tibble(q = "inherited seasonal contrast S", rho = rho_draw(S_lat)),
-                tibble(q = "beaver seasonal modification B", rho = rho_draw(B_lat)),
-                tibble(q = "downstream seasonal contrast T", rho = rho_draw(T_lat))) |>
+T_m <- S_m + B_m   # downstream seasonal contrast, per draw
+sp <- bind_rows(tibble(q = "inherited seasonal contrast S", rho = rho_draw(S_m)),
+                tibble(q = "beaver seasonal modification B", rho = rho_draw(B_m)),
+                tibble(q = "downstream seasonal contrast T", rho = rho_draw(T_m))) |>
   mutate(q = factor(q, levels = c("beaver seasonal modification B", "downstream seasonal contrast T",
                                   "inherited seasonal contrast S")))
 sp_med <- sp |> group_by(q) |> summarise(m = median(rho))
@@ -263,7 +301,7 @@ Sentence for the Discussion: the seasonal DOC contrast that streams inherit is o
 kable(tribble(
   ~`Manuscript figure`, ~Content, ~Answers, ~`This document`, ~Status,
   "Figure 1a", "Posterior predictive distribution of $\\Delta\\text{DOC}_s$ by season", "Q1", "@fig-q1", "existing",
-  "Figure 1b", "Structural causal model with estimated effects", "Q2", "@fig-q2", "existing",
+  "Figure 1b", "Structural causal model, outcome downstream DOC, with estimated effects", "Q2", "@fig-q2", "**redrawn — outcome is downstream DOC**",
   "Figure 2",  "Relative response $R_s$: across streams (a) and by stream (b)", "Q3", "@fig-R", "**new — replaces the amplification-factor figure**",
   "Figure 3",  "Map, sampling design and schematic of $S$, $\\Delta\\text{DOC}_s$, $R_s$, $F$", "Methods", "@fig-map", "panel b **redrawn**",
   "Figure S1–S9", "Hypothesised DAG, priors, checks, stream-level classification, total effects, connectivity model", "Q2 support", "—", "existing",
@@ -285,6 +323,6 @@ kable(tribble(
 
 ```{r session}
 #| echo: false
-cat("Data: data/processed/m12.csv | error-corrected concentrations: notebook/latent_concentrations_fit.R -> results/latent_R.rds (thinned copy latent_R_thin.rds is tracked)\n")
+cat("Data: data/processed/m12.csv | concentration posteriors: notebook/concentrations_fit.R -> results/concentrations.rds (thinned copy concentrations_thin.rds is tracked)\n")
 sessionInfo()$R.version$version.string
 ```
