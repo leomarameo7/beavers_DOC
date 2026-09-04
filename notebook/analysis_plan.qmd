@@ -72,42 +72,42 @@ vars <- tribble(
   "Does beaver-engineering increase or decrease DOC concentrations, and by how much, in each season?",
 
   "$\\mathbf{S}$", "inherited **S**easonal signal", "$\\text{DOC}_{up,summer} - \\text{DOC}_{up,winter}$",
-  "the seasonal DOC trajectory the upstream river corridor delivers to the reach; $S > 0$ seasonal enrichment, $S < 0$ seasonal depletion **(mg L$^{-1}$)**",
+  "the inherited seasonal contrast the upstream river corridor delivers to the reach; $S > 0$ seasonal enrichment, $S < 0$ seasonal depletion **(mg L$^{-1}$)**",
   "How does DOC change between winter and summer in the river *before* it reaches the beaver-engineered reach?",
 
   "$\\mathbf{B}$", "**B**eaver seasonal modification", "$\\Delta\\text{DOC}_{summer} - \\Delta\\text{DOC}_{winter}$",
   "how much beaver-engineering changes its own DOC response from winter to summer **(mg L$^{-1}$)**",
   "Does the effect of beaver-engineering on DOC differ between winter and summer, and in which direction?",
 
-  "$T$", "downstream seasonal signal", "$S + B$ (exact identity)",
-  "the seasonal DOC trajectory leaving the reach after beaver-engineering has modified it **(mg L$^{-1}$)**",
+  "$T$", "downstream seasonal contrast", "$S + B$ (exact identity)",
+  "the inherited seasonal contrast leaving the reach after beaver-engineering has modified it **(mg L$^{-1}$)**",
   "How does DOC change between winter and summer in the river *after* the beaver-engineered reach?",
 
   "$A_\\text{beaver}$, $A_\\text{floodplain}$", "areas", "mapped",
   "ponded footprint of the beaver-engineered reach; contributing catchment floodplain area generating $S$ **(km$^2$)**",
-  "How large is the beaver-engineered footprint, and how large is the floodplain area that generates the inherited seasonal signal?",
+  "How large is the beaver-engineered footprint, and how large is the floodplain area that generates the inherited seasonal contrast?",
 
   "$\\mathbf{G}$", "seasonal **G**ain", "$B / S$",
-  "how beaver-engineering modifies the seasonal DOC signal inherited from upstream ($T = S(1 + G)$): $G > 0$ reinforces, $-1 < G < 0$ dampens, $G = -1$ cancels, $G < -1$ reverses the inherited trajectory, whether enrichment ($S > 0$) or depletion ($S < 0$) **(dimensionless)**",
-  "Does beaver-engineering reinforce, dampen or reverse the seasonal DOC trajectory inherited from upstream?",
+  "how beaver-engineering modifies the inherited seasonal contrast ($T = S(1 + G)$): $G > 0$ reinforces, $-1 < G < 0$ dampens, $G = -1$ cancels, $G < -1$ reverses it, whether enrichment ($S > 0$) or depletion ($S < 0$) **(dimensionless)**",
+  "Does beaver-engineering reinforce, dampen or reverse the inherited seasonal contrast?",
 
   "$\\mathbf{R_s}$", "**R**elative response, season $s$", "$\\Delta\\text{DOC}_s / \\lvert S \\rvert$",
-  "how much DOC beaver-engineering adds ($R_s > 0$) or removes ($R_s < 0$) in season $s$, expressed as a fraction of the winter-to-summer swing of the incoming DOC; $R_s = 0.5$ means the change across the reach is half the seasonal swing **(dimensionless)**",
-  "How much does beaver-engineering add or remove DOC in season $s$, relative to the seasonal DOC signal the reach inherits from upstream?",
+  "how much DOC beaver-engineering adds ($R_s > 0$) or removes ($R_s < 0$) in season $s$, expressed as a fraction of the inherited seasonal contrast; $R_s = 0.5$ means the change across the reach is half the seasonal contrast **(dimensionless)**",
+  "How much does beaver-engineering add or remove DOC in season $s$, relative to the inherited seasonal contrast?",
 
   "$\\mathbf{F}$", "**F**ootprint contrast", "$A_\\text{floodplain} / A_\\text{beaver}$",
   "how much larger the floodplain area generating $S$ is than the beaver-engineered footprint **(dimensionless)**",
-  "How small is the beaver-engineered footprint relative to the floodplain area that generates the inherited seasonal signal?",
+  "How small is the beaver-engineered footprint relative to the floodplain area that generates the inherited seasonal contrast?",
 
   "$\\mathbf{L}$", "**L**everage", "$\\lvert G \\rvert \\cdot F$",
-  "magnitude of beaver-engineering's modification of the inherited seasonal signal, per unit of engineered footprint **(dimensionless)**",
-  "How strongly does beaver-engineering modify the inherited seasonal DOC signal relative to the small area it occupies?",
+  "magnitude of beaver-engineering's modification of the inherited seasonal contrast, per unit of engineered footprint **(dimensionless)**",
+  "How strongly does beaver-engineering modify the inherited seasonal contrast relative to the small area it occupies?",
 
   "$D_{beaver,s}$", "area-normalised local response", "$\\Delta\\text{DOC}_s / A_\\text{beaver}$",
   "beaver-engineering's DOC change per unit of its footprint, season $s$ **(mg L$^{-1}$ km$^{-2}$)**",
   "How much DOC change does beaver-engineering produce per unit area of its footprint in season $s$?",
 
-  "$D_\\text{floodplain}$", "area-normalised seasonal signal", "$S / A_\\text{floodplain}$",
+  "$D_\\text{floodplain}$", "area-normalised seasonal contrast", "$S / A_\\text{floodplain}$",
   "the upstream seasonal DOC change per unit of floodplain area **(mg L$^{-1}$ km$^{-2}$)**",
   "How much seasonal DOC change does the floodplain generate per unit of its area?",
 
@@ -144,7 +144,7 @@ The **same causal mechanism** operates in winter and summer. Downstream DOC inhe
 |-----------------|-------------------|------------------|------------------|
 | **Q1 Direction** | Does beaver-engineering consistently increase or decrease DOC concentrations downstream compared with upstream? | Beaver-engineering has **no consistent direction**: responses are variable and heavy-tailed, with a shift toward enrichment in summer when primary production is highest. | $\Delta$DOC$_s$, $B$ |
 | **Q2 Drivers** | Which abiotic and biotic drivers set the direction of the DOC change? | Dams increase water residence time, which promotes primary producers and thereby DOC; high upstream DOC favours retention. | Structural causal model |
-| **Q3 Magnitude** | Irrespective of direction, how large is the beaver-mediated DOC change per unit area relative to the seasonal floodplain-scale variation, and does it reinforce or oppose the inherited signal? | The change per unit area is orders of magnitude larger than the floodplain-scale seasonal signal, and beaver-engineering **modifies** (rather than merely adds to) the inherited seasonal trajectory. | $R_s$ (add/remove, relative to the inherited signal), $G$ (reinforce/dampen/reverse the seasonal trajectory), $F$ (spatial context); $M = \lvert R_s \rvert F$ only as a bridge |
+| **Q3 Magnitude** | Irrespective of direction, how large is the beaver-mediated DOC change per unit area relative to the seasonal floodplain-scale variation, and does it reinforce or oppose the inherited seasonal contrast? | The change per unit area is orders of magnitude larger than the floodplain-scale seasonal contrast, and beaver-engineering **modifies** (rather than merely adds to) the inherited seasonal contrast. | $R_s$ (add/remove, relative to the inherited seasonal contrast), $G$ (reinforce/dampen/reverse the inherited seasonal contrast), $F$ (spatial context); $M = \lvert R_s \rvert F$ only as a bridge |
 
 # 4. Data used here
 
@@ -161,9 +161,9 @@ d <- inner_join(w, s, by = c("site", "beaver_territory")) |>
   mutate(
     dw      = dn_w - up_w,          # DOC_w : local response, winter
     ds      = dn_s - up_s,          # DOC_s : local response, summer
-    S       = up_s - up_w,          # inherited seasonal signal
+    S       = up_s - up_w,          # inherited seasonal contrast
     B       = ds - dw,              # beaver seasonal modification
-    Tt      = dn_s - dn_w,          # downstream seasonal signal (= S + B)
+    Tt      = dn_s - dn_w,          # downstream seasonal contrast (= S + B)
     G       = B / S,                # seasonal gain
     F       = Afp / Abv,            # footprint contrast
     ratio_s = abs(ds) / abs(S),     # concentration ratio, summer
@@ -225,9 +225,9 @@ Direction is set by the **external context** of the pond. Upstream DOC has the l
 
 This is where the two new analyses go.
 
-## 7.0 NEW: the relative response R_s — how much beaver-engineering adds or removes, relative to the inherited seasonal signal
+## 7.0 NEW: the relative response R_s — how much beaver-engineering adds or removes, relative to the inherited seasonal contrast
 
-$R_s = \Delta\text{DOC}_s / \lvert S \rvert$ keeps the sign of the beaver effect (add or remove) and expresses its size as a fraction of the winter-to-summer swing of the incoming DOC. It is estimated from the **latent** concentrations of a hierarchical measurement-error model (one model per measured concentration, log scale, 0.2 mg L$^{-1}$ error), so the ratio never divides by a raw value.
+$R_s = \Delta\text{DOC}_s / \lvert S \rvert$ keeps the sign of the beaver effect (add or remove) and expresses its size as a fraction of the inherited seasonal contrast. It is estimated from the **latent** concentrations of a hierarchical measurement-error model (one model per measured concentration, log scale, 0.2 mg L$^{-1}$ error), so the ratio never divides by a raw value.
 
 ```{r latent-R}
 #| results: hide
@@ -280,9 +280,9 @@ p_R
 ::: {.callout-important}
 ## Key message of @fig-R
 
-**In summer, beaver-engineering adds DOC equal to about one fifth of the seasonal swing of the incoming DOC; in winter it adds nothing.** The across-reach median of $R_{summer}$ is `r sprintf("%.2f", median(medR(R_s)))` (95% CrI `r sprintf("%.2f to %.2f", quantile(medR(R_s),.025), quantile(medR(R_s),.975))`, P(> 0) = `r sprintf("%.3f", mean(medR(R_s)>0))`) against `r sprintf("%.2f", median(medR(R_w)))` for $R_{winter}$. The positive median hides substantial two-sided variation: `r sum(colMeans(R_s>0)>0.9)` reaches have P($R_{summer}$ > 0) > 0.9 (beaver-engineering adds DOC) and `r sum(colMeans(R_s>0)<0.1)` have P($R_{summer}$ < 0) > 0.9 (it removes DOC). The unsigned median $\lvert R_{summer} \rvert$ = `r sprintf("%.2f", median(apply(abs(R_s),1,median)))` is the "half the seasonal signal" that M contains. Excluding the reaches with the smallest $\lvert S \rvert$ lowers the median but not the conclusion.
+**In summer, beaver-engineering adds DOC equal to about one fifth of the inherited seasonal contrast; in winter it adds nothing.** The across-reach median of $R_{summer}$ is `r sprintf("%.2f", median(medR(R_s)))` (95% CrI `r sprintf("%.2f to %.2f", quantile(medR(R_s),.025), quantile(medR(R_s),.975))`, P(> 0) = `r sprintf("%.3f", mean(medR(R_s)>0))`) against `r sprintf("%.2f", median(medR(R_w)))` for $R_{winter}$. The positive median hides substantial two-sided variation: `r sum(colMeans(R_s>0)>0.9)` reaches have P($R_{summer}$ > 0) > 0.9 (beaver-engineering adds DOC) and `r sum(colMeans(R_s>0)<0.1)` have P($R_{summer}$ < 0) > 0.9 (it removes DOC). The unsigned median $\lvert R_{summer} \rvert$ = `r sprintf("%.2f", median(apply(abs(R_s),1,median)))` is the "half the seasonal contrast" that M contains. Excluding the reaches with the smallest $\lvert S \rvert$ lowers the median but not the conclusion.
 
-This is the quantity that answers "how much does beaver-engineering add or remove relative to the floodplain seasonal signal?" in concentration units, with its sign. **Placement: main text, as the primary Q3 result (Figure 2a), with F stated once as context and M shown only as $\lvert R_s \rvert \times F$ beside its decomposition.**
+This is the quantity that answers "how much does beaver-engineering add or remove relative to the floodplain seasonal contrast?" in concentration units, with its sign. **Placement: main text, as the primary Q3 result (Figure 2a), with F stated once as context and M shown only as $\lvert R_s \rvert \times F$ beside its decomposition.**
 :::
 
 ## 7.1 NEW: what the amplification factor M is actually made of
@@ -334,7 +334,7 @@ kable(tibble(
 ::: {.callout-important}
 ## Key message of the decomposition
 
-**M is the product of a modest concentration ratio and a very large footprint contrast.** In a typical stream, beaver-engineering changes DOC across the reach ($\lvert \Delta\text{DOC}_{summer} \rvert$) by about 0.57 times the seasonal swing of the incoming DOC ($\lvert S \rvert$) — this is $\lvert R_{summer} \rvert$ — while the engineered footprint $A_\text{beaver}$ is only 1/256 (about **0.4%**) of the floodplain area $A_\text{floodplain}$ that generates $S$. Since $M = \lvert R_s \rvert \times F \approx 0.57 \times 256$, the "≈140 times" comes mainly from the area ratio $F$, not from the size of the concentration change.
+**M is the product of a modest concentration ratio and a very large footprint contrast.** In a typical stream, beaver-engineering changes DOC across the reach ($\lvert \Delta\text{DOC}_{summer} \rvert$) by about 0.57 times the inherited seasonal contrast ($\lvert S \rvert$) — this is $\lvert R_{summer} \rvert$ — while the engineered footprint $A_\text{beaver}$ is only 1/256 (about **0.4%**) of the floodplain area $A_\text{floodplain}$ that generates $S$. Since $M = \lvert R_s \rvert \times F \approx 0.57 \times 256$, the "≈140 times" comes mainly from the area ratio $F$, not from the size of the concentration change.
 
 Reporting the two factors separately is the honest version of the current Q3 claim, it is far harder to attack, and it answers Reviewer 1's question about what "floodplain-scale" means. A reviewer who does this arithmetic unaided will otherwise conclude the headline oversells the biogeochemistry.
 
@@ -351,7 +351,7 @@ Per unit area, the DOC change produced by beaver-engineering is **141 times** th
 **Placement: main text, Figure 2b.** *(unchanged, but now read together with the decomposition)*
 :::
 
-## 7.2 NEW: does beaver-engineering reinforce, dampen or reverse the inherited signal?
+## 7.2 NEW: does beaver-engineering reinforce, dampen or reverse the inherited seasonal contrast?
 
 The measurement error of each concentration (0.2 mg L⁻¹) must be carried into S and B, otherwise the state counts are read off point values that the data do not support. We do this with a **Bayesian hierarchical measurement-error model**, in the same style as the rest of the paper, not with a null-hypothesis test.
 
@@ -431,7 +431,7 @@ kable(ctr |> mutate(across(where(is.numeric), ~round(.x, 2))),
 glue::glue(
 "Reaches whose six-state label carries posterior probability above 0.9: {sum(p_state>0.9)} of {nrow(d)} ({round(100*mean(p_state>0.9))}%)
 Reaches with P(|B| above 0.5 mg/L) above 0.9, i.e. a practically relevant seasonal modification: {sum(d$B_strong)} of {nrow(d)}
-Between-reach SD of the true inherited signal S: {round(mean(as_draws_df(fS)$sd_reach__Intercept),2)} mg/L (measurement SD 0.283), so shrinkage is small")
+Between-reach SD of the true inherited seasonal contrast S: {round(mean(as_draws_df(fS)$sd_reach__Intercept),2)} mg/L (measurement SD 0.283), so shrinkage is small")
 ```
 
 ```{r fig-response-space}
@@ -461,7 +461,7 @@ pa <- ggplot(d, aes(S_pm, B_pm)) +
   scale_alpha_manual(values = c(`FALSE` = .25, `TRUE` = 1), guide = "none") +
   scale_x_continuous(trans = psl, breaks = c(-10,-1,0,1,10), limits = c(-40, 40)) +
   scale_y_continuous(trans = psl, breaks = c(-10,-1,0,1,10), limits = c(-40, 40)) +
-  labs(x = expression("Inherited seasonal signal   S   (mg "*L^-1*")"),
+  labs(x = expression("inherited seasonal contrast   S   (mg "*L^-1*")"),
        y = expression("Beaver seasonal modification   B   (mg "*L^-1*")"),
        subtitle = "Posterior medians of the latent (measurement-error corrected) contrasts\nDashed diagonal: B = -S, exact cancellation.  Solid symbols: P(|B| > 0.5 mg/L) > 0.9") +
   theme_bw(base_size = 12) +
@@ -471,12 +471,12 @@ pa <- ggplot(d, aes(S_pm, B_pm)) +
 tb <- tab |> mutate(state = fct_rev(state),
                     side = ifelse(state %in% STATES[c(1, 6)], "pushes toward summer enrichment",
                                   ifelse(state %in% STATES[c(3, 4)], "pushes toward summer depletion",
-                                         "dampens the inherited signal")))
+                                         "dampens the inherited seasonal contrast")))
 pb <- ggplot(tb, aes(y = state)) +
   geom_pointrange(aes(x = post_mean, xmin = lo, xmax = hi, colour = side), size = .55) +
   scale_colour_manual(values = c("pushes toward summer enrichment" = OK[["blue"]],
                                  "pushes toward summer depletion"  = OK[["vermillion"]],
-                                 "dampens the inherited signal"    = "grey40"), name = NULL) +
+                                 "dampens the inherited seasonal contrast"    = "grey40"), name = NULL) +
   labs(x = "Posterior number of reaches (mean and 95% credible interval)", y = NULL,
        subtitle = "Counts derived from the latent S and B of the hierarchical measurement-error model,\nso the classification uncertainty is propagated rather than ignored") +
   guides(colour = guide_legend(nrow = 2)) +
@@ -493,7 +493,7 @@ fig_rs
 ::: {.callout-important}
 ## Key message of the response space
 
-**(a)** Beaver-engineered reaches occupy all six response states: they reinforce, dampen and occasionally reverse the seasonal DOC trajectory they inherit. This is the visual proof that the reach is an **operator on an incoming signal**, not a fixed source or sink.
+**(a)** Beaver-engineered reaches occupy all six response states: they reinforce, dampen and occasionally reverse the inherited seasonal contrast they inherit. This is the visual proof that the reach is an **operator on an incoming signal**, not a fixed source or sink.
 
 **(b)** The state counts come from the latent S and B of the measurement-error model, so their uncertainty is carried rather than ignored. The asymmetry is unambiguous and all of it points one way:
 
@@ -501,7 +501,7 @@ fig_rs
 -   amplification of enrichment exceeds dampening of enrichment by `r sprintf("%.0f", ctr$Posterior[2])` reaches (`r sprintf("%.0f to %.0f", ctr$lo[2], ctr$hi[2])`), P(> 0) = `r sprintf("%.3f", ctr$"P(> 0)"[2])`;
 -   `r sprintf("%.0f", ctr$Posterior[3])` of 158 reaches (`r sprintf("%.0f to %.0f", ctr$lo[3], ctr$hi[3])`) have B > 0, and the median seasonal modification is `r sprintf("%.2f", ctr$Posterior[4])` mg L⁻¹ (`r sprintf("%.2f to %.2f", ctr$lo[4], ctr$hi[4])`), P(> 0) = `r sprintf("%.3f", ctr$"P(> 0)"[4])`.
 
-**Beaver-engineering systematically pushes the inherited seasonal trajectory toward summer enrichment.** This is the same signal as Q1 (+0.14 mg L⁻¹ in summer) and the primary-producer pathway of Q2, now expressed as an operation on the incoming signal rather than as an average.
+**Beaver-engineering systematically pushes the inherited seasonal contrast toward summer enrichment.** This is the same signal as Q1 (+0.14 mg L⁻¹ in summer) and the primary-producer pathway of Q2, now expressed as an operation on the incoming signal rather than as an average.
 
 The honest caveat stays at the level of the individual reach: only `r sum(d$p_state > 0.9)` of `r nrow(d)` reaches carry their six-state label with posterior probability above 0.9. **The population-level asymmetry is solid; per-reach labels are not**, so the six states should be reported as posterior counts with intervals, never as a tally of point classifications.
 
