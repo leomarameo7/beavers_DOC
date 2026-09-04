@@ -185,6 +185,72 @@ ggplot(res, aes(est, model, colour = season)) +
 **Conclusion: "keep downstream DOC as the target and let upstream feed in" is already implemented in the manuscript.** The paired ΔDOC model *is* the downstream-DOC model with inheritance fixed at 1. Estimating that slope freely does not add information here, it removes it.
 :::
 
+# 3b. The SCM itself, refitted with downstream DOC as the outcome
+
+The pilots above are two-equation models. The obvious follow-up question is what happens to the **full structural causal model** if its outcome is downstream DOC rather than $\Delta$DOC. The answer can be derived before fitting anything.
+
+## 3b.1 Why it must give the same mediator effects
+
+The current outcome equation of the SCM is
+
+$$\Delta\text{DOC} = a + \beta_1\,\text{DOC}_{up,z} + \beta_2\,\text{macrophytes} + \beta_3\,\text{phytoplankton} + \beta_4\,\text{litter} + \beta_5\,\text{WRT} + u_{site} + \varepsilon$$
+
+Substituting $\Delta\text{DOC} = \text{DOC}_{down} - \text{DOC}_{up}$ and the z-scoring $\text{DOC}_{up,z} = (\text{DOC}_{up} - \mu)/\sigma$, and moving $\text{DOC}_{up}$ to the right-hand side:
+
+$$\text{DOC}_{down} = \underbrace{(a - \beta_1\mu/\sigma)}_{\text{new intercept}} + \underbrace{(1 + \beta_1/\sigma)}_{\text{inheritance slope}}\,\text{DOC}_{up} + \beta_2\,\text{macrophytes} + \dots + u_{site} + \varepsilon$$
+
+Every mediator term is untouched. The two outcome choices are **one model in two parameterizations**: "the effect of upstream DOC on $\Delta$DOC" and "the inheritance slope on downstream DOC" are locked together by $1 + \beta_1/\sigma$. With $\beta_1 = -0.103$ per SD and $\sigma = 2.05$ mg L$^{-1}$ from `b1`, the implied inheritance slope is already $0.950$ [0.918, 0.983] — the SCM has been estimating the free slope all along, in $\Delta$DOC units.
+
+## 3b.2 The fit
+
+The model `b1_downstream` is `b1` with three deliberate changes and nothing else: the outcome is `DOC_out | mi(0.2)` (one concentration's error instead of the propagated 0.283), upstream DOC enters on its raw mg L$^{-1}$ scale as `mi(DOC_input)` with a prior Normal(1, 0.3) on the inheritance slope, and its sub-model gets a prior on the mg L$^{-1}$ scale. Same mediator priors, same site random effect, same Student-*t* likelihood, same sampler settings (4 chains, 10 000 iterations, 3 000 warm-up).
+
+```{r downstream-formula}
+#| eval: false
+#| code-fold: false
+bf(DOC_out | mi(0.2) ~ 0 + Intercept + mi(DOC_input) + mi(macrophy_abun_z) + mi(plankton_abun_z) +
+     mi(cover_litter_z) + mi(water_res_time_z) + (0 + Intercept | site), family = student()) +
+bf(DOC_input | mi() ~ 0 + Intercept, family = gaussian()) +     # raw scale, prior Normal(3, 3)
+# ... all other mediator equations exactly as in b1 ...
+set_prior("normal(1, 0.3)", coef = "miDOC_input", resp = "DOCout")   # inheritance slope
+```
+
+```{r downstream-compare}
+#| echo: false
+cmp <- readRDS(here("results", "scm_downstream_comparison.rds"))
+d1 <- cmp$d1; d2 <- cmp$d2
+q <- function(x) sprintf("%.3f [%.3f, %.3f]", mean(x), quantile(x, .025), quantile(x, .975))
+tab <- tribble(
+  ~Parameter, ~`b1: outcome ΔDOC`, ~`b1_downstream: outcome downstream DOC`,
+  "Inheritance slope (per mg/L of upstream DOC)", q(1 + d1$bsp_deltaDOC_miDOC_input_z / cmp$s_up), q(d2$bsp_DOCout_miDOC_input),
+  "Macrophytes ($\\beta_2$)",         q(d1$bsp_deltaDOC_mimacrophy_abun_z),  q(d2$bsp_DOCout_mimacrophy_abun_z),
+  "Phytoplankton ($\\beta_3$)",       q(d1$bsp_deltaDOC_miplankton_abun_z),  q(d2$bsp_DOCout_miplankton_abun_z),
+  "Soil litter cover ($\\beta_4$)",   q(d1$bsp_deltaDOC_micover_litter_z),   q(d2$bsp_DOCout_micover_litter_z),
+  "Water residence time ($\\beta_5$)",q(d1$bsp_deltaDOC_miwater_res_time_z), q(d2$bsp_DOCout_miwater_res_time_z),
+  "Between-site SD",                  q(d1$sd_site__deltaDOC_Intercept),     q(d2$sd_site__DOCout_Intercept),
+  "Residual scale $\\sigma$",         q(d1$sigma_deltaDOC),                  q(d2$sigma_DOCout),
+  "Degrees of freedom $\\nu$",        q(d1$nu_deltaDOC),                     q(d2$nu_DOCout),
+  "Average ΔDOC (b1 intercept; downstream model evaluated at mean upstream DOC)",
+     q(d1$b_deltaDOC_Intercept), q(d2$b_DOCout_Intercept + (d2$bsp_DOCout_miDOC_input - 1) * cmp$mu_up))
+kable(tab, caption = sprintf("Posterior mean [95%% CrI]. Convergence: max R-hat %.3f (b1) and %.3f (b1_downstream).", cmp$rhat["b1"], cmp$rhat["b1_downstream"]))
+```
+
+::: {.callout-important}
+## Result: the full SCM is invariant to the choice of outcome
+
+The inheritance slope is **`r sprintf("%.3f", mean(d2$bsp_DOCout_miDOC_input))`** when estimated directly against **`r sprintf("%.3f", mean(1 + d1$bsp_deltaDOC_miDOC_input_z / cmp$s_up))`** implied by `b1`; every mediator coefficient agrees to the second decimal; the site SD, the residual scale and the tail parameter are the same; and the downstream model evaluated at the mean upstream concentration returns the same null average $\Delta$DOC. The small remaining differences come only from the outcome error (0.2 versus 0.283) and the prior scale of the upstream coefficient, both changed on purpose.
+
+So the answer to "what if the SCM's outcome were downstream DOC?" is: **the mediator story of Q2 does not move, and the upstream-DOC path is re-read as an inheritance of about 0.95 mg per mg instead of −0.10 SD on $\Delta$DOC.** That reading is worth one sentence in the Methods; it does not warrant refitting the paper.
+
+What remains genuinely open is the version in which the 0.2 mg L$^{-1}$ error of upstream DOC is propagated as a *predictor* (latent upstream value). The two-equation pilot in section 3 showed that this is weakly identified with a site random effect and two samplings per site, and the SCM shares that structure, so it was not attempted here.
+:::
+
+::: {.callout-warning}
+## A pre-existing diagnostic worth noting
+
+Both fits report **E-BFMI of about 0.16–0.18** in every chain (the usual concern threshold is 0.3). This is not caused by the reparameterization — `b1` already had it — and R-hat and effective sample sizes are fine. The likely cause is the tail parameter: $\nu$ sits at `r sprintf("%.2f", mean(d1$nu_deltaDOC))` against its prior lower bound of 2, i.e. the data want tails at least as heavy as the bound allows, which creates a difficult posterior geometry. Lowering the bound (for example `lb = 1`) or reparameterizing $\nu$ would be the standard remedy. It does not change any estimate reported in the manuscript, but it is worth fixing before the analysis is archived.
+:::
+
 # 4. What a full rebuild would still involve
 
 The pilot settles the target-variable question but not the rest of Josh's proposal, which is to derive B, S, G and M from the posterior of a **season-specific SCM including the mediators**. That part remains a substantial job.
