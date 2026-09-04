@@ -37,6 +37,8 @@ This notebook is intended to be used for reviewers and general public that is in
 Let's load the R libraries that we are going to use in this study:
 
 ```{r load_packages}
+invisible(Sys.setlocale("LC_CTYPE", "en_US.UTF-8"))  # print non-ASCII (Delta, mg/L superscripts) correctly
+
 library(RColorBrewer)
 library(NatParksPalettes)
 library(ggokabeito)
@@ -285,8 +287,11 @@ df_q1 |> group_by(season) |>
             sink = 100 * mean(pred < -0.5), rope = 100 * mean(abs(pred) <= 0.5), source = 100 * mean(pred > 0.5))
 ```
 
-```{r fig-q1, fig.width=10, fig.height=6}
-#| fig-cap: "Figure 2a. Posterior predictive distribution of the beaver-mediated DOC change for a single sampling, by season. Shaded areas: posterior predictive probability of a sink (<-0.5 mg/L), negligible (ROPE) and source (>0.5 mg/L) response. Point: median; bars: 66% and 95% intervals."
+```{r}
+#| label: fig-q1
+#| fig-width: 10
+#| fig-height: 6
+#| fig-cap: "**Manuscript Figure 1a. Direction of the beaver-mediated DOC change.** Posterior predictive distribution of $\\Delta$DOC (`pred`) for a single sampling of a beaver-engineered stream, separately for winter and summer, derived from the measurement-error model `fit_q1` on the raw upstream and downstream concentrations. Shaded areas give the posterior predictive probability of a DOC sink response ($\\Delta$DOC < -0.5 mg/L, coral), a negligible response (within the ROPE of +/-0.5 mg/L, grey) and a DOC source response ($\\Delta$DOC > 0.5 mg/L, blue). The point is the posterior median and the bars are the 66% and 95% intervals."
 lab <- df_q1 |> group_by(season) |> summarise(l_sink = paste0(round(100*mean(pred < -0.5),1), " %: sink"),
   l_rope = paste0(round(100*mean(abs(pred) <= 0.5),1), " %: ROPE"), l_src = paste0(round(100*mean(pred > 0.5),1), " %: source"))
 fill_colors <- c(sink = "coral", ROPE = "lightgrey", source = "skyblue")
@@ -302,6 +307,18 @@ df_q1$season <- factor(df_q1$season, levels = c("winter", "summer")); lab$season
   theme_bw(base_size = 14) + theme(panel.grid = element_blank()) + labs(x = expression(Delta*"DOC (mg/L)"), y = NULL))
 ggsave(here("results", "figures", "Figure_2a.png"), p_q1, width = 10, height = 6, dpi = 300)
 ```
+
+::: {.callout-note}
+## What @fig-q1 shows
+
+Reading the derived quantities of the previous chunk by name:
+
+-   **`avg`** — the *average* $\Delta$DOC of each season, i.e. the difference between the downstream and upstream season means. It is `r sprintf("%+.2f", df_q1 |> filter(season=="summer") |> pull(avg) |> mean())` mg/L in summer (95% CrI `r df_q1 |> filter(season=="summer") |> pull(avg) |> quantile(c(.025,.975)) |> round(2) |> paste(collapse=" to ")`) and `r sprintf("%+.2f", df_q1 |> filter(season=="winter") |> pull(avg) |> mean())` mg/L in winter (`r df_q1 |> filter(season=="winter") |> pull(avg) |> quantile(c(.025,.975)) |> round(2) |> paste(collapse=" to ")`). Both lie inside the ROPE, so **beaver-engineering does not shift DOC in a consistent direction**.
+-   **`pred`** — the $\Delta$DOC expected for one sampling of one stream, which adds the residual variation to `avg`. It is broad and heavy-tailed: the probability of a negligible response is `r sprintf("%.0f%%", 100*mean(abs(df_q1$pred[df_q1$season=="summer"])<=0.5))` in summer and `r sprintf("%.0f%%", 100*mean(abs(df_q1$pred[df_q1$season=="winter"])<=0.5))` in winter, of a source response `r sprintf("%.0f%%", 100*mean(df_q1$pred[df_q1$season=="summer"]>0.5))` and `r sprintf("%.0f%%", 100*mean(df_q1$pred[df_q1$season=="winter"]>0.5))`, and of a sink response `r sprintf("%.0f%%", 100*mean(df_q1$pred[df_q1$season=="summer"]< -0.5))` and `r sprintf("%.0f%%", 100*mean(df_q1$pred[df_q1$season=="winter"]< -0.5))`.
+
+These percentages describe **one sampling**, not a proportion of streams; the stream-level version is @fig-site-level.
+:::
+
 
 ## Figure 2a (SCM-based, previous version — kept for comparison)
 
@@ -365,8 +382,8 @@ fill_colors <- c(
 ```
 
 ```{r }
-#| label: fig-mainresults2a
-#| fig-cap: "Posterior predictive distribution of beaver-mediated DOC change for a typical stream (predictors at their mean, site effects excluded). The red shaded area represents the posterior predictive probability that a single sampling shows a DOC sink response. The light blue shaded area represents the proportion of the posterior distribution in favour of the hypothesis that beaver ponds act as DOC sources. The grey shaded area represents the Region Of Practical Equivalence (ROPE) and it defines an interval around zero where effects are too small to be of practical importance. The central dot indicates the median of the distribution, while the thick and thin horizontal lines represent the 66% and 95% credible intervals, respectively."
+#| label: fig-scm-predictive
+#| fig-cap: "**Consistency check (not a manuscript figure).** Posterior predictive distribution of beaver-mediated DOC change from the structural causal model `b1` for a typical stream (all predictors at their mean, site effects excluded), to be compared with @fig-q1. The red shaded area represents the posterior predictive probability that a single sampling shows a DOC sink response. The light blue shaded area represents the proportion of the posterior distribution in favour of the hypothesis that beaver ponds act as DOC sources. The grey shaded area represents the Region Of Practical Equivalence (ROPE) and it defines an interval around zero where effects are too small to be of practical importance. The central dot indicates the median of the distribution, while the thick and thin horizontal lines represent the 66% and 95% credible intervals, respectively."
 #| fig-width: 10
 #| fig-height: 6
 # Plot
@@ -436,6 +453,11 @@ obs <- m6_fit |> group_by(site) |> summarise(d = mean(delta_DOC, na.rm = TRUE))
 round(100 * prop.table(table(cut(obs$d, c(-Inf, -0.5, 0.5, Inf), labels = c("sink", "negligible", "source")))), 1)
 
 cls <- left_join(cls, obs, by = "site") |> arrange(med) |> mutate(rank = row_number(), dc = pmin(d, 5))
+```
+
+```{r}
+#| label: fig-site-level
+#| fig-cap: "**Appendix S1, Figure S6. Stream-level classification of $\\Delta$DOC.** Each stream is summarised by `med`, the posterior median of its expected $\\Delta$DOC (population-level effects plus the stream-level intercept, averaged over that stream's observations), with the 90% credible interval from `lo` to `hi` (blue). Orange crosses are the observed stream means `d`, shown for reference and clipped at 5 mg/L. The grey band is the ROPE (+/-0.5 mg/L). Streams are ranked by `med`."
 ggplot(cls, aes(x = rank)) +
   annotate("rect", xmin = -Inf, xmax = Inf, ymin = -0.5, ymax = 0.5, fill = "grey85", alpha = .7) +
   geom_hline(yintercept = 0, linetype = 2, colour = "grey40") +
@@ -447,6 +469,14 @@ ggplot(cls, aes(x = rank)) +
   labs(x = "Stream (ranked by posterior median)", y = expression(paste(Delta, "DOC (mg/L)"))) +
   theme_classic(base_size = 13) + theme(legend.position = "top")
 ```
+
+::: {.callout-note}
+## What @fig-site-level shows
+
+`class` counts how many streams fall in each region once the stream-level intercept is included: `r paste(names(table(cls$class)), table(cls$class), sep=" = ", collapse=", ")`. The posterior medians `med` span `r sprintf("%.2f to %.2f", min(cls$med), max(cls$med))` mg/L, all inside the ROPE, and the median width of the 90% interval (`hi` - `lo`) is `r sprintf("%.2f", median(cls$hi - cls$lo))` mg/L.
+
+**No stream behaves as a consistent DOC source or sink.** The variability seen in @fig-q1 therefore belongs to the individual sampling, not to stable differences between streams, which is why the sink / negligible / source percentages must never be reported as percentages of streams.
+:::
 
 ## Total effects of the exogenous drivers on ΔDOC (path tracing; Appendix S1: Figure S8)
 
@@ -473,6 +503,11 @@ tot
 
 df <- bind_rows(lapply(names(eff), function(n) tibble(effect = n, draw = eff[[n]]))) |>
   mutate(effect = factor(effect, levels = rev(names(eff))))
+```
+
+```{r}
+#| label: fig-total-effects
+#| fig-cap: "**Appendix S1, Figure S7. Total effects of the exogenous drivers on $\\Delta$DOC.** Posterior distribution of the total standardized effect of each driver, obtained by tracing every open causal path of the SCM `b1` and summing the products of the path coefficients on each posterior draw. `wrt_total` is the total effect of water residence time (its direct path plus the paths through macrophytes and phytoplankton); the beaver-engineering variables act only through `wrt_total`. Points are posterior means, thick and thin bars the 66% and 95% credible intervals."
 ggplot(df, aes(x = draw, y = effect)) +
   geom_vline(xintercept = 0, linetype = 2, colour = "grey40") +
   stat_halfeye(.width = c(.66, .95), fill = "steelblue", alpha = .8) +
@@ -481,6 +516,19 @@ ggplot(df, aes(x = draw, y = effect)) +
   theme_bw(base_size = 14) + theme(panel.grid.minor = element_blank())
 ggsave(here("results", "figures", "Figure_total_effects.png"), width = 8, height = 4.5, dpi = 300)
 ```
+
+::: {.callout-note}
+## What @fig-total-effects shows
+
+Reading `tot` by driver name (standardized effect, 90% CrI, posterior probability of a positive effect):
+
+-   **Upstream DOC** (`c_up`): `r sprintf("%+.3f", tot$mean[tot$effect=="Upstream DOC"])` [`r sprintf("%.3f, %.3f", tot$lo90[tot$effect=="Upstream DOC"], tot$hi90[tot$effect=="Upstream DOC"])`], P(> 0) = `r sprintf("%.2f", tot$p_pos[tot$effect=="Upstream DOC"])` — the largest total effect, and negative: streams already carrying much DOC tend to retain it.
+-   **Solar radiation** (through the primary producers): `r sprintf("%+.3f", tot$mean[tot$effect=="Solar radiation"])` [`r sprintf("%.3f, %.3f", tot$lo90[tot$effect=="Solar radiation"], tot$hi90[tot$effect=="Solar radiation"])`], P(> 0) = `r sprintf("%.2f", tot$p_pos[tot$effect=="Solar radiation"])`.
+-   **Water residence time** (`wrt_total`): `r sprintf("%+.3f", tot$mean[tot$effect=="Water residence time"])` [`r sprintf("%.3f, %.3f", tot$lo90[tot$effect=="Water residence time"], tot$hi90[tot$effect=="Water residence time"])`], P(> 0) = `r sprintf("%.2f", tot$p_pos[tot$effect=="Water residence time"])`.
+-   **Number of dams** (`a_nd`): `r sprintf("%+.3f", tot$mean[tot$effect=="Number of dams"])`, and **maximum dam height** (`a_dh`): `r sprintf("%+.3f", tot$mean[tot$effect=="Max dam height"])` — both small, because they reach $\Delta$DOC only through `wrt_total`.
+
+**The direction of the DOC change is set by the context the pond receives** — the incoming DOC load and the light available to its primary producers — while the structure of the dam complex only modulates it weakly.
+:::
 
 ## The beaver amplification factor (M)
 
@@ -669,6 +717,7 @@ Here some rule of thumb by Andrew Gelman and the Stan team ([link](https://githu
 
 ```{r}
 #| label: fig-priors
+#| fig-cap: "**Prior versus posterior for the amplification-factor model `m1`.** For each parameter the prior (light) and the posterior (dark) are overlaid; a posterior much narrower than its prior indicates that the data, not the prior, are driving the estimate."
 # Let's also visualize them. 
 tidy_inter <- mcmc_intervals_data(m1, prob = 0.66, # 66% intervals
                                   prob_outer = 0.95,
@@ -711,7 +760,8 @@ r2 <- bayes_R2(
 The estimated Bayesian $R^2$, which accounts for both seasonal effects and site-level variability, is `r round(r2[1], 1)`
 
 ```{r }
-#| label: fig-ppc
+#| label: fig-ppc-M
+#| fig-cap: "**Posterior predictive check of the amplification-factor model `m1`, by season.** The dark line is the observed density of the response `Y_logM` and the light lines are 100 datasets simulated from the posterior. Agreement between them means the model reproduces the observed distribution."
 pp_check(m1, type = "dens_overlay_grouped", group = "season", ndraws = 100)
 ```
 
@@ -721,6 +771,7 @@ Looks great!
 
 ```{r }
 #| label: fig-residualsM
+#| fig-cap: "**Residuals of the amplification-factor model `m1`.** Residuals ($Y_i - Y_{pred}$) against the predicted $\\log_{10}$M value. A cloud centred on zero with no trend indicates that the model is an adequate description of the data."
 y_hat <- fitted(m1,   resp = "deltaDOC") # exctrat the point predictions of delta DOC
 res <- residuals(m1,  resp = "deltaDOC")
 
@@ -781,8 +832,8 @@ winter_factor <- formatC(ci_data$mean_factor[ci_data$Season == 'winter'], format
 ```
 
 ```{r}
-#| label: fig-mainresultsM
-#| fig-cap: "Posterior distribution of the beaver amplification factor M, comparing the beaver mediated change in DOC to the seasonal floodplain-scale DOC change per unit area. The vertical dashed line at 0 represents the line of equivalence, where the magnitudes are equal. The central dot marks the posterior mean. The thick inner segment shows the 66% credible interval, and the thinner outer segment shows the 95% CI. Green represents winter, and orange represents summer. For example, in summer log10(M)= 2.15 indicates the beaver DOC change is, on average, 102.15  times greater per unit area than the seasonal floodplain-scale DOC change. Since the entire 95% CI of both winter and summer are right of the equivalence line, the model provides strong evidence of beaver amplification effects (M>1) in both seasons."
+#| label: fig-M
+#| fig-cap: "**Manuscript Figure 2. The beaver amplification factor M.** Posterior distribution of the beaver amplification factor M, comparing the beaver mediated change in DOC to the seasonal floodplain-scale DOC change per unit area. The vertical dashed line at 0 represents the line of equivalence, where the magnitudes are equal. The central dot marks the posterior mean. The thick inner segment shows the 66% credible interval, and the thinner outer segment shows the 95% CI. Green represents winter, and orange represents summer. For example, in summer log10(M)= 2.15 indicates the beaver DOC change is, on average, 102.15  times greater per unit area than the seasonal floodplain-scale DOC change. Since the entire 95% CI of both winter and summer are right of the equivalence line, the model provides strong evidence of beaver amplification effects (M>1) in both seasons."
 #| fig-width: 10
 #| fig-height: 8
 # Define colors
@@ -837,6 +888,19 @@ plot_colors <- c("summer" = "#D55E00", "winter" = "#009E73")
 
 ```
 
+::: {.callout-note}
+## What @fig-M shows
+
+`ci_data` holds the posterior of $\log_{10}$M by season, and `mean_factor` its back-transformed value:
+
+-   **summer**: $\log_{10}$M = `r sprintf("%.2f", ci_data$Log10_Magnitude[ci_data$Season=="summer"])`, i.e. **M = `r sprintf("%.0f", ci_data$mean_factor[ci_data$Season=="summer"])`**
+-   **winter**: $\log_{10}$M = `r sprintf("%.2f", ci_data$Log10_Magnitude[ci_data$Season=="winter"])`, i.e. **M = `r sprintf("%.0f", ci_data$mean_factor[ci_data$Season=="winter"])`**
+
+Both 95% credible intervals lie entirely to the right of the equivalence line (M = 1). **Per unit area, the DOC change produced by beaver-engineering is one to two orders of magnitude larger than the seasonal floodplain-scale change**, and more so in summer, when the primary producers are most active.
+
+Note that M is a ratio of *absolute* values: it measures how large the change is, never its direction. Direction is @fig-q1; the two are complementary, not contradictory.
+:::
+
 ## Appendix S1
 
 ## Figure S1: SCM's priors
@@ -875,6 +939,8 @@ priors_annotated |>
 ```
 
 ```{r plot_prior_direct_effects}
+#| label: fig-priors-direct
+#| fig-cap: "**Priors on the direct effects on $\\Delta$DOC** ($\\beta_1$ to $\\beta_5$: upstream DOC, macrophytes, phytoplankton, litter cover, water residence time). Half-eye plots of the prior draws; the text gives each prior distribution."
 # Extract priors for direct effects slopes 
 prior_direct_effects <- priors_annotated |> 
   filter(
@@ -921,6 +987,8 @@ prior_direct_effects <- priors_annotated |>
 ```
 
 ```{r plot_sigma}
+#| label: fig-priors-sigma
+#| fig-cap: "**Priors on the residual standard deviations** of $\\Delta$DOC and of every mediator equation of the SCM."
 # Extract priors for direct effects slopes 
 prior_sigmas <- priors_annotated |> 
   filter(
@@ -963,6 +1031,8 @@ prior_sigmas <- priors_annotated |>
 ```
 
 ```{r prior_deltaDOC_intercepts}
+#| label: fig-priors-intercept
+#| fig-cap: "**Prior on the $\\Delta$DOC intercept**, i.e. the average DOC change expected before seeing the data."
 
 prior_deltaDOC_intercept <- priors_annotated |> 
   filter(label %in% c("b_deltaDOC_Intercept")
@@ -994,6 +1064,8 @@ prior_deltaDOC_intercept <- priors_annotated |>
 ```
 
 ```{r indirect_effects_priors}
+#| label: fig-priors-indirect
+#| fig-cap: "**Priors on the indirect-effect paths** ($\\beta_6$ to $\\beta_{13}$), which connect solar radiation and the beaver-engineering variables to $\\Delta$DOC through water residence time and the primary producers."
 
 # Extract priors for indirect effects slopes 
 prior_ind_effects <- priors_annotated |> 
@@ -1054,6 +1126,8 @@ prior_ind_effects <- priors_annotated |>
 Composite figure:
 
 ```{r}
+#| label: fig-S2-priors
+#| fig-cap: "**Appendix S1, Figure S2. Priors of the structural causal model.** (a) the $\\Delta$DOC intercept, (b) the direct effects on $\\Delta$DOC ($\\beta_1$ to $\\beta_5$), (c) the indirect-effect paths ($\\beta_6$ to $\\beta_{13}$), (d) the residual standard deviations. Each panel shows the prior draws as half-eye plots, annotated with the prior distribution used."
 #| fig-width: 13
 #| fig-height: 12
 (priors_figure <- (p_delta_intercept + p_direct  ) / (prior_plot_ind_effects )  + p_sigma  +  
@@ -1085,8 +1159,8 @@ res <- residuals(b1,  resp = "deltaDOC")
 And then we plot:
 
 ```{r residual_plots, warning=FALSE, message=FALSE}
-#| label: fig-residuals
-#| fig-cap: "Residuals from the fitted model, plotted in two different ways: (a) residuals versus predicted values, and (b) residuals versus observed values."
+#| label: fig-S3-residuals
+#| fig-cap: "**Appendix S1, Figure S3. Residuals of the structural causal model `b1`.** Residuals ($Y_i - Y_{pred}$) against the predicted $\\Delta$DOC. Residuals scattered around zero with no systematic trend indicate that the model describes the data adequately."
 #| fig-width: 13
 #| fig-height: 8 
 
@@ -1113,6 +1187,8 @@ Residuals looks reasonable: the residuals are centered around zero for the vast 
 Let’s see how well the model predicts our outcome variable `delta DOC`.
 
 ```{r pp_check_}
+#| label: fig-S4-ppc
+#| fig-cap: "**Appendix S1, Figure S4. Posterior predictive check of the structural causal model `b1`.** The dark line is the observed density of $\\Delta$DOC and the light lines are 1000 datasets simulated from the posterior."
 
 (ppc1 <- pp_check(b1, resp = "deltaDOC", ndraws = 1000)+
   theme_bw(base_size = 16) +

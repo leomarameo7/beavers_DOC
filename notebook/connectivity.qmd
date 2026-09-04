@@ -31,6 +31,8 @@ bibliography: references.bib
 ---
 
 ```{r libraries, message=FALSE}
+invisible(Sys.setlocale("LC_CTYPE", "en_US.UTF-8"))  # print non-ASCII (Delta, arrows) correctly
+
 # Load libraries
 library(tidyverse)
 library(here)
@@ -69,11 +71,11 @@ In this study, we are going to use Berger's methodology to define stream lateral
 - `yes_connected` : presence of wetland and it is connected to the stream (figure 1b).
 :::
 
-![The image represent two different stream with their associated later connectivity. Kaspar Berger authorship.](../images/later_connectivty_berger-01.png){#fig-latconn}
+![**The three levels of `lateral_connectivity`.** Two streams with contrasting lateral connectivity to an adjacent wetland: on the left a wetland present but not directly connected to the channel (`yes_not_connected`), on the right a wetland hydrologically connected to the channel (`yes_connected`). Sites with no wetland within the 50 m buffer are coded `No_wetland`. Image by Kaspar Berger.](../images/later_connectivty_berger-01.png){#fig-latconn}
 
 Please note our main results:
 
-![Drivers of beaver-mediated DOC change. Solid edges (red = negative, blue = positive) represent ≥90% probability evidence of causal effects; dashed edges represent inconclusive evidence. Standardized average effects are shown](../images/Capitani_Figure_2b.png){#fig-scm}
+![**The main structural causal model, for reference (manuscript Figure 1b).** Drivers of beaver-mediated DOC change: solid edges (red = negative, blue = positive) carry at least 90% posterior probability of a directional effect, dashed edges are inconclusive. Values are standardized average effects. The path this notebook extends is water residence time (`WRT`), to which `lateral_connectivity` is added as an additional parent.](../images/Capitani_Figure_2b.png){#fig-scm}
 
 We do already know that the mediating path (WRT → ΔDOC) is weak because an increase in WRT influence 1-2% the `deltaDOC`.
 
@@ -125,7 +127,7 @@ upstream_DOC -> delta_DOC
 #plot(dag)
 ```
 
-![Actualized Directed acyclic graph (DAG) where the later connectivity is taken into account.](../images/DAG_lateral_conn.png){#fig-daglateral}
+![**Extended DAG including `lateral_connectivity` (Appendix S1, Figure S8).** Identical to the main SCM except for one added causal path, from `lateral_connectivity` to water residence time (`WRT`). Because `lateral_connectivity` has no parents, no back-door path to `delta_DOC` exists and its total effect is identified without adjustment; the open front-door paths run through `WRT` and the primary producers.](../images/DAG_lateral_conn.png){#fig-daglateral}
 
 So in this DAG, there are exactly **two open front-door paths**:
 
@@ -334,7 +336,7 @@ Then plot the results as contrasts (Appendix S1: Figure S9):
 
 ```{r}
 #| label: fig-contrasts
-#| fig-cap: "Posterior effects of lateral stream-wetland connectivity (relative to sites without wetland) on water residence time (left) and the total mediated effect on ΔDOC (right). Points: posterior medians; thick/thin bars: 66% and 95% credible intervals."
+#| fig-cap: "**Appendix S1, Figure S9. Effect of lateral stream-wetland connectivity.** Left: the contrasts `effect_wrt_not_connected` and `effect_wrt_connected`, i.e. the effect of each connectivity level on water residence time relative to sites without wetland. Right: `total_effect_not_connected` and `total_effect_connected`, the total mediated effect on $\\Delta$DOC, obtained by multiplying each contrast by the WRT to $\\Delta$DOC coefficient `wrt_to_doc`. Points are posterior medians; thick and thin bars are the 66% and 95% credible intervals; the dashed line marks zero."
 #| fig-width: 11
 #| fig-height: 4.5
 df_s9 <- bind_rows(
@@ -355,6 +357,18 @@ lab_s9 <- as_labeller(c(A = "Connectivity%->%'water residence time'", B = "'Tota
 ggsave(here("results", "figures", "figS9_connectivity.png"), p_s9, width = 11, height = 4.5, dpi = 300)
 ```
 
+::: {.callout-note}
+## What @fig-contrasts shows
+
+Naming each posterior quantity explicitly (standardized effect, 90% credible interval, posterior probability of being positive):
+
+-   **`effect_wrt_not_connected`** — an unconnected wetland versus no wetland, effect on water residence time: `r sprintf("%+.2f", mean(effect_wrt_not_connected))` [`r sprintf("%.2f, %.2f", quantile(effect_wrt_not_connected,.05), quantile(effect_wrt_not_connected,.95))`], P(> 0) = `r sprintf("%.2f", mean(effect_wrt_not_connected > 0))`
+-   **`effect_wrt_connected`** — a connected wetland versus no wetland, effect on water residence time: `r sprintf("%+.2f", mean(effect_wrt_connected))` [`r sprintf("%.2f, %.2f", quantile(effect_wrt_connected,.05), quantile(effect_wrt_connected,.95))`], P(> 0) = `r sprintf("%.2f", mean(effect_wrt_connected > 0))`
+-   **`wrt_to_doc`** — the mediating coefficient from water residence time to $\Delta$DOC: `r sprintf("%+.2f", mean(wrt_to_doc))` [`r sprintf("%.2f, %.2f", quantile(wrt_to_doc,.05), quantile(wrt_to_doc,.95))`], P(> 0) = `r sprintf("%.2f", mean(wrt_to_doc > 0))`
+-   **`total_effect_not_connected`**: `r sprintf("%+.2f", mean(total_effect_not_connected))` [`r sprintf("%.2f, %.2f", quantile(total_effect_not_connected,.05), quantile(total_effect_not_connected,.95))`], and **`total_effect_connected`**: `r sprintf("%+.2f", mean(total_effect_connected))` [`r sprintf("%.2f, %.2f", quantile(total_effect_connected,.05), quantile(total_effect_connected,.95))`]
+
+**Lateral stream-wetland connectivity does not detectably change $\Delta$DOC through the water-residence-time pathway.** The estimates of the remaining paths are unchanged from the main SCM (@fig-scm), so the conclusions of the manuscript are robust to adding this causal path.
+:::
 
 ### Conclusions:
 
