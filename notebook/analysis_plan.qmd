@@ -110,7 +110,7 @@ m <- read.csv(here("data", "processed", "m12.csv"))
 w <- m |> filter(season == "winter") |> select(site, beaver_territory, up_w = DOC_input, dn_w = DOC_out,
                                                  Afp = A_floodplain_km2, Abv = A_beaver_km2)
 s <- m |> filter(season == "summer") |> select(site, beaver_territory, up_s = DOC_input, dn_s = DOC_out)
-# streams with both seasons complete (158 of 176); local responses and footprint contrast
+# the 158 streams with both seasons complete; local responses and footprint contrast
 d <- inner_join(w, s, by = c("site", "beaver_territory")) |> filter(complete.cases(up_w, dn_w, up_s, dn_s)) |>
   mutate(dw = dn_w - up_w,      # local response in winter
          ds = dn_s - up_s,      # local response in summer
@@ -144,7 +144,7 @@ The direction of the local response is set by the context the pond receives: ups
 
 # 5. Q3 — Magnitude and seasonal modification: $R_s$ and $G$
 
-Of the 176 streams sampled, **158 have both a winter and a summer sampling**; every seasonal quantity ($S$, $B$, $G$, $R_s$) uses these 158 streams. State this once in the Methods, so the two numbers never appear unexplained side by side.
+The analysis uses the **158 streams with both a winter and a summer sampling**; this is the only stream count reported anywhere in the manuscript (the sites visited but excluded during data cleaning are not mentioned).
 
 $R_s$, $B$ and $G$ are computed from posterior draws of each stream's concentrations (Bayesian measurement-error model, `notebook/concentrations_fit.R`; the model belongs in the Methods), so no derived quantity is ever formed from raw values and the uncertainty is carried through (`r nrow(readRDS(here("results","concentrations_thin.rds"))$S)` posterior draws per stream).
 
@@ -290,9 +290,9 @@ Sentence for the Discussion: the seasonal DOC contrast that streams inherit is o
 
 # 7. Methods figure
 
-**Manuscript placement: main text, Figure 3 (existing map; panel b redrawn with $S$, $\Delta\text{DOC}_s$, $R_s$ and $F$ in place of the amplification-factor quantities).**
+**Manuscript placement: main text, Figure 3 (both panels redrawn: panel a shows the 158 analysed streams, panel b shows $S$, $\Delta\text{DOC}_s$, $R_s$ and $F$ in place of the amplification-factor quantities).**
 
-![**Sampling design and derived variables.** (a) Sampling locations across Switzerland. Red dots (n = 176) denote streams where water samples were collected, black dots (n = 16) denote streams where water samples and primary producer abundance were sampled. The inset shows the sampling design at each stream: water was sampled upstream of the first and downstream of the last beaver dam. (b) Schematic of the derived variables: the inherited seasonal contrast $S$ is generated over the floodplain area $A_\text{floodplain}$; the local response $\Delta\text{DOC}_s$ is measured across the beaver-engineered stream of ponded area $A_\text{beaver}$; the relative response is $R_s = \Delta\text{DOC}_s / \lvert S \rvert$ and the footprint contrast is $F = A_\text{floodplain} / A_\text{beaver}$.](../results/figures/plan/fig_map_schematic.png){#fig-map}
+![**Sampling design and derived variables.** (a) Sampling locations across Switzerland: the 158 analysed streams (red dots; redrawn by `notebook/figure_3a_map.R` so that map and analysis show the same set). The 16 streams where primary producer abundance was sampled are a separate campaign; their coordinates are not yet in the repository and must be added to place them on the redrawn map. The inset shows the sampling design at each stream: water was sampled upstream of the first and downstream of the last beaver dam. (b) Schematic of the derived variables: the inherited seasonal contrast $S$ is generated over the floodplain area $A_\text{floodplain}$; the local response $\Delta\text{DOC}_s$ is measured across the beaver-engineered stream of ponded area $A_\text{beaver}$; the relative response is $R_s = \Delta\text{DOC}_s / \lvert S \rvert$ and the footprint contrast is $F = A_\text{floodplain} / A_\text{beaver}$.](../results/figures/plan/fig_map_schematic.png){#fig-map}
 
 # 8. Figures for the manuscript
 
@@ -303,7 +303,7 @@ kable(tribble(
   "Figure 1a", "Posterior predictive distribution of $\\Delta\\text{DOC}_s$ by season", "Q1", "@fig-q1", "existing",
   "Figure 1b", "Structural causal model, outcome downstream DOC, with estimated effects", "Q2", "@fig-q2", "**redrawn — outcome is downstream DOC**",
   "Figure 2",  "Relative response $R_s$: across streams (a) and by stream (b)", "Q3", "@fig-R", "**new — replaces the amplification-factor figure**",
-  "Figure 3",  "Map, sampling design and schematic of $S$, $\\Delta\\text{DOC}_s$, $R_s$, $F$", "Methods", "@fig-map", "panel b **redrawn**",
+  "Figure 3",  "Map (158 analysed streams), sampling design and schematic of $S$, $\\Delta\\text{DOC}_s$, $R_s$, $F$", "Methods", "@fig-map", "**both panels redrawn**",
   "Figure S1–S9", "Hypothesised DAG, priors, checks, stream-level classification, total effects, connectivity model", "Q2 support", "—", "existing",
   "Figure S10", "Derivation of the variables", "all", "@fig-dag", "**new**",
   "Figure S11", "Spatial coherence of $S$, $B$ and $T$", "Discussion support", "@fig-spatial", "**new**"))
@@ -316,7 +316,8 @@ kable(tribble(
 2.  **Results.** The amplification-factor section and its figure are removed; Q3 is answered by $R_s$ (Figure 2) with the footprint sentence, plus the two seasonal-gain sentences ($G$: reinforce / dampen / reverse counts) — no additional figure.
 3.  **Methods.** The definitions of $S$, $B$, $G$, $R_s$ and $F$ and the measurement-error model on the concentrations replace the amplification-factor equations; one sentence states that the structural causal model is parameterized with downstream DOC as the outcome (inheritance slope 0.95) and $\Delta\text{DOC}_s$ is derived from the posterior; Figure 3b is redrawn.
 4.  **Discussion.** One sentence on spatial coherence: the inherited seasonal contrast is regional, the beaver seasonal modification is local (Figure S11).
-5.  **Appendix S1.** Figure S10 (derivation of the variables) and Figure S11 (spatial coherence) are added.
+5.  **Whole manuscript.** Every mention of 176 streams is replaced by **158**, the streams actually analysed (abstract, introduction, methods, Figure 3a and its caption); the count appears with the same value everywhere.
+6.  **Appendix S1.** Figure S10 (derivation of the variables) and Figure S11 (spatial coherence) are added.
 :::
 
 # 9. Reproducibility
