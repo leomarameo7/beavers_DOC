@@ -43,6 +43,8 @@ This document fixes the story of the manuscript: three research questions, the v
 The subject of every effect statement is **beaver-engineering**, the physical modification beavers create, because the upstream–downstream contrast measures the whole beaver-engineered stream. The unit of analysis is the stream.
 
 ```{r variable-table}
+#| label: tbl-variables
+#| tbl-cap: "The derived variables used throughout this document, referenced from every figure caption below."
 #| echo: false
 kable(tribble(
   ~Symbol, ~Name, ~Definition, ~`Meaning (unit)`, ~`Question it answers`,
@@ -74,7 +76,7 @@ kable(tribble(
 
 **Manuscript placement: Appendix S1 (Figure S10).**
 
-![**Derivation of the variables.** Top: the same causal structure operates in winter and summer; downstream DOC inherits upstream DOC and is modified by local hydrological and biological processes. Bottom (dashed): $\Delta\text{DOC}_s$, $S$, $R_s$ and $F$ are calculations from the concentrations, not causal nodes. Solid arrows are causal pathways; the green arrow is the persistence of the hydrologic template between seasons.](../images/DAG_variable_derivation.png){#fig-dag}
+![**Derivation of the variables.** Top: the same causal structure operates in winter and summer; downstream DOC inherits upstream DOC and is modified by local hydrological and biological processes. Bottom (dashed): $\Delta\text{DOC}_s$, $S$, $R_s$ and $F$ are calculations from the concentrations, not causal nodes. Solid arrows are causal pathways; the green arrow is the persistence of the hydrologic template between seasons. Variable definitions: @tbl-variables.](../images/DAG_variable_derivation.png){#fig-dag}
 
 # 2. Research questions and hypotheses
 
@@ -104,7 +106,7 @@ The division of labour between the two quantities is fixed: **$R_s$ answers "how
 
 **Manuscript placement: main text, Figure 1a (existing, unchanged).**
 
-![**Direction of the local response.** Posterior predictive distribution of $\Delta\text{DOC}_s$ for a single sampling of a beaver-engineered stream, in winter and summer, from the measurement-error model on the raw upstream and downstream concentrations. Coral: posterior predictive probability of a sink response ($\Delta\text{DOC}_s < -0.5$ mg L$^{-1}$); grey: negligible response (ROPE $\pm 0.5$ mg L$^{-1}$); skyblue: source response ($\Delta\text{DOC}_s > 0.5$ mg L$^{-1}$). Point: median; bars: 66% and 95% intervals.](../overleaf/figures/media/Figure_2a.png){#fig-q1}
+![**Direction of the local response.** Posterior predictive distribution of $\Delta\text{DOC}_s$ for a single sampling of a beaver-engineered stream, in winter and summer, from the measurement-error model on the raw upstream and downstream concentrations. Coral: posterior predictive probability of a sink response ($\Delta\text{DOC}_s < -0.5$ mg L$^{-1}$); grey: negligible response (ROPE $\pm 0.5$ mg L$^{-1}$); skyblue: source response ($\Delta\text{DOC}_s > 0.5$ mg L$^{-1}$). Point: median; bars: 66% and 95% intervals. $\Delta\text{DOC}_s$ is defined in @tbl-variables.](../overleaf/figures/media/Figure_2a.png){#fig-q1}
 
 ```{r q1-data}
 # raw data: one row per sampling; pair each stream's winter and summer sampling
@@ -268,7 +270,7 @@ g_med <- median(apply(G_m, 1, function(g) median(g)))  # posterior median of the
 
 ```{r fig-R}
 #| fig-height: 12.5
-#| fig-cap: "**Relative response $R_s$ and seasonal gain $G$ of beaver-engineering.** (a) Posterior distribution of the median relative response across the 158 streams, in winter and summer; point: posterior median, bars: 66% and 95% credible intervals; dashed line: no response. (b) Relative response of each stream in summer: posterior median with 66% (thick) and 95% (thin) credible intervals, streams ranked by their median; the grey band marks $\\lvert R_{summer} \\rvert < 0.1$. The vertical axis is linear between $-0.1$ and $0.1$ and logarithmic beyond, so small and large responses are both readable. In panels (a) and (b) skyblue: source (beaver-engineering adds DOC, P > 0.90), coral: sink (removes DOC, P > 0.90), grey: no-evidence — the same colours as in the direction figure; panel (b) prints the percentage of the 158 streams in each colour directly on the plot. (c) Out of the 158 streams, what percentage reinforce ($G > 0$, make the inherited seasonal contrast bigger), dampen ($-1 < G < 0$, make it smaller) or reverse ($G < -1$, flip its sign)? Each stream is classified on every posterior draw, so each bar is a full posterior distribution of that percentage, with its own uncertainty — not a single count of streams sorted into fixed bins; point: posterior median percentage, bars: 66% and 95% credible intervals."
+#| fig-cap: "**Relative response $R_s$ and seasonal gain $G$ of beaver-engineering.** (a) Posterior distribution of the median relative response across the 158 streams, in winter and summer; point: posterior median, bars: 66% and 95% credible intervals; dashed line: no response. (b) Relative response of each stream in summer: posterior median with 66% (thick) and 95% (thin) credible intervals, streams ranked by their median; the grey band marks $\\lvert R_{summer} \\rvert < 0.1$. The vertical axis is linear between $-0.1$ and $0.1$ and logarithmic beyond, so small and large responses are both readable. In panels (a) and (b) skyblue: source (beaver-engineering adds DOC, P > 0.90), coral: sink (removes DOC, P > 0.90), grey: no-evidence — the same colours as in the direction figure; panel (b) prints the percentage of the 158 streams in each colour directly on the plot. (c) Out of the 158 streams, what percentage reinforce ($G > 0$, make the inherited seasonal contrast bigger), dampen ($-1 < G < 0$, make it smaller) or reverse ($G < -1$, flip its sign)? Each stream is classified on every posterior draw, so each bar is a full posterior distribution of that percentage, with its own uncertainty — not a single count of streams sorted into fixed bins; point: posterior median percentage, bars: 66% and 95% credible intervals. $R_s$, $G$, $B$ and $S$ are defined in @tbl-variables."
 # classify by posterior probability: add if P(R > 0) > 0.90, remove if P(R < 0) > 0.90, else no-evidence
 cls <- function(p_add) case_when(p_add > 0.90 ~ "add", p_add < 0.10 ~ "remove", TRUE ~ "none")
 lab <- c(add = "source (adds DOC)", remove = "sink (removes DOC)", none = "no-evidence")   # P > 0.90 stated once, in the caption
@@ -377,7 +379,7 @@ For each stream we correlate its value with the mean of its 8 nearest neighbours
 
 ```{r fig-spatial}
 #| fig-height: 3.5
-#| fig-cap: "**Spatial coherence of the inherited seasonal contrast $S$, the beaver seasonal modification $B$ and the downstream seasonal contrast $T$.** Posterior distribution of the Spearman correlation between each stream's value and the mean of its 8 nearest neighbours, computed on every posterior draw of the concentrations. Point: median; bars: 66% and 95% credible intervals; dashed line: no spatial coherence."
+#| fig-cap: "**Spatial coherence of the inherited seasonal contrast $S$, the beaver seasonal modification $B$ and the downstream seasonal contrast $T$.** Posterior distribution of the Spearman correlation between each stream's value and the mean of its 8 nearest neighbours, computed on every posterior draw of the concentrations. Point: median; bars: 66% and 95% credible intervals; dashed line: no spatial coherence. $S$ and $B$ are defined in @tbl-variables ($T = S + B$)."
 # stream coordinates (longitude, latitude of the upstream sampling point)
 co <- read.csv(here("data", "processed", "m6.csv")) |> distinct(site, .keep_all = TRUE) |>
   select(site, lon = x_upstream, lat = y_upstream)
@@ -424,7 +426,7 @@ The chunk below draws panel (a) directly from the analysed data — the red dots
 
 ```{r fig-map}
 #| fig-height: 11
-#| fig-cap: "**Sampling design and derived variables.** (a) Sampling locations across Switzerland (elevation background): red dots are the 158 analysed streams; black triangles are the 16 streams where primary producer abundance was sampled. Water was sampled upstream of the first and downstream of the last beaver dam of each stream, once in winter and once in summer. (b) Schematic of the derived variables: the inherited seasonal contrast $S$ is generated over the floodplain area $A_\\text{floodplain}$; the local response $\\Delta\\text{DOC}_s$ is measured across the beaver-engineered stream of ponded area $A_\\text{beaver}$; the relative response is $R_s = \\Delta\\text{DOC}_s / \\lvert S \\rvert$ and the footprint contrast is $F = A_\\text{floodplain} / A_\\text{beaver}$."
+#| fig-cap: "**Sampling design and derived variables.** (a) Sampling locations across Switzerland (elevation background): red dots are the 158 analysed streams; black triangles are the 16 streams where primary producer abundance was sampled. Water was sampled upstream of the first and downstream of the last beaver dam of each stream, once in winter and once in summer. (b) Schematic of the derived variables: the inherited seasonal contrast $S$ is generated over the floodplain area $A_\\text{floodplain}$; the local response $\\Delta\\text{DOC}_s$ is measured across the beaver-engineered stream of ponded area $A_\\text{beaver}$; the relative response is $R_s = \\Delta\\text{DOC}_s / \\lvert S \\rvert$ and the footprint contrast is $F = A_\\text{floodplain} / A_\\text{beaver}$. All variables are defined in @tbl-variables."
 # panel (a): the 158 analysed streams (d, from the Q1 chunk) with coordinates,
 # and the 16 producer-abundance streams from the field-campaign site list
 pts  <- d |> distinct(site) |>
