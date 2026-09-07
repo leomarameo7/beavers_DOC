@@ -261,12 +261,6 @@ B_m <- LR$ds - LR$dw
 # seasonal gain G = B / S: does beaver-engineering reinforce (G > 0),
 # dampen (-1 < G < 0) or reverse (G < -1) the inherited seasonal contrast?
 G_m <- B_m / S_m
-# classify each stream by the posterior probability of its gain category
-g_lab <- apply(G_m, 2, function(g) {
-  p <- c(reinforce = mean(g > 0), dampen = mean(g > -1 & g < 0), reverse = mean(g < -1))
-  if (max(p) > 0.90) names(p)[which.max(p)] else "no-evidence"  # classify only when P > 0.90
-})
-g_n <- table(factor(g_lab, levels = c("reinforce", "dampen", "reverse", "no-evidence")))
 g_med <- median(apply(G_m, 1, function(g) median(g)))  # posterior median of the across-stream median gain
 ```
 
@@ -274,7 +268,7 @@ g_med <- median(apply(G_m, 1, function(g) median(g)))  # posterior median of the
 
 ```{r fig-R}
 #| fig-height: 12.5
-#| fig-cap: "**Relative response $R_s$ and seasonal gain $G$ of beaver-engineering.** (a) Posterior distribution of the median relative response across the 158 streams, in winter and summer; point: posterior median, bars: 66% and 95% credible intervals; dashed line: no response. (b) Relative response of each stream in summer: posterior median with 66% (thick) and 95% (thin) credible intervals, streams ranked by their median; the grey band marks $\\lvert R_{summer} \\rvert < 0.1$. The vertical axis is linear between $-0.1$ and $0.1$ and logarithmic beyond, so small and large responses are both readable. In panels (a) and (b) skyblue: source (beaver-engineering adds DOC, P > 0.90), coral: sink (removes DOC, P > 0.90), grey: no-evidence — the same colours as in the direction figure. (c) Seasonal gain $G$ of each stream: posterior median with 66% (thick) and 95% (thin) credible intervals, streams ranked by their median, same axis construction as (b); the dashed lines at $G = 0$ and $G = -1$ separate reinforcement ($G > 0$), dampening ($-1 < G < 0$) and reversal ($G < -1$) of the inherited seasonal contrast; colours in (c): purple: reinforces (P > 0.90), green: dampens (P > 0.90), black: reverses (P > 0.90), grey: no-evidence."
+#| fig-cap: "**Relative response $R_s$ and seasonal gain $G$ of beaver-engineering.** (a) Posterior distribution of the median relative response across the 158 streams, in winter and summer; point: posterior median, bars: 66% and 95% credible intervals; dashed line: no response. (b) Relative response of each stream in summer: posterior median with 66% (thick) and 95% (thin) credible intervals, streams ranked by their median; the grey band marks $\\lvert R_{summer} \\rvert < 0.1$. The vertical axis is linear between $-0.1$ and $0.1$ and logarithmic beyond, so small and large responses are both readable. In panels (a) and (b) skyblue: source (beaver-engineering adds DOC, P > 0.90), coral: sink (removes DOC, P > 0.90), grey: no-evidence — the same colours as in the direction figure. (c) Share of the 158 streams that reinforce ($G > 0$), dampen ($-1 < G < 0$) or reverse ($G < -1$) the inherited seasonal contrast: each stream is classified on every posterior draw, so the three distributions are the posterior uncertainty of the proportion itself, not a count of streams individually classified at a fixed threshold; point: posterior median, bars: 66% and 95% credible intervals."
 # classify by posterior probability: add if P(R > 0) > 0.90, remove if P(R < 0) > 0.90, else no-evidence
 cls <- function(p_add) case_when(p_add > 0.90 ~ "add", p_add < 0.10 ~ "remove", TRUE ~ "none")
 lab <- c(add = "source (adds DOC, P > 0.90)", remove = "sink (removes DOC, P > 0.90)", none = "no-evidence")
@@ -309,29 +303,30 @@ pb <- ggplot(per, aes(x = rank, y = med, colour = class)) +
   labs(x = "Stream (ranked by posterior median)",
        y = expression(R[summer]*"  (axis linear in [-0.1, 0.1], logarithmic beyond)")) +
   theme_bw(base_size = 12) + theme(panel.grid.minor = element_blank(), legend.position = "top")
-# ---- panel (c): each stream's seasonal gain G, ranked ----------------------
-# G categories get their own colours (different meanings than source/sink)
-gpal <- c(reinforce = "#8856A7", dampen = "#41AB5D", reverse = "black", `no-evidence` = "grey60")
-glab <- c(reinforce = "reinforces (P > 0.90)", dampen = "dampens (P > 0.90)",
-          reverse = "reverses (P > 0.90)", `no-evidence` = "no-evidence")
-gper <- tibble(med  = apply(G_m, 2, median),
-               lo95 = apply(G_m, 2, quantile, .025), hi95 = apply(G_m, 2, quantile, .975),
-               lo66 = apply(G_m, 2, quantile, .17),  hi66 = apply(G_m, 2, quantile, .83),
-               class = factor(g_lab, levels = names(gpal))) |> arrange(med) |> mutate(rank = row_number())
-pc <- ggplot(gper, aes(x = rank, y = med, colour = class)) +
-  geom_hline(yintercept = 0, linetype = "dashed", colour = "grey45") +
-  geom_hline(yintercept = -1, linetype = "dashed", colour = "grey45") +
-  geom_linerange(aes(ymin = lo95, ymax = hi95), alpha = .45, linewidth = 0.4) +  # 95% interval (thin)
-  geom_linerange(aes(ymin = lo66, ymax = hi66), alpha = .8, linewidth = 0.9) +   # 66% interval (thick)
-  geom_point(size = 1.6) +
-  scale_colour_manual(values = gpal, labels = glab, breaks = names(gpal), name = NULL) +
-  scale_y_continuous(trans = psl, breaks = c(-10, -1, -0.1, 0, 0.1, 1, 10)) +
-  labs(x = "Stream (ranked by posterior median)",
-       y = expression(G*"  (axis linear in [-0.1, 0.1], logarithmic beyond)")) +
-  theme_bw(base_size = 12) + theme(panel.grid.minor = element_blank(), legend.position = "top")
-fig2 <- pa / pb / pc + plot_layout(heights = c(1, 1.3, 1.3)) + plot_annotation(tag_levels = "a")
-ggsave(here("results", "figures", "plan", "fig_R.png"), fig2, width = 9, height = 12.5, dpi = 300)
+# ---- panel (c): posterior share of streams that reinforce/dampen/reverse ---
+# classify every stream on EVERY posterior draw (no P > 0.90 threshold), then
+# compute the proportion in each zone per draw -- this gives a posterior
+# distribution of the proportion itself, propagating its own uncertainty,
+# rather than a single count built from per-stream point classifications.
+zone <- function(g) case_when(g > 0 ~ "reinforce", g > -1 ~ "dampen", TRUE ~ "reverse")
+zmat <- apply(G_m, c(1, 2), zone)                       # same shape as G_m, one label per draw x stream
+gprop <- as_tibble(t(apply(zmat, 1, function(row)        # proportion per zone, one row per draw
+  c(reinforce = mean(row == "reinforce"), dampen = mean(row == "dampen"), reverse = mean(row == "reverse"))))) |>
+  pivot_longer(everything(), names_to = "zone", values_to = "p") |>
+  mutate(zone = factor(zone, levels = c("reverse", "dampen", "reinforce")))
+gpal <- c(reinforce = "#8856A7", dampen = "#41AB5D", reverse = "black")
+pc <- ggplot(gprop, aes(x = p, y = zone, fill = zone)) +
+  stat_halfeye(.width = c(.66, .95), point_interval = "median_qi") +   # 66% and 95% credible intervals
+  scale_fill_manual(values = gpal, guide = "none") +
+  scale_x_continuous(labels = label_percent(accuracy = 1)) +
+  labs(x = "Share of the 158 streams in each zone", y = NULL) +
+  theme_bw(base_size = 12) + theme(panel.grid.minor = element_blank())
+fig2 <- pa / pb / pc + plot_layout(heights = c(1, 1.3, 1)) + plot_annotation(tag_levels = "a")
+ggsave(here("results", "figures", "plan", "fig_R.png"), fig2, width = 9, height = 11, dpi = 300)
 fig2
+# summary of panel (c) for the key message, one row per zone
+gsum <- gprop |> group_by(zone) |> summarise(med = median(p), lo = quantile(p, .025), hi = quantile(p, .975))
+gz <- function(z) gsum |> filter(zone == z)
 ```
 
 ::: {.callout-important}
@@ -341,7 +336,7 @@ fig2
 
 **Panel (b) of @fig-R.** The streams do not behave alike. In summer, `r sprintf("%.0f%%", 100 * n_add / n_str)` of the beaver-engineered streams (`r n_add` of `r n_str`) are DOC sources; `r sprintf("%.0f%%", 100 * n_rem / n_str)` (`r n_rem`) are DOC sinks; the rest are no-evidence.
 
-**Panel (c) of @fig-R.** The seasonal gain is heterogeneous: `r sprintf("%.0f%%", 100 * g_n["reinforce"] / n_str)` of the streams (`r g_n["reinforce"]` of `r n_str`) reinforce the inherited seasonal contrast, `r sprintf("%.0f%%", 100 * g_n["dampen"] / n_str)` (`r g_n["dampen"]`) dampen it, `r sprintf("%.0f%%", 100 * g_n["reverse"] / n_str)` (`r g_n["reverse"]`) reverse it, and `r sprintf("%.0f%%", 100 * g_n["no-evidence"] / n_str)` (`r g_n["no-evidence"]`) are no-evidence; the median gain across streams is `r sprintf("%.2f", g_med)`. Beaver-engineering does not shift the seasonal contrast in one direction; it redistributes it stream by stream.
+**Panel (c) of @fig-R.** The seasonal gain is heterogeneous: `r sprintf("%.0f%%", 100*gz("reinforce")$med)` of the streams (95% CrI `r sprintf("%.0f–%.0f%%", 100*gz("reinforce")$lo, 100*gz("reinforce")$hi)`) reinforce the inherited seasonal contrast, `r sprintf("%.0f%%", 100*gz("dampen")$med)` (`r sprintf("%.0f–%.0f%%", 100*gz("dampen")$lo, 100*gz("dampen")$hi)`) dampen it, and `r sprintf("%.0f%%", 100*gz("reverse")$med)` (`r sprintf("%.0f–%.0f%%", 100*gz("reverse")$lo, 100*gz("reverse")$hi)`) reverse it; the median gain across streams is `r sprintf("%.2f", g_med)`. Beaver-engineering does not shift the seasonal contrast in one direction; it redistributes it stream by stream.
 :::
 
 # 6. Spatial coherence: is the beaver seasonal modification regional or local?
@@ -453,7 +448,7 @@ kable(tribble(
 ## What changes in the manuscript
 
 1.  **Abstract.** The sentence *"Compared to floodplain-scale DOC variation, beaver-engineering amplified DOC concentration changes 141 times in summer and 33 times in winter."* is replaced by: *"Relative to the inherited seasonal contrast of upstream DOC, beaver-engineering added DOC equal to `r sprintf("%.0f%%", 100*median(medR(R_s)))` of that contrast in summer (95% credible interval `r sprintf("%.0f–%.0f%%", 100*quantile(medR(R_s), .025), 100*quantile(medR(R_s), .975))`) and had no net effect in winter, on a footprint of about `r sprintf("%.1f%%", 100 * median(1 / d$F))` of the floodplain area."*
-2.  **Results.** The amplification-factor section and its figure are removed; Q3 is answered by $R_s$ (Figure 2a, b) and by the seasonal gain $G$ (Figure 2c: reinforce / dampen / reverse counts).
+2.  **Results.** The amplification-factor section and its figure are removed; Q3 is answered by $R_s$ (Figure 2a, b) and by the seasonal gain $G$ (Figure 2c: share of streams that reinforce / dampen / reverse).
 3.  **Methods.** The definitions of $S$, $B$, $G$, $R_s$ and $F$ and the measurement-error model on the concentrations replace the amplification-factor equations; one sentence states that the structural causal model is parameterized with downstream DOC as the outcome (inheritance slope 0.95) and $\Delta\text{DOC}_s$ is derived from the posterior; Figure 3b is redrawn.
 4.  **Discussion.** One sentence on spatial coherence: the inherited seasonal contrast is regional, the beaver seasonal modification is local (Figure S11).
 5.  **Whole manuscript.** Every mention of 176 streams is replaced by **158**, the streams actually analysed (abstract, introduction, methods, Figure 3a and its caption); the count appears with the same value everywhere.
