@@ -325,7 +325,7 @@ pc <- ggplot(gprop, aes(x = p, y = zone, fill = zone)) +
   stat_halfeye(.width = c(.66, .95), point_interval = "median_qi") +   # 66% and 95% credible intervals
   scale_fill_manual(values = gpal, guide = "none") +
   scale_x_continuous(labels = label_percent(accuracy = 1)) +
-  labs(x = "Percentage of the 158 streams", y = NULL) +
+  labs(x = "Percentage of the 158 streams", y = expression("Seasonal gain,  "*G*" = "*B*" / "*S)) +
   theme_bw(base_size = 12) + theme(panel.grid.minor = element_blank())
 fig2 <- pa / pb / pc + plot_layout(heights = c(1, 1.3, 1)) + plot_annotation(tag_levels = "a")
 ggsave(here("results", "figures", "plan", "fig_R.png"), fig2, width = 9, height = 11, dpi = 300)
