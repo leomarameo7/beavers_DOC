@@ -290,11 +290,11 @@ per <- tibble(med  = apply(R_s, 2, median),
               lo95 = apply(R_s, 2, quantile, .025), hi95 = apply(R_s, 2, quantile, .975),
               lo66 = apply(R_s, 2, quantile, .17),  hi66 = apply(R_s, 2, quantile, .83),
               class = cls(colMeans(R_s > 0))) |> arrange(med) |> mutate(rank = row_number())
-# percentage of the 158 streams in each colour, printed inside the panel
-# (top-left corner is empty of points, so the labels don't cover any data)
+# percentage of the 158 streams in each colour: the legend names the colour,
+# the in-panel text gives its share (top-left corner is empty of points)
 pct_b <- prop.table(table(factor(per$class, levels = c("add", "remove", "none")))) * 100
 pct_lab <- tibble(class = c("add", "remove", "none"),
-                   txt = sprintf("%s: %.0f%% of streams", lab[c("add", "remove", "none")], pct_b[c("add", "remove", "none")]),
+                   txt = sprintf("%.0f%% of streams", pct_b[c("add", "remove", "none")]),
                    y = c(90, 30, 10))   # stacked top to bottom on the log axis
 # axis transform: linear inside [-0.1, 0.1], logarithmic beyond
 psl <- pseudo_log_trans(sigma = 0.1, base = 10)
@@ -304,12 +304,11 @@ pb <- ggplot(per, aes(x = rank, y = med, colour = class)) +
   geom_linerange(aes(ymin = lo95, ymax = hi95), alpha = .45, linewidth = 0.4) +  # 95% interval (thin)
   geom_linerange(aes(ymin = lo66, ymax = hi66), alpha = .8, linewidth = 0.9) +   # 66% interval (thick)
   geom_point(size = 1.6) +
-  geom_text(data = pct_lab, aes(x = 3, y = y, label = txt, colour = class), hjust = 0, size = 4, fontface = "bold") +
-  scale_colour_manual(values = c(add = "#3B9AD1", remove = "#E8603C", none = "grey60"), guide = "none") +
+  geom_text(data = pct_lab, aes(x = 3, y = y, label = txt, colour = class), hjust = 0, size = 4, fontface = "bold", show.legend = FALSE) +
+  scale_colour_manual(values = c(add = "#3B9AD1", remove = "#E8603C", none = "grey60"), labels = lab, breaks = names(lab), name = NULL) +
   scale_y_continuous(trans = psl, breaks = c(-10, -1, -0.1, 0, 0.1, 1, 10)) +
-  labs(x = "Stream (ranked by posterior median)",
-       y = expression("Relative response in summer,  "*R[summer]*" = "*Delta*DOC[summer]*" / |S|")) +
-  theme_bw(base_size = 12) + theme(panel.grid.minor = element_blank())
+  labs(x = "Stream", y = expression(R[summer]*" = "*Delta*DOC[summer]*" / |S|")) +
+  theme_bw(base_size = 12) + theme(panel.grid.minor = element_blank(), legend.position = "top")
 # ---- panel (c): posterior share of streams that reinforce/dampen/reverse ---
 # classify every stream on EVERY posterior draw (no P > 0.90 threshold), then
 # compute the proportion in each zone per draw -- this gives a posterior
@@ -321,7 +320,7 @@ gprop <- as_tibble(t(apply(zmat, 1, function(row)        # proportion per zone, 
   c(reinforce = mean(row == "reinforce"), dampen = mean(row == "dampen"), reverse = mean(row == "reverse"))))) |>
   pivot_longer(everything(), names_to = "zone", values_to = "p") |>
   mutate(zone = factor(zone, levels = c("reverse", "dampen", "reinforce")))
-gpal <- c(reinforce = "#8856A7", dampen = "#41AB5D", reverse = "black")
+gpal <- c(reinforce = "#8856A7", dampen = "#41AB5D", reverse = "#B5651D")   # light brown
 pc <- ggplot(gprop, aes(x = p, y = zone, fill = zone)) +
   stat_halfeye(.width = c(.66, .95), point_interval = "median_qi") +   # 66% and 95% credible intervals
   scale_fill_manual(values = gpal, guide = "none") +
@@ -356,14 +355,16 @@ rz <- function(z) rprop |> filter(zone == z) |> summarise(med = median(p))
 :::
 
 ::: {.callout-note}
-## Why @fig-q1 looks "negligible" while @fig-R looks decisive
+## How @fig-q1 and @fig-R fit together
 
-@fig-q1 and @fig-R come from the same model, but they answer different questions about it, and that is why one reads as "mostly no effect" and the other as "most streams have a clear sign."
+@fig-q1 and @fig-R are not two conflicting results — they answer two different questions, so one naturally reads as "mostly nothing detectable" and the other as "most streams have a clear sign."
 
-- **@fig-q1 shows a predicted new measurement.** The DOC instrument has a known error of 0.2 mg L$^{-1}$: if the same stream were sampled again, the new reading could land up to about that far above or below the true concentration, just from measurement error. @fig-q1 shows the range of results a new measurement could plausibly give, so it is wide, and most of that range falls inside the $\pm$0.5 mg L$^{-1}$ "no real change" zone.
-- **@fig-R shows the model's estimate of the true concentration itself**, with the known 0.2 mg L$^{-1}$ measurement error already subtracted out — not a predicted new measurement, but the model's best answer to "what is the real value, once the measurement error is accounted for?" That estimate is more precise than any single reading, so most streams come out clearly on one side of zero or the other.
+- **@fig-q1 asks: if someone visits a stream and takes one water sample, what would they most likely find?** This is a single field visit — the way almost every published beaver–DOC study, including the ones this manuscript is compared against, actually samples. The answer: mostly nothing an ecologist would call a real change.
+- **@fig-R asks: what is each stream's true relative response, according to the best estimate the model can produce from everything it knows?** This is the paper's actual result — it does not simulate a single field visit, it reports the model's estimate of the real value. The answer: most streams have a clear sign.
 
-Both are correct; one shows what a new noisy measurement could look like, the other shows what the model believes is really there. If it helps, applying @fig-q1's own ROPE logic to $R_{summer}$ (a $\pm$0.1 band, matching the grey "negligible" band already drawn in panel (b)) still leaves only `r sprintf("%.0f%%", 100*rz("negligible")$med)` of streams negligible, versus `r sprintf("%.0f%%", 100*rz("source")$med)` source and `r sprintf("%.0f%%", 100*rz("sink")$med)` sink — confirming this is the predictive/parameter distinction, not an inconsistency in the data.
+Both questions are legitimate and both answers are correct; they are simply not the same question. (The technical reason the two differ — one reports a simulated single observation, the other reports the model's own estimate — is a Methods-level detail and does not need to be repeated at every figure.) For consistency, applying @fig-q1's "no real change" logic to $R_{summer}$ (a $\pm$0.1 band, matching the grey band already drawn in panel (b)) still leaves only `r sprintf("%.0f%%", 100*rz("negligible")$med)` of streams with no detectable response, versus `r sprintf("%.0f%%", 100*rz("source")$med)` source and `r sprintf("%.0f%%", 100*rz("sink")$med)` sink.
+
+Methods sentence: state once that Figure 1a reports the posterior *predictive* distribution of a single new sampling (so it includes the instrument error), while $R_s$, $B$ and $G$ are computed from each stream's posterior *parameter* estimate (the model's estimate of the true concentration).
 :::
 
 # 6. Spatial coherence: is the beaver seasonal modification regional or local?
