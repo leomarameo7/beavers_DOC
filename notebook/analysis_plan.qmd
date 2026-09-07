@@ -225,6 +225,8 @@ if (file.exists(fx_path)) {
 }
 ```
 
+**Result: fixing the slope changes nothing else.** Both fits converge cleanly (max R-hat 1.00). Every mediator effect (macrophytes, phytoplankton, litter, water residence time) agrees within its credible interval whether the inheritance slope is estimated freely (0.945) or pinned at 1 — the largest shift is Phytoplankton, 0.141 to 0.130, well inside both intervals. Only the intercept moves (0.15 to 0.02), which is expected: fixing the slope at exactly 1 forces the intercept to absorb the small remaining offset. The mediator story of Figure 1b does not depend on which value the inheritance slope takes.
+
 # 5. Q3 — Magnitude and seasonal modification: $R_s$ and $G$
 
 The analysis uses the **158 streams with both a winter and a summer sampling**.
