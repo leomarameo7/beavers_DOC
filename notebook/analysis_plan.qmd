@@ -196,10 +196,34 @@ pq2
 ::: {.callout-note}
 ## Key message of @fig-q2
 
-The direction of the local response is set by the context the pond receives: upstream DOC has the largest total effect (−0.10; high upstream DOC favours retention), followed by solar radiation acting through the primary producers (+0.04). The number of dams and the dam height act only weakly, through water residence time. Beaver-engineering creates the conditions; the inputs decide the sign. Supporting material stays in Appendix S1 (Table S1, Figures S1–S9).
+Downstream DOC is mostly the upstream state carried forward: the inheritance slope is 0.95 [0.92, 0.98] mg per mg, by far the largest path in the model. Around that inherited background, beaver-engineering adds a local modification through the primary producers and the litter: phytoplankton (+0.14) and macrophytes (+0.08), fed by solar radiation (+0.19 and +0.14), and soil litter cover (+0.07). Water residence time and the number/height of the dams act only weakly, and only indirectly through the producers. Beaver-engineering does not retain incoming DOC — it inherits it, then adds to it. Supporting material stays in Appendix S1 (Table S1, Figures S1–S9).
 :::
 
-**Parameterization.** The structural causal model is reported with **downstream DOC as the outcome**: upstream DOC enters as the inherited incoming state with a freely estimated inheritance slope, and $\Delta\text{DOC}_s$ is computed from the posterior afterwards as $\text{DOC}_{down,s} - \text{DOC}_{up,s}$, so upstream DOC is never both a predictor and part of the outcome. This model (`b1_downstream`, `notebook/scm_rebuild.qmd`) is the $\Delta$DOC model in a different parameterization: every mediator effect agrees to the second decimal, and the upstream-DOC path is re-read as an inheritance slope of **0.95 [0.92, 0.98]** — downstream DOC inherits 95% of the upstream concentration, mg per mg. Figure 1b is redrawn accordingly (@fig-q2); the Methods gain one sentence stating the parameterization and the inheritance slope.
+**Parameterization.** The structural causal model is reported with **downstream DOC as the outcome**: upstream DOC enters as the inherited incoming state with a freely estimated inheritance slope, and $\Delta\text{DOC}_s$ is computed from the posterior afterwards as $\text{DOC}_{down,s} - \text{DOC}_{up,s}$, so upstream DOC is never both a predictor and part of the outcome. This reading replaces the older wording of Q2, which described the upstream-DOC path as upstream DOC *causing greater retention*; downstream DOC instead **inherits** the upstream state (slope 0.95 mg per mg), and the hydrological/biological pathways are local modifications around that inherited background, not retention of it. This model (`b1_downstream`, `notebook/scm_rebuild.qmd`) is the $\Delta$DOC model in a different parameterization: every mediator effect agrees to the second decimal, and the upstream-DOC path is re-read as an inheritance slope of **0.95 [0.92, 0.98]** — downstream DOC inherits 95% of the upstream concentration, mg per mg. Figure 1b is redrawn accordingly (@fig-q2); the Methods gain one sentence stating the parameterization and the inheritance slope.
+
+**Robustness check (Josh's suggestion, adopted): does fixing the inheritance slope at 1 change anything else?** `b1_downstream` estimates the slope freely (prior Normal(1, 0.3), posterior 0.95). A second fit, `b1_downstream_fixed` (`notebook/scm_downstream_fixed_fit.R`), pins it at 1 (prior Normal(1, 0.001), the standard way to fix an `mi()` coefficient in brms) and is otherwise identical.
+
+```{r robustness-inheritance}
+#| echo: false
+fx_path <- here("results", "models_fit", "b1_downstream_fixed.rds")
+if (file.exists(fx_path)) {
+  library(brms)
+  d_free <- as_draws_df(readRDS(here("results", "models_fit", "b1_downstream.rds")))
+  d_fix  <- as_draws_df(readRDS(fx_path))
+  qf2 <- function(x) sprintf("%.3f [%.3f, %.3f]", mean(x), quantile(x, .025), quantile(x, .975))
+  rob <- tribble(
+    ~Parameter, ~`Free slope (b1_downstream)`, ~`Fixed at 1 (b1_downstream_fixed)`,
+    "Inheritance slope",  qf2(d_free$bsp_DOCout_miDOC_input),      qf2(d_fix$bsp_DOCout_miDOC_input),
+    "Macrophytes",        qf2(d_free$bsp_DOCout_mimacrophy_abun_z), qf2(d_fix$bsp_DOCout_mimacrophy_abun_z),
+    "Phytoplankton",      qf2(d_free$bsp_DOCout_miplankton_abun_z), qf2(d_fix$bsp_DOCout_miplankton_abun_z),
+    "Soil litter cover",  qf2(d_free$bsp_DOCout_micover_litter_z),  qf2(d_fix$bsp_DOCout_micover_litter_z),
+    "Water residence time", qf2(d_free$bsp_DOCout_miwater_res_time_z), qf2(d_fix$bsp_DOCout_miwater_res_time_z),
+    "Intercept",          qf2(d_free$b_DOCout_Intercept),           qf2(d_fix$b_DOCout_Intercept))
+  kable(rob, caption = "Posterior mean [95% CrI]. Fixing the inheritance slope at 1 is a robustness check, not a preferred model.")
+} else {
+  cat("Fit in progress (notebook/scm_downstream_fixed_fit.R) -- table will appear once results/models_fit/b1_downstream_fixed.rds exists.")
+}
+```
 
 # 5. Q3 — Magnitude and seasonal modification: $R_s$ and $G$
 
