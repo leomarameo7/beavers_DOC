@@ -268,7 +268,7 @@ g_med <- median(apply(G_m, 1, function(g) median(g)))  # posterior median of the
 
 ```{r fig-R}
 #| fig-height: 12.5
-#| fig-cap: "**Relative response $R_s$ and seasonal gain $G$ of beaver-engineering.** (a) Posterior distribution of the median relative response across the 158 streams, in winter and summer; point: posterior median, bars: 66% and 95% credible intervals; dashed line: no response. (b) Relative response of each stream in summer: posterior median with 66% (thick) and 95% (thin) credible intervals, streams ranked by their median; the grey band marks $\\lvert R_{summer} \\rvert < 0.1$. The vertical axis is linear between $-0.1$ and $0.1$ and logarithmic beyond, so small and large responses are both readable. In panels (a) and (b) skyblue: source (beaver-engineering adds DOC, P > 0.90), coral: sink (removes DOC, P > 0.90), grey: no-evidence — the same colours as in the direction figure. (c) Share of the 158 streams that reinforce ($G > 0$), dampen ($-1 < G < 0$) or reverse ($G < -1$) the inherited seasonal contrast: each stream is classified on every posterior draw, so the three distributions are the posterior uncertainty of the proportion itself, not a count of streams individually classified at a fixed threshold; point: posterior median, bars: 66% and 95% credible intervals."
+#| fig-cap: "**Relative response $R_s$ and seasonal gain $G$ of beaver-engineering.** (a) Posterior distribution of the median relative response across the 158 streams, in winter and summer; point: posterior median, bars: 66% and 95% credible intervals; dashed line: no response. (b) Relative response of each stream in summer: posterior median with 66% (thick) and 95% (thin) credible intervals, streams ranked by their median; the grey band marks $\\lvert R_{summer} \\rvert < 0.1$. The vertical axis is linear between $-0.1$ and $0.1$ and logarithmic beyond, so small and large responses are both readable. In panels (a) and (b) skyblue: source (beaver-engineering adds DOC, P > 0.90), coral: sink (removes DOC, P > 0.90), grey: no-evidence — the same colours as in the direction figure. (c) Out of the 158 streams, what percentage reinforce ($G > 0$, make the inherited seasonal contrast bigger), dampen ($-1 < G < 0$, make it smaller) or reverse ($G < -1$, flip its sign)? Each stream is classified on every posterior draw, so each bar is a full posterior distribution of that percentage, with its own uncertainty — not a single count of streams sorted into fixed bins; point: posterior median percentage, bars: 66% and 95% credible intervals."
 # classify by posterior probability: add if P(R > 0) > 0.90, remove if P(R < 0) > 0.90, else no-evidence
 cls <- function(p_add) case_when(p_add > 0.90 ~ "add", p_add < 0.10 ~ "remove", TRUE ~ "none")
 lab <- c(add = "source (adds DOC, P > 0.90)", remove = "sink (removes DOC, P > 0.90)", none = "no-evidence")
@@ -319,7 +319,7 @@ pc <- ggplot(gprop, aes(x = p, y = zone, fill = zone)) +
   stat_halfeye(.width = c(.66, .95), point_interval = "median_qi") +   # 66% and 95% credible intervals
   scale_fill_manual(values = gpal, guide = "none") +
   scale_x_continuous(labels = label_percent(accuracy = 1)) +
-  labs(x = "Share of the 158 streams in each zone", y = NULL) +
+  labs(x = "Percentage of the 158 streams", y = NULL) +
   theme_bw(base_size = 12) + theme(panel.grid.minor = element_blank())
 fig2 <- pa / pb / pc + plot_layout(heights = c(1, 1.3, 1)) + plot_annotation(tag_levels = "a")
 ggsave(here("results", "figures", "plan", "fig_R.png"), fig2, width = 9, height = 11, dpi = 300)
