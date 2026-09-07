@@ -39,10 +39,12 @@ r2_in <- matrix(c(mean(r2_draw), sd(r2_draw), quantile(r2_draw, .025), quantile(
 dd <- sweep(ep[, both], 2, dat$DOC_input[both])   # dDOC per draw and row
 avg_season <- sapply(c("summer", "winter"), function(s) rowMeans(dd[, dat$season[both] == s]))
 saveRDS(list(dat = dat, obs = obs, both = both,
-             ep_sub = ep[sample(n_draw, 1000), ], pp_sub = pp[sample(n_draw, 1000), ],
+             ep_sub = ep[sample(n_draw, 500), ], pp_sub = pp[sample(n_draw, 500), ],
              mu_loo = mu_loo, q_loo = q_loo, y = y,
-             loo = lo, loo_metrics = loo_metrics, ddoc_metrics = ddoc_metrics,
-             d_obs = d_obs, d_loo = d_loo, dd_sub = dd[sample(n_draw, 1000), ],
+             # keep only the loo summaries (the full object with PSIS weights is ~75 MB)
+             loo = list(estimates = lo$estimates, diagnostics = list(pareto_k = lo$diagnostics$pareto_k)),
+             loo_metrics = loo_metrics, ddoc_metrics = ddoc_metrics,
+             d_obs = d_obs, d_loo = d_loo, dd_sub = dd[sample(n_draw, 500), ],
              avg_season = avg_season, r2_in = r2_in),
         here("results", "scm_downstream_pred.rds"))
 print(lo); print(round(loo_metrics, 3)); print(round(ddoc_metrics, 3)); print(round(r2_in, 3))
