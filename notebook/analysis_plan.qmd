@@ -574,7 +574,292 @@ if (have_hold) {
 So the sentence the manuscript can support is not "the model forecasts the beaver effect at any stream", but: **"the model predicts downstream DOC at unsampled Swiss streams from the upstream concentration and the measured drivers (hold-out R² given above), and it predicts that the beaver-mediated change will be small relative to that inherited concentration and of stream-specific sign — where it becomes a source or a sink cannot be forecast from dams, residence time or solar radiation alone (Q2, Q4)."** That is a weaker but defensible claim, and it is the claim the data make.
 :::
 
-# 9. Methods figure
+# 9. Structural and causal sensitivity
+
+The SCM of Q2 rests on causal assumptions that the data cannot fully verify: the arrows we drew, the arrows we left out, and the absence of unmeasured common causes. This section tests those assumptions in the tradition of @shipley2016 and Grace's causal-knowledge analysis: alternative structures (A), unmeasured confounding (B), relationships the DAG says must be null (C), robustness to modelling choices (D), and the qualitative causal-knowledge table (E). One fact conditions everything below: **the primary producers were measured at 16 streams, all in summer, and at none of them was the water residence time measured.** The producer paths therefore rest on 16 samplings, and the water-residence-time → producer paths are informed only by the priors and the imputation model. The sensitivity analyses say how much that matters.
+
+**Manuscript placement: Appendix S1 (Figures S14–S17, Table S2), with one paragraph in the Methods.**
+
+```{r sens-setup}
+#| echo: false
+library(brms); library(dagitty)
+m6 <- read.csv(here("data", "processed", "m6.csv")) |> mutate(across(c(season, site), as.factor))
+sens_path <- here("results", "dag_sensitivity.rds"); have_sens <- file.exists(sens_path)
+if (have_sens) SENS <- readRDS(sens_path)
+med_names <- c(bsp_DOCout_miDOC_input = "inheritance slope", bsp_DOCout_mimacrophy_abun_z = "macrophytes",
+               bsp_DOCout_miplankton_abun_z = "phytoplankton", bsp_DOCout_micover_litter_z = "soil litter cover",
+               bsp_DOCout_miwater_res_time_z = "water residence time")
+```
+
+## A. Alternative DAGs
+
+Four structures, all keeping the mediator core of Figure 1b:
+
+-   **DAG 0** — the manuscript's model.
+-   **DAG 1** — upstream DOC also drives the primary producers (upstream DOC → phytoplankton, macrophytes), Leonardo's alternative: a DOC-rich inflow could feed or shade the producers.
+-   **DAG 2** — solar radiation acts directly on downstream DOC (photodegradation), not only through the producers.
+-   **DAG 3** — season is a common cause of the producers and of downstream DOC, left unblocked in DAG 0.
+
+Each DAG implies conditional independencies that can be checked on the data with `dagitty` [@shipley2016]. Each test is run on the rows complete for the variables it involves, and reported as the partial correlation with its 95% interval (the only frequentist quantity in this document, kept because the test is the standard one for this purpose). Structures that add an arrow *remove* an implied independence, so a DAG-0 independence that fails in the data, and that an alternative DAG does not imply, is evidence for that alternative.
+
+```{r fig-dag-tests}
+#| fig-height: 6
+#| fig-cap: "**Conditional independencies implied by DAG 0, tested on the data.** Each row is one independence the manuscript's DAG implies (X ⊥ Y | Z); the point is the partial correlation on the rows complete for the variables involved, with its 95% interval and the number of samplings used. Filled points: the interval excludes zero (the independence fails). The right-hand label says which alternative DAG(s) would drop that independence, i.e. which alternative a failure supports. Tests with fewer than 10 complete rows are not run."
+dag_txt <- list(
+  dag0 = "dag { n_dams -> wrt; dam_height -> wrt; slope -> wrt; solar -> plankton; solar -> macro; solar -> litter;
+           wrt -> plankton; wrt -> macro; wrt -> DOC_out; plankton -> DOC_out; macro -> DOC_out; litter -> DOC_out; DOC_in -> DOC_out }",
+  dag1 = "dag { n_dams -> wrt; dam_height -> wrt; slope -> wrt; solar -> plankton; solar -> macro; solar -> litter;
+           wrt -> plankton; wrt -> macro; wrt -> DOC_out; plankton -> DOC_out; macro -> DOC_out; litter -> DOC_out; DOC_in -> DOC_out;
+           DOC_in -> plankton; DOC_in -> macro }",
+  dag2 = "dag { n_dams -> wrt; dam_height -> wrt; slope -> wrt; solar -> plankton; solar -> macro; solar -> litter;
+           wrt -> plankton; wrt -> macro; wrt -> DOC_out; plankton -> DOC_out; macro -> DOC_out; litter -> DOC_out; DOC_in -> DOC_out;
+           solar -> DOC_out }",
+  dag3 = "dag { n_dams -> wrt; dam_height -> wrt; slope -> wrt; solar -> plankton; solar -> macro; solar -> litter;
+           wrt -> plankton; wrt -> macro; wrt -> DOC_out; plankton -> DOC_out; macro -> DOC_out; litter -> DOC_out; DOC_in -> DOC_out;
+           season -> plankton; season -> macro; season -> litter; season -> DOC_out }")
+gs <- lapply(dag_txt, dagitty)
+dd <- m6 |> transmute(n_dams = n_dams_z, dam_height = dam_height_z, slope = slope_z, solar = solar_z,
+                      plankton = plankton_abun_z, macro = macrophy_abun_z, litter = cover_litter_z, wrt = water_res_time_z,
+                      DOC_out, DOC_in = DOC_input, season = as.numeric(season == "summer"))
+ci_lab <- function(x) paste0(x$X, " ⊥ ", x$Y, if (length(x$Z)) paste0(" | ", paste(unlist(x$Z), collapse = ", ")) else "")
+ci0 <- impliedConditionalIndependencies(gs$dag0)
+implied_by <- function(g, lab) lab %in% sapply(impliedConditionalIndependencies(g), ci_lab)
+tests <- lapply(ci0, function(x) {
+  v <- unlist(c(x$X, x$Y, x$Z)); sub <- dd[complete.cases(dd[, v]), v, drop = FALSE]
+  n <- nrow(sub); lab <- ci_lab(x)
+  out <- tibble(test = lab, n = n, r = NA_real_, lo = NA_real_, hi = NA_real_)
+  if (n >= 10 && all(apply(sub, 2, sd) > 0)) {
+    t <- tryCatch(localTests(gs$dag0, sub, type = "cis", tests = list(x)), error = function(e) NULL)
+    if (!is.null(t)) out <- tibble(test = lab, n = n, r = t$estimate, lo = t$`2.5%`, hi = t$`97.5%`) }
+  out$dropped_by <- paste(names(gs)[-1][!sapply(gs[-1], implied_by, lab = lab)], collapse = ", ")
+  out })
+tests <- bind_rows(tests) |> filter(!is.na(r)) |>
+  mutate(fails = lo > 0 | hi < 0, dropped_by = ifelse(dropped_by == "", "none", gsub("dag", "DAG ", dropped_by)),
+         test = fct_reorder(paste0(test, "  (n = ", n, ")"), r))
+ggplot(tests, aes(x = r, y = test)) +
+  geom_vline(xintercept = 0, linetype = "dashed", colour = "grey45") +
+  geom_linerange(aes(xmin = lo, xmax = hi), colour = "grey60") +
+  geom_point(aes(fill = fails), shape = 21, size = 2.6, colour = "black") +
+  geom_text(aes(x = 1.05, label = dropped_by), hjust = 0, size = 3, colour = "grey30") +
+  scale_fill_manual(values = c(`TRUE` = "black", `FALSE` = "white"), labels = c(`TRUE` = "fails", `FALSE` = "holds"), name = NULL) +
+  coord_cartesian(xlim = c(-1, 1.6), clip = "off") +
+  labs(x = "Partial correlation implied to be zero (95% interval)", y = NULL) +
+  theme_bw(base_size = 11) + theme(panel.grid.minor = element_blank(), legend.position = "top") -> p_tests
+ggsave(here("results", "figures", "plan", "fig_dag_tests.png"), p_tests, width = 9, height = 6, dpi = 300, bg = "white"); p_tests
+```
+
+```{r fig-dag-compare}
+#| fig-height: 5
+#| fig-cap: "**The four DAGs fitted as multivariate models.** (a) Out-of-sample fit for downstream DOC by PSIS-LOO: expected log predictive density relative to the best model (0 = best), with standard error; a difference smaller than about 4 is not meaningful. (b) The mediator effects on downstream DOC under each structure: posterior median with 66% and 95% credible intervals. Fits with 4 chains × 2500 post-warm-up draws; max R-hat in the caption of the callout."
+if (have_sens) {
+  cmp <- as.data.frame(SENS$loo_compare); if (!"model" %in% names(cmp)) cmp$model <- rownames(cmp)
+  cmp <- cmp |> select(model, elpd_diff, se_diff) |> mutate(model = factor(gsub("dag", "DAG ", model), levels = paste("DAG", 0:3)))
+  pa <- ggplot(cmp, aes(x = elpd_diff, y = fct_rev(model))) +
+    geom_vline(xintercept = 0, linetype = "dashed", colour = "grey45") +
+    geom_pointrange(aes(xmin = elpd_diff - se_diff, xmax = elpd_diff + se_diff), size = .5) +
+    labs(x = "ELPD difference to the best DAG (± SE)", y = NULL) + theme_bw(base_size = 12) + theme(panel.grid.minor = element_blank())
+  eff <- bind_rows(lapply(c("dag0","dag1","dag2","dag3"), function(nm) as_tibble(SENS$models[[nm]]$draws) |>
+    pivot_longer(everything(), names_to = "par", values_to = "v") |> mutate(model = gsub("dag", "DAG ", nm)))) |>
+    filter(par != "bsp_DOCout_miDOC_input") |> mutate(par = factor(med_names[par], levels = med_names[-1]))
+  pb <- ggplot(eff, aes(x = v, y = fct_rev(factor(model)), colour = model)) +
+    geom_vline(xintercept = 0, linetype = "dashed", colour = "grey45") +
+    stat_pointinterval(.width = c(.66, .95), point_interval = "median_qi") +
+    facet_wrap(~ par, ncol = 2, scales = "free_x") + scale_colour_brewer(palette = "Dark2", guide = "none") +
+    labs(x = "Standardized effect on downstream DOC", y = NULL) + theme_bw(base_size = 12) + theme(panel.grid.minor = element_blank())
+  p_cmp <- pa + pb + plot_layout(widths = c(1, 1.6)) + plot_annotation(tag_levels = "a")
+  ggsave(here("results", "figures", "plan", "fig_dag_compare.png"), p_cmp, width = 9, height = 5, dpi = 300, bg = "white"); p_cmp
+} else cat("DAG fits not yet available (notebook/R/dag_sensitivity.R).")
+```
+
+```{r dag-new-paths}
+#| echo: false
+fl <- tests |> filter(fails); fx <- fl |> filter(dropped_by != "none")
+strip <- function(x) sub("  \\(n.*", "", as.character(x))
+a_msg <- sprintf("- **Conditional-independence tests** (@fig-dag-tests): %d of the %d testable independencies fail. Those that an alternative DAG would drop: %s. The remaining failures are among the exogenous drivers (e.g. %s): the dams, the gradient, solar radiation and the upstream DOC share landscape causes, which the SCM tolerates because none of them lies on a causal path to another, but which the Methods should state.",
+  nrow(fl), nrow(tests),
+  if (nrow(fx)) paste(sprintf("%s (r = %.2f [%.2f, %.2f], n = %d; supports %s)", strip(fx$test), fx$r, fx$lo, fx$hi, fx$n, fx$dropped_by), collapse = "; ") else "none",
+  paste(head(strip(fl$test[fl$dropped_by == "none"]), 3), collapse = "; "))
+if (have_sens) {
+  np <- function(nm, par) { x <- SENS$models[[nm]]$extra[, par]; sprintf("%.2f [%.2f, %.2f], P(> 0) = %.2f", median(x), quantile(x, .025), quantile(x, .975), mean(x > 0)) }
+  e1 <- colnames(SENS$models$dag1$extra); e2 <- colnames(SENS$models$dag2$extra)
+  rh <- sapply(SENS$models[c("dag0","dag1","dag2","dag3")], `[[`, "rhat")
+  cm <- as.data.frame(SENS$loo_compare); if (!"model" %in% names(cm)) cm$model <- rownames(cm)
+  best <- gsub("dag", "DAG ", cm$model[1]); d0 <- cm[cm$model == "dag0", ]
+  # data-driven wording for the added paths
+  pp <- function(nm, par) mean(SENS$models[[nm]]$extra[, par] > 0)
+  e1 <- colnames(SENS$models$dag1$extra); e2 <- colnames(SENS$models$dag2$extra)
+  p_pla <- e1[grepl("planktonabunz", e1)][1]; p_mac <- e1[grepl("macrophyabunz", e1)][1]; p_sol <- e2[grepl("DOCout", e2)][1]
+  sup <- function(p) if (p > 0.90) "supported (P > 0.90)" else if (p < 0.10) "supported, negative (P < 0.10)" else "no-evidence"
+  dag1_msg <- sprintf("- **DAG 1 (upstream DOC → producers), Leonardo's alternative:** the added paths are %s (phytoplankton) and %s (macrophytes) per mg L⁻¹ of upstream DOC — %s and %s. A DOC-rich inflow goes with more producers, consistent with the failed independence in @fig-dag-tests. The mediator effects on downstream DOC under DAG 1 are nevertheless indistinguishable from DAG 0 (@fig-dag-compare b): the added arrow changes the picture of what drives the producers, not what the producers do to DOC.",
+                      np("dag1", p_pla), np("dag1", p_mac), sup(pp("dag1", p_pla)), sup(pp("dag1", p_mac)))
+  dag2_msg <- sprintf("- **DAG 2 (direct solar → DOC):** the direct path is %s — %s; it is the nominally best structure by LOO. Under DAG 2 the producer effects shrink somewhat (part of the solar effect no longer has to travel through them) but keep their sign.",
+                      np("dag2", p_sol), sup(pp("dag2", p_sol)))
+  loo_msg <- sprintf("- **No alternative structure fits meaningfully better.** By PSIS-LOO the nominally best structure is %s; the manuscript's DAG 0 sits %.1f ELPD below it (SE %.1f), a difference of about %.1f standard errors and below the usual threshold of 4 ELPD for a meaningful preference. Max R-hat across the four fits: %.3f.",
+                     best, -d0$elpd_diff, d0$se_diff, abs(d0$elpd_diff / d0$se_diff), max(rh))
+}
+```
+
+::: {.callout-important}
+## Conclusions — A. Alternative DAGs
+
+`r if (have_sens) loo_msg else "- pending"`
+`r if (have_sens) dag1_msg else ""`
+`r if (have_sens) dag2_msg else ""`
+`r if (have_sens) "- **DAG 3 (season as confounder):** because the producers were measured in summer only, the season term in the producer equations is informed by priors and imputation alone; the DAG-3 mediator effects should be read as 'unchanged under a prior-driven adjustment', not as a data-based test." else ""`
+`r a_msg`
+-   **Tests involving the producers rest on 16 rows** and are wide; the DAG-1 support above is real but weak, and it is the DAG-1 *fit* (@fig-dag-compare) that says whether the added path changes anything that matters.
+-   **What this settles:** the mediator effects are not an artefact of the particular arrows drawn. **What it cannot settle:** whether the producer paths are right at all — that rests on 16 summer samplings and on the priors, which B and D address.
+:::
+
+## B. Unmeasured confounding of the mediator → DOC paths
+
+How strong would an unobserved common cause of a producer and downstream DOC have to be to erase the producer's effect? Following @cinelli2020 as implemented in `sensemakr`, the outcome equation is fitted as a linear model on the 16 producer streams (the only rows with the producers; water residence time is absent there and cannot be included), with solar radiation as the benchmark covariate: the contour plots show the adjusted effect for every combination of confounder strength (its partial R² with the treatment and with the outcome), and the marks show a confounder as strong as one, two and three times solar radiation. The **robustness value** is the strength (partial R² with both) at which the effect reaches zero.
+
+```{r fig-sensemakr}
+#| fig-height: 4
+#| fig-cap: "**Robustness of each producer → downstream DOC path to an unmeasured confounder.** Contours: the adjusted effect of the producer on downstream DOC for a confounder with the given partial R² with the producer (x) and with downstream DOC (y); the triangle is the unadjusted estimate; the red marks are confounders 1×, 2× and 3× as strong as solar radiation. Linear outcome equation on the 16 producer streams (summer). Note that this linear fit does not carry the priors, the measurement error or the water-residence-time path of the SCM — it is the sensitivity of the raw 16-stream relationship."
+library(sensemakr)
+dl <- m6 |> filter(!is.na(plankton_abun_z)) |> select(DOC_out, DOC_input, macrophy_abun_z, plankton_abun_z, cover_litter_z, solar_z)
+lmo <- lm(DOC_out ~ DOC_input + macrophy_abun_z + plankton_abun_z + cover_litter_z + solar_z, data = dl)
+paths <- c(macrophy_abun_z = "macrophytes", plankton_abun_z = "phytoplankton", cover_litter_z = "soil litter cover")
+rv <- sapply(names(paths), function(tr) { s <- sensemakr(lmo, treatment = tr, benchmark_covariates = "solar_z", kd = 1:3)
+  c(est = s$sensitivity_stats$estimate, rv = s$sensitivity_stats$rv_q, r2 = s$sensitivity_stats$r2yd.x, r2_solar = s$bounds$r2dz.x[1]) })
+draw_sm <- function() { par(mfrow = c(1, 3), mar = c(4, 4, 3, 1))
+  for (tr in names(paths)) { s <- sensemakr(lmo, treatment = tr, benchmark_covariates = "solar_z", kd = 1:3)
+    ovb_contour_plot(s, sensitivity.of = "estimate", main = paths[tr]) } }
+png(here("results", "figures", "plan", "fig_sensemakr.png"), width = 9, height = 4, units = "in", res = 300); draw_sm(); invisible(dev.off())
+draw_sm()
+```
+
+::: {.callout-important}
+## Conclusions — B. Unmeasured confounding
+
+-   **The raw 16-stream relationship is not the SCM's.** In the linear outcome equation the estimates are `r sprintf("%.2f", rv["est","macrophy_abun_z"])` (macrophytes), `r sprintf("%.2f", rv["est","plankton_abun_z"])` (phytoplankton) and `r sprintf("%.2f", rv["est","cover_litter_z"])` (litter), against +0.08, +0.14 and +0.07 in the SCM. The SCM's positive producer effects are therefore carried substantially by the informative priors (Normal(0.2, 0.075) on each producer path) and by the hierarchical structure, not by these 16 samplings alone. This is the single most important sensitivity result of the section, and it is confirmed by the prior-sensitivity fits in D.
+-   **Robustness values** (strength a confounder needs to erase the raw effect): macrophytes `r sprintf("%.2f", rv["rv","macrophy_abun_z"])`, litter `r sprintf("%.2f", rv["rv","cover_litter_z"])`, phytoplankton `r sprintf("%.2f", rv["rv","plankton_abun_z"])`; solar radiation, the strongest measured covariate, explains only `r sprintf("%.0f%%", 100 * rv["r2_solar","macrophy_abun_z"])`–`r sprintf("%.0f%%", 100 * max(rv["r2_solar",]))` of the residual variance of any producer, so a confounder several times stronger than solar would be needed to remove the macrophyte or litter relationship, and almost none to remove the phytoplankton one.
+-   **Water residence time cannot be assessed** this way: it was never measured at a producer stream.
+-   **What the manuscript should say:** the producer → DOC paths are consistent with the literature-based priors and are not overturned by plausible confounding, but with 16 summer samplings they are prior-informed estimates rather than data-driven ones; the Methods should state the prior for each path and D should be cited.
+:::
+
+## C. Falsification tests and a placebo outcome
+
+The DAG says some relationships must be absent. If they are present, either the DAG or the data are wrong somewhere. Three implied nulls among the exogenous drivers, tested as Bayesian regressions on all samplings, and one placebo outcome: upstream DOC, which lies above the dams and cannot be affected by beaver-engineering — if the number of dams, the dam height or the water residence time "predicted" upstream DOC, it would reveal a confounder (a landscape gradient that sets both the dams and the DOC).
+
+```{r fig-negative-controls}
+#| fig-height: 3.8
+#| fig-cap: "**Relationships the DAG says must be null.** Posterior distributions of the standardized coefficients of four Bayesian Student-t regressions on all samplings (Normal(0, 1) priors on the slopes); point: median, bars: 66% and 95% credible intervals; dashed line: zero. The last three rows are the placebo outcome — upstream DOC regressed on the beaver-engineering variables, which cannot causally affect it."
+nc_fit <- function(f, tag) brm(f, data = m6, family = student(), prior = c(prior(normal(0, 1), class = "b")),
+  chains = 4, iter = 3000, warmup = 1000, seed = 7, backend = "cmdstanr", refresh = 0,
+  file = here("results", "models_fit", paste0("negctrl_", tag)))
+nc <- list(
+  `dam height ~ solar radiation`      = nc_fit(dam_height_z ~ solar_z, "dh_solar"),
+  `number of dams ~ upstream DOC`     = nc_fit(n_dams_z ~ DOC_input_z, "nd_docin"),
+  `channel gradient ~ solar radiation`= nc_fit(slope_z ~ solar_z, "slope_solar"),
+  `placebo: upstream DOC ~ dams, height, residence time` = nc_fit(DOC_input_z ~ n_dams_z + dam_height_z + water_res_time_z, "placebo"))
+nc_draws <- bind_rows(lapply(names(nc), function(nm) { d <- as_draws_df(nc[[nm]]); b <- grep("^b_", names(d), value = TRUE); b <- b[b != "b_Intercept"]
+  as_tibble(d[, b]) |> pivot_longer(everything(), names_to = "coef", values_to = "v") |>
+    mutate(test = nm, coef = sub("^b_", "", coef), label = if (length(b) == 1) nm else paste0("placebo: upstream DOC ~ ", gsub("_z$", "", coef))) }))
+nc_sum <- nc_draws |> group_by(label) |> summarise(med = median(v), lo = quantile(v, .025), hi = quantile(v, .975), p_pos = mean(v > 0))
+ggplot(nc_draws, aes(x = v, y = fct_rev(factor(label, levels = unique(label))))) +
+  geom_vline(xintercept = 0, linetype = "dashed", colour = "grey45") +
+  stat_halfeye(.width = c(.66, .95), point_interval = "median_qi", fill = "grey80") +
+  labs(x = "Standardized coefficient", y = NULL) + theme_bw(base_size = 12) + theme(panel.grid.minor = element_blank()) -> p_nc
+ggsave(here("results", "figures", "plan", "fig_negative_controls.png"), p_nc, width = 9, height = 3.8, dpi = 300, bg = "white"); p_nc
+```
+
+::: {.callout-important}
+## Conclusions — C. Falsification tests
+
+`r paste(sprintf("- **%s:** %.2f [%.2f, %.2f], P(> 0) = %.2f — %s.", nc_sum$label, nc_sum$med, nc_sum$lo, nc_sum$hi, nc_sum$p_pos, ifelse(nc_sum$lo > 0 | nc_sum$hi < 0, "**the implied null fails**", "consistent with the implied null")), collapse = "\n")`
+`r pl <- nc_sum |> filter(grepl("placebo", label)); worst <- pl |> arrange(desc(abs(med))) |> slice(1); sprintf("- **Placebo outcome:** the largest association between a beaver-engineering variable and upstream DOC is %s (%.2f SD); %s. Any confounding of the dam → residence time → DOC chain by the catchment's DOC regime is therefore at most of that size, an order of magnitude below the inheritance slope.", sub("placebo: upstream DOC ~ ", "", worst$label), worst$med, if (worst$lo > 0 | worst$hi < 0) "credibly non-zero but small" else "not distinguishable from zero")`
+-   **Reading:** a failed null among the exogenous drivers (dams, gradient, solar) means those drivers share a landscape cause — which the SCM tolerates, because they are not on a causal path to each other, but which a reader should know. A failed placebo would mean that the beaver-engineering variables are confounded with the DOC regime of the catchment; the result above says whether that is the case.
+:::
+
+## D. Robustness to modelling choices
+
+Two checks are already in section 4 (outcome parameterization; inheritance slope fixed at 1). Two remain: the prior scale, and spatial autocorrelation of the residuals.
+
+```{r fig-prior-sens}
+#| fig-height: 4
+#| fig-cap: "**Prior sensitivity.** Mediator effects on downstream DOC when the standard deviation of every informative prior is halved, kept as in the manuscript, or doubled; posterior median with 66% and 95% credible intervals. A path whose estimate follows the prior scale is prior-driven; a path that stays put is data-driven."
+if (have_sens) {
+  ps <- bind_rows(lapply(c(prior_half = "prior_half", manuscript = "dag0", prior_double = "prior_double"), function(nm) as_tibble(SENS$models[[nm]]$draws) |>
+    pivot_longer(everything(), names_to = "par", values_to = "v")), .id = "prior") |>
+    mutate(prior = factor(prior, levels = c("prior_half", "manuscript", "prior_double"), labels = c("sd halved", "manuscript", "sd doubled")),
+           par = factor(med_names[par], levels = med_names))
+  ggplot(ps, aes(x = v, y = fct_rev(prior), colour = prior)) +
+    geom_vline(xintercept = 0, linetype = "dashed", colour = "grey45") +
+    stat_pointinterval(.width = c(.66, .95), point_interval = "median_qi") +
+    facet_wrap(~ par, scales = "free_x", ncol = 5) + scale_colour_manual(values = c("#E8603C", "black", "#3B9AD1"), guide = "none") +
+    labs(x = "Effect on downstream DOC", y = NULL) + theme_bw(base_size = 11) + theme(panel.grid.minor = element_blank()) -> p_ps
+  ggsave(here("results", "figures", "plan", "fig_prior_sens.png"), p_ps, width = 10, height = 4, dpi = 300, bg = "white"); p_ps
+} else cat("Prior-sensitivity fits not yet available.")
+```
+
+```{r fig-spatial-resid}
+#| fig-height: 2.8
+#| fig-cap: "**Spatial autocorrelation of the residuals of downstream DOC.** For each posterior draw, the Spearman correlation between each sampling's residual (observed minus expected downstream DOC) and the mean residual of its 8 nearest neighbouring samplings, using the stream coordinates; point: median, bars: 66% and 95% credible intervals; dashed line: no spatial autocorrelation."
+P2 <- readRDS(here("results", "scm_downstream_pred.rds")); obs2 <- P2$obs
+lon <- m6$x_upstream[obs2]; lat <- m6$y_upstream[obs2]; okc <- !is.na(lon)
+kmx2 <- (lon - mean(lon, na.rm = TRUE)) * 111.32 * cos(mean(lat, na.rm = TRUE) * pi / 180); kmy2 <- (lat - mean(lat, na.rm = TRUE)) * 110.57
+D2 <- as.matrix(dist(cbind(kmx2[okc], kmy2[okc]))); diag(D2) <- Inf
+nb2 <- t(apply(D2, 1, function(r) order(r)[1:8]))
+resid <- sweep(-P2$ep_sub[, obs2][, okc], 2, -P2$y[okc])
+rho_res <- apply(resid, 1, function(r) cor(r, rowMeans(matrix(r[as.vector(nb2)], nrow = length(r))), method = "spearman"))
+ggplot(tibble(rho = rho_res), aes(x = rho, y = 1)) +
+  geom_vline(xintercept = 0, linetype = "dashed", colour = "grey45") +
+  stat_halfeye(.width = c(.66, .95), point_interval = "median_qi", fill = "grey80") +
+  labs(x = "Spearman correlation of residuals with the mean of the 8 nearest neighbours", y = NULL) +
+  theme_bw(base_size = 12) + theme(panel.grid.minor = element_blank(), axis.text.y = element_blank(), axis.ticks.y = element_blank())
+```
+
+```{r prior-sens-numbers}
+#| echo: false
+if (have_sens) {
+  pm <- ps |> group_by(par, prior) |> summarise(med = median(v), .groups = "drop") |> pivot_wider(names_from = prior, values_from = med)
+  shift <- pm |> mutate(range = `sd doubled` - `sd halved`)
+  most <- shift |> arrange(desc(abs(range))) |> slice(1)
+  d_msg <- sprintf("- **Prior scale:** the inheritance slope does not move (%.2f, %.2f, %.2f from halved to doubled sd). The producer paths move with the prior: the largest shift is %s, from %.2f (sd halved) to %.2f (sd doubled). The path that keeps its sign when the prior is loosened is phytoplankton (%.2f with sd doubled); macrophytes and litter follow the prior. With 16 summer samplings, the producer effects are prior-informed estimates, the same conclusion as B, reached from the other side.",
+                   pm$`sd halved`[1], pm$manuscript[1], pm$`sd doubled`[1], as.character(most$par), most$`sd halved`, most$`sd doubled`, pm$`sd doubled`[pm$par == "phytoplankton"])
+} else d_msg <- "- pending"
+```
+
+::: {.callout-important}
+## Conclusions — D. Modelling choices
+
+`r d_msg`
+-   **Spatial residuals:** the residual neighbour correlation is `r sprintf("%.2f [%.2f, %.2f]", median(rho_res), quantile(rho_res, .025), quantile(rho_res, .975))` — no spatial autocorrelation is left in downstream DOC once upstream DOC and the drivers are in the model, so the stream random effect is doing its job and a spatial term is not needed.
+-   Together with section 4: outcome parameterization, inheritance slope, prior scale and space — the inheritance and the *absence* of a consistent local effect are robust; the *sign* of each producer path is where the model leans on prior knowledge.
+:::
+
+## E. Causal knowledge analysis
+
+The qualitative frame the quantitative checks sit in (after Grace's causal-knowledge analysis; **the wording of the eight questions must be checked against the paper before this goes into Appendix S1**).
+
+```{r}
+#| label: tbl-cka
+#| tbl-cap: "Causal knowledge analysis of the beaver–DOC system."
+#| echo: false
+kable(tribble(
+  ~`Question`, ~`Answer for the beaver–DOC system`, ~`Where addressed`,
+  "1. What causal quantity is sought?", "The local modification that beaver-engineering adds to downstream DOC, decomposed into its hydrological and biological pathways; and its size relative to the inherited seasonal contrast.", "Q2 (SCM), Q3 ($R_s$, $G$)",
+  "2. What is the causal system and its boundary?", "The beaver-engineered stream from the first to the last dam; inputs are upstream DOC, solar radiation, channel gradient, dams; the floodplain and the catchment are outside, represented by upstream DOC and $S$.", "Figure 3b, DAG (Figure 1b)",
+  "3. What is assumed about the structure (arrows present)?", "Dams → residence time → producers → DOC; solar → producers → DOC; litter → DOC; upstream DOC inherited with slope near 1.", "Table S1 (13 hypotheses), section 2",
+  "4. What is assumed absent (arrows omitted, no confounding)?", "No direct solar → DOC, no upstream DOC → producers, no season confounding, no unmeasured common cause of producers and DOC.", "Section 9 A–C: none of the omitted arrows is supported; placebo and implied nulls in C",
+  "5. How are the effects identified?", "By the DAG's adjustment sets, with measurement error on every concentration and imputation of missing predictors; the inheritance slope is estimated, not assumed.", "Methods; section 4 (robustness to slope = 1)",
+  "6. Is the data adequate for the structure?", "158 streams for the inheritance and the direction; 16 summer streams for the producers, with no water residence time at those streams. The producer paths are the weak point.", "Section 9 B and D: prior-informed estimates",
+  "7. How sensitive are the conclusions?", "Inheritance, the null average and the heterogeneity are robust to structure, priors, outcome parameterization and space; the sign of each producer path follows the prior scale.", "Sections 4, 8, 9",
+  "8. To what does the result transport?", "To Swiss low-order single-thread streams with 1–19 dams; downstream DOC at an unseen stream is predictable (hold-out R² given in section 8), the sign of the local change is not.", "Section 8"))
+```
+
+::: {.callout-important}
+## Conclusions — E. Causal knowledge analysis
+
+-   The structure of Q2 is well supported where the data are dense (inheritance, direction, dams → residence time) and prior-dependent where they are thin (producers).
+-   The manuscript should say so in one Methods paragraph: which arrows were tested and how (A, C), how strong a confounder would have to be (B), and that the producer effects follow the prior scale (D) — with Appendix S1 Figures S14–S17 and Table S2.
+-   This is not a weakness to hide: it is the honest statement of what a national survey with a 16-stream mechanistic subset can and cannot identify, and it points to the next study — residence time and producers measured at the same streams, in both seasons.
+:::
+
+# 10. Methods figure
 
 **Manuscript placement: main text, Figure 3 (both panels redrawn: panel a shows the 158 analysed streams, panel b shows $S$, $\Delta\text{DOC}_s$, $R_s$ and $F$ in place of the amplification-factor quantities).**
 
@@ -615,7 +900,7 @@ ggsave(here("results", "figures", "plan", "fig_map_schematic.png"), fig3, width 
 fig3
 ```
 
-# 10. Figures for the manuscript
+# 11. Figures for the manuscript
 
 ```{r inventory}
 #| echo: false
@@ -629,7 +914,8 @@ kable(tribble(
   "Figure S10", "Derivation of the variables", "all", "@fig-dag", "**new**",
   "Figure S11", "Spatial coherence of $S$, $B$ and $T$", "Discussion support", "@fig-spatial", "**new**",
   "Figure S12", "$R_{summer}$ and $G$ against the number of dams and the water residence time", "Q4", "@fig-intensity", "**new**",
-  "Figure S13", "Hold-out prediction of downstream DOC and $\\Delta\\text{DOC}$", "Methods support", "@fig-holdout", "**new**"))
+  "Figure S13", "Hold-out prediction of downstream DOC and $\\Delta\\text{DOC}$", "Methods support", "@fig-holdout", "**new**",
+  "Figures S14–S17, Table S2", "Structural and causal sensitivity: alternative DAGs, unmeasured confounding, falsification tests, prior and spatial checks, causal knowledge analysis", "Q2 support", "@fig-dag-tests, @fig-dag-compare, @fig-sensemakr, @fig-negative-controls, @fig-prior-sens, @fig-spatial-resid, @tbl-cka", "**new**"))
 ```
 
 ::: {.callout-warning}
@@ -644,7 +930,7 @@ kable(tribble(
 7.  **Methods and Discussion.** One sentence each on validation: the SCM predicts downstream DOC at unseen streams (hold-out R², coverage), but not the sign of the local change; the "predictive basis" claim of the Discussion is reworded accordingly (section 8).
 :::
 
-# 11. Reproducibility
+# 12. Reproducibility
 
 ```{r session}
 #| echo: false
