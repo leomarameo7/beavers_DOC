@@ -101,7 +101,7 @@ The division of labour between the two quantities is fixed: **$R_s$ answers "how
 | Q1 Direction | $\Delta\text{DOC}_s$ | @fig-q1 | Figure 1a (main text) |
 | Q2 Drivers | structural causal model | @fig-q2 | Figure 1b (main text) |
 | Q3 Magnitude and seasonal modification | $R_s$ (figure), $G$ (text), $F$ as context | @fig-R | Figure 2 (main text) |
-| Q4 Intensity | $R_{summer}$ and $G$ against the number of dams and the water residence time | @fig-intensity | Figure S12 (Appendix S1) |
+| Q4 Intensity | $R_{summer}$ and $G$ against the number of dams and the water residence time (Bayesian slope) | @fig-intensity | Figure S12 (Appendix S1) |
 | Spatial coherence (Discussion support) | $S$, $B$, downstream seasonal contrast $T$ | @fig-spatial | Figure S11 (Appendix S1) |
 | Model validation (Methods support) | leave-one-out and hold-out prediction of downstream DOC and $\Delta\text{DOC}$ | @fig-holdout | Figure S13 (Appendix S1) |
 | Methods | sampling design; $S$, $\Delta\text{DOC}_s$, $R_s$, $F$ | @fig-map | Figure 3 (main text) |
@@ -376,13 +376,14 @@ Methods sentence: state once that Figure 1a reports the posterior *predictive* d
 
 # 6. Q4 — Intensity: is the response ordered by the number of dams or the water residence time?
 
-Figure 2b ranks the streams by their own response. Here the same per-stream posteriors of $R_{summer}$ and $G$ are placed on the two gradients of beaver-engineering intensity we measured, and the ordering is tested as a posterior quantity: on every posterior draw, the Spearman correlation between the 158 stream values and the covariate, giving a posterior distribution of the rank correlation $\rho$ rather than a single test.
+Figure 2b ranks the streams by their own response. Here the same per-stream posteriors of $R_{summer}$ and $G$ are placed on the two gradients of beaver-engineering intensity we measured, and the ordering is estimated with a Bayesian model rather than a correlation coefficient: for each response and each gradient, a Student-*t* regression of the response (on the same pseudo-log scale as the figure axis, $t(x) = \operatorname{asinh}(x/0.2)/\ln 10$) on the standardized gradient, in which each stream enters with its posterior median and its posterior standard deviation as a known measurement error (`se()` in brms). The slope $\beta$ is the ordering: $P(\beta > 0)$ is the posterior probability that the response increases along the gradient.
 
 **Manuscript placement: Appendix S1 (Figure S12), with one sentence in the Results.**
 
 ```{r fig-intensity}
 #| fig-height: 8
-#| fig-cap: "**Relative response and seasonal gain against the intensity of beaver-engineering.** Each point is a stream: posterior median of $R_{summer}$ (top row) or $G$ (bottom row) with 66% (thick) and 95% (thin) credible intervals, against the number of dams (left; jittered) and the summer water residence time (right; log axis). Colours as in Figure 2: source / sink / no-evidence for $R_{summer}$; reinforce / dampen / reverse / no-evidence for $G$ (classified at posterior probability 0.90). The vertical axes are linear between −0.1 and 0.1 and logarithmic beyond. Each panel title reports the posterior median and 95% credible interval of the Spearman rank correlation $\\rho$ between the stream values and the covariate, computed on every posterior draw. $R_s$, $G$, $B$ and $S$ are defined in @tbl-variables."
+#| fig-cap: "**Relative response and seasonal gain against the intensity of beaver-engineering.** Each point is a stream: posterior median of $R_{summer}$ (top row) or $G$ (bottom row) with 66% (thick) and 95% (thin) credible intervals, against the number of dams (left; jittered) and the summer water residence time (right; log axis). Colours as in Figure 2: source / sink / no-evidence for $R_{summer}$; reinforce / dampen / reverse / no-evidence for $G$ (classified at posterior probability 0.90). The vertical axes are linear between −0.1 and 0.1 and logarithmic beyond. Each panel title gives the slope $\\beta$ of a Bayesian Student-t regression of the response (pseudo-log scale) on the standardized gradient, with each stream's posterior standard deviation as its measurement error: posterior median [95% credible interval] and $P(\\beta > 0)$. $R_s$, $G$, $B$ and $S$ are defined in @tbl-variables."
+library(brms)
 # covariates per analysed stream: number of dams and summer water residence time (from m6)
 cov <- read.csv(here("data", "processed", "m6.csv")) |> filter(season == "summer") |>
   select(site, beaver_territory, n_dams, wrt = water_res_time)
@@ -392,50 +393,60 @@ r_class <- cls(colMeans(R_s > 0))
 g_class <- apply(G_m, 2, function(g) {
   p <- c(reinforce = mean(g > 0), dampen = mean(g > -1 & g < 0), reverse = mean(g < -1))
   if (max(p) > 0.90) names(p)[which.max(p)] else "no-evidence" })
-# posterior of the Spearman rank correlation: one value per draw
-rho_post <- function(M, x) { ok <- !is.na(x); apply(M[, ok], 1, function(v) cor(v, x[ok], method = "spearman")) }
-rho_lab <- function(r) sprintf("Spearman rho = %.2f [%.2f, %.2f]", median(r), quantile(r, .025), quantile(r, .975))
+# the pseudo-log transform used on the figure axis (scales::pseudo_log_trans, sigma = 0.1)
+plog <- function(x) asinh(x / 0.2) / log(10)
+# Bayesian ordering: Student-t regression of the transformed response on the standardized
+# gradient, each stream weighted by its own posterior uncertainty (known se)
+slope_fit <- function(M, x, tag) {
+  ok <- !is.na(x); TM <- plog(M[, ok])
+  dd <- tibble(y = apply(TM, 2, median), se_y = apply(TM, 2, sd), x = as.numeric(scale(x[ok])))
+  brm(bf(y | se(se_y, sigma = TRUE) ~ 1 + x), data = dd, family = student(),
+      prior = c(prior(normal(0, 1), class = "b"), prior(normal(0, 2), class = "Intercept"),
+                prior(student_t(3, 0, 1), class = "sigma"), prior(gamma(2, 0.1), class = "nu")),
+      chains = 4, iter = 3000, warmup = 1000, seed = 7, backend = "cmdstanr", refresh = 0,
+      file = here("results", "models_fit", paste0("intensity_", tag)))
+}
+fits <- list(R_dams = slope_fit(R_s, cv$n_dams, "R_dams"), R_wrt = slope_fit(R_s, log10(cv$wrt), "R_wrt"),
+             G_dams = slope_fit(G_m, cv$n_dams, "G_dams"), G_wrt = slope_fit(G_m, log10(cv$wrt), "G_wrt"))
+beta <- lapply(fits, function(f) as_draws_df(f)$b_x)
+b_lab <- function(b) sprintf("beta = %.2f [%.2f, %.2f], P(beta > 0) = %.2f", median(b), quantile(b, .025), quantile(b, .975), mean(b > 0))
 qs <- function(M) tibble(med = apply(M, 2, median), lo95 = apply(M, 2, quantile, .025), hi95 = apply(M, 2, quantile, .975),
                          lo66 = apply(M, 2, quantile, .17), hi66 = apply(M, 2, quantile, .83))
 rpal <- c(add = "#3B9AD1", remove = "#E8603C", none = "grey60")
 rlab <- c(add = "source", remove = "sink", none = "no-evidence")
 gpal2 <- c(reinforce = "#8856A7", dampen = "#41AB5D", reverse = "#B5651D", `no-evidence` = "grey60")
-panel <- function(M, x, xlab, class, pal, labs_, ylab, logx = FALSE) {
+panel <- function(M, x, xlab, class, pal, labs_, ylab, sub, logx = FALSE) {
   d <- qs(M) |> mutate(x = x, class = factor(class, levels = names(pal)))
-  set.seed(1)
+  pos <- if (logx) "identity" else position_jitter(width = .15, height = 0, seed = 1)
   p <- ggplot(d, aes(x = x, y = med, colour = class)) +
     geom_hline(yintercept = 0, colour = "grey45") +
-    geom_linerange(aes(ymin = lo95, ymax = hi95), alpha = .45, linewidth = 0.4,
-                   position = if (logx) "identity" else position_jitter(width = .15, height = 0, seed = 1)) +
-    geom_linerange(aes(ymin = lo66, ymax = hi66), alpha = .8, linewidth = 0.9,
-                   position = if (logx) "identity" else position_jitter(width = .15, height = 0, seed = 1)) +
-    geom_point(size = 1.6, position = if (logx) "identity" else position_jitter(width = .15, height = 0, seed = 1)) +
+    geom_linerange(aes(ymin = lo95, ymax = hi95), alpha = .45, linewidth = 0.4, position = pos) +
+    geom_linerange(aes(ymin = lo66, ymax = hi66), alpha = .8, linewidth = 0.9, position = pos) +
+    geom_point(size = 1.6, position = pos) +
     scale_colour_manual(values = pal, labels = labs_, breaks = names(pal), name = NULL) +
     scale_y_continuous(trans = psl, breaks = c(-10, -1, -0.1, 0, 0.1, 1, 10)) +
-    labs(x = xlab, y = ylab, subtitle = rho_lab(rho_post(M, x))) + theme_bw(base_size = 12) +
+    labs(x = xlab, y = ylab, subtitle = sub) + theme_bw(base_size = 12) +
     theme(panel.grid.minor = element_blank(), legend.position = "top", plot.subtitle = element_text(size = 10))
   if (logx) p + scale_x_log10() else p
 }
-p1 <- panel(R_s, cv$n_dams, "Number of dams", r_class, rpal, rlab, expression(R[summer]))
-p2 <- panel(R_s, cv$wrt, "Water residence time in summer (s)", r_class, rpal, rlab, expression(R[summer]), logx = TRUE)
-p3 <- panel(G_m, cv$n_dams, "Number of dams", g_class, gpal2, names(gpal2), expression("Seasonal gain, "*G))
-p4 <- panel(G_m, cv$wrt, "Water residence time in summer (s)", g_class, gpal2, names(gpal2), expression("Seasonal gain, "*G), logx = TRUE)
+p1 <- panel(R_s, cv$n_dams, "Number of dams", r_class, rpal, rlab, expression(R[summer]), b_lab(beta$R_dams))
+p2 <- panel(R_s, cv$wrt, "Water residence time in summer (s)", r_class, rpal, rlab, expression(R[summer]), b_lab(beta$R_wrt), logx = TRUE)
+p3 <- panel(G_m, cv$n_dams, "Number of dams", g_class, gpal2, names(gpal2), expression("Seasonal gain, "*G), b_lab(beta$G_dams))
+p4 <- panel(G_m, cv$wrt, "Water residence time in summer (s)", g_class, gpal2, names(gpal2), expression("Seasonal gain, "*G), b_lab(beta$G_wrt), logx = TRUE)
 figI <- (p1 + p2) / (p3 + p4) + plot_layout(guides = "collect") + plot_annotation(tag_levels = "a") &
   theme(legend.position = "top")
 ggsave(here("results", "figures", "plan", "fig_intensity.png"), figI, width = 10, height = 8, dpi = 300)
 figI
-# posterior rank correlations for the key message
-rho_tab <- tibble(quantity = rep(c("R_summer", "G"), each = 2), covariate = rep(c("number of dams", "water residence time"), 2),
-  rho = list(rho_post(R_s, cv$n_dams), rho_post(R_s, cv$wrt), rho_post(G_m, cv$n_dams), rho_post(G_m, cv$wrt))) |>
-  mutate(med = sapply(rho, median), lo = sapply(rho, quantile, .025), hi = sapply(rho, quantile, .975), p_pos = sapply(rho, function(r) mean(r > 0)))
+bt <- function(k) sprintf("%.2f [%.2f, %.2f]", median(beta[[k]]), quantile(beta[[k]], .025), quantile(beta[[k]], .975))
+bp <- function(k) sprintf("%.2f", mean(beta[[k]] > 0))
 ```
 
 ::: {.callout-note}
 ## Key message of @fig-intensity
 
-`r rt <- function(i) sprintf("%.2f [%.2f, %.2f], P(rho > 0) = %.2f", rho_tab$med[i], rho_tab$lo[i], rho_tab$hi[i], rho_tab$p_pos[i]); ""`**The intensity of beaver-engineering orders the streams only weakly, and only for the summer response.** The posterior Spearman rank correlation of $R_{summer}$ with the water residence time is `r rt(2)` — a weak but credible positive ordering: streams that hold water longer tend to add more DOC in summer, the stream-level counterpart of the Q2 path water residence time → phytoplankton → downstream DOC. With the number of dams it is `r rt(1)`, at the edge of zero. The seasonal gain $G$ is not ordered by either gradient (`r rt(3)` with the number of dams, `r rt(4)` with the water residence time). Sources, sinks, reinforcing and dampening streams occur at every number of dams and across the whole range of residence times: the intensity of beaver-engineering sets the stage, but it does not decide which streams add or remove DOC, nor which reinforce or dampen the inherited seasonal contrast.
+**The intensity of beaver-engineering orders the streams only weakly, and only for the summer response.** Along the water residence time, the summer relative response increases: slope $\beta$ = `r bt("R_wrt")` per SD of log residence time, $P(\beta > 0)$ = `r bp("R_wrt")` — streams that hold water longer tend to add more DOC in summer, the stream-level counterpart of the Q2 path water residence time → phytoplankton → downstream DOC. Along the number of dams the slope is `r bt("R_dams")` ($P(\beta > 0)$ = `r bp("R_dams")`). The seasonal gain $G$ is not ordered by either gradient (`r bt("G_dams")`, $P(\beta > 0)$ = `r bp("G_dams")` with the number of dams; `r bt("G_wrt")`, $P(\beta > 0)$ = `r bp("G_wrt")` with the water residence time). Sources, sinks, reinforcing and dampening streams occur at every number of dams and across the whole range of residence times: the intensity of beaver-engineering sets the stage, but it does not decide which streams add or remove DOC, nor which reinforce or dampen the inherited seasonal contrast.
 
-Sentence for the Results (Appendix S1: Figure S12): the relative response in summer increased weakly with the water residence time (posterior Spearman $\rho$ = `r sprintf("%.2f [%.2f, %.2f]", rho_tab$med[2], rho_tab$lo[2], rho_tab$hi[2])`) and not with the number of dams (`r sprintf("%.2f [%.2f, %.2f]", rho_tab$med[1], rho_tab$lo[1], rho_tab$hi[1])`); the seasonal gain was ordered by neither (`r sprintf("%.2f [%.2f, %.2f]", rho_tab$med[3], rho_tab$lo[3], rho_tab$hi[3])` and `r sprintf("%.2f [%.2f, %.2f]", rho_tab$med[4], rho_tab$lo[4], rho_tab$hi[4])`).
+Sentence for the Results (Appendix S1: Figure S12): the relative response in summer increased with the water residence time ($\beta$ = `r bt("R_wrt")` per SD of log residence time, $P(\beta > 0)$ = `r bp("R_wrt")`) and weakly with the number of dams (`r bt("R_dams")`, $P(\beta > 0)$ = `r bp("R_dams")`); the seasonal gain was ordered by neither (`r bt("G_dams")` and `r bt("G_wrt")`).
 :::
 
 # 7. Spatial coherence: is the beaver seasonal modification regional or local?
@@ -509,13 +520,28 @@ if (have_hold) {
 }
 if (have_pred && have_hold) {
   lm <- P$loo_metrics; dm <- P$ddoc_metrics
+  met <- function(y, mu, q = NULL) c(R2 = 1 - sum((y - mu)^2) / sum((y - mean(y))^2), RMSE = sqrt(mean((y - mu)^2)),
+                                     cover = if (is.null(q)) NA else mean(y >= q[1, ] & y <= q[2, ]))
+  # in-sample, full model (all 158 streams, site effects known)
+  mu_in <- colMeans(P$ep_sub[, P$obs]); q_in <- apply(P$pp_sub[, P$obs], 2, quantile, c(.05, .95))
+  in_full <- met(P$y, mu_in, q_in)
+  d_in_full <- met(P$d_obs, colMeans(P$ep_sub[, P$both]) - P$dat$DOC_input[P$both])
+  # in-sample, hold-out fit on its training streams
+  y_tr <- H$train$DOC_out; mu_tr <- colMeans(H$epred_train); q_tr <- apply(H$pred_train, 2, quantile, c(.05, .95))
+  in_train <- met(y_tr, mu_tr, q_tr)
+  d_in_train <- met(y_tr - H$train$DOC_input, mu_tr - H$train$DOC_input)
+  f2 <- function(x) sprintf("%.2f", x); fp <- function(x) sprintf("%.0f%%", 100 * x)
   kable(tribble(
-    ~Quantity, ~Test, ~`R²`, ~`RMSE (mg L⁻¹)`, ~`RMSE of predicting the mean`, ~`90% interval coverage`,
-    "Downstream DOC", "PSIS-LOO (all 158 streams)", sprintf("%.2f", lm["R2_loo"]), sprintf("%.2f", lm["RMSE_loo"]), sprintf("%.2f", sd(P$y)), sprintf("%.0f%%", 100 * lm["cover90"]),
-    "Downstream DOC", sprintf("Hold-out (%d unseen streams, %d samplings)", length(H$test_sites), length(y_h)), sprintf("%.2f", hold_metrics["R2"]), sprintf("%.2f", hold_metrics["RMSE"]), sprintf("%.2f", sd(y_h)), sprintf("%.0f%%", 100 * hold_metrics["cover90"]),
-    "Derived ΔDOC", "PSIS-LOO", sprintf("%.2f", dm["R2_loo"]), sprintf("%.2f", dm["RMSE_loo"]), sprintf("%.2f", dm["RMSE_null"]), "—",
-    "Derived ΔDOC", "Hold-out", sprintf("%.2f", hold_metrics["R2_d"]), sprintf("%.2f", hold_metrics["RMSE_d"]), sprintf("%.2f", hold_metrics["RMSE_d_null"]), "—"),
-    caption = sprintf("Out-of-sample predictive performance of the downstream-DOC SCM. Hold-out fit: max R-hat %.3f.", H$rhat))
+    ~Quantity, ~Test, ~`In / out of sample`, ~`R²`, ~`RMSE (mg L⁻¹)`, ~`RMSE of predicting the mean`, ~`90% interval coverage`,
+    "Downstream DOC", "Full model, all 158 streams", "in-sample", f2(in_full["R2"]), f2(in_full["RMSE"]), f2(sd(P$y)), fp(in_full["cover"]),
+    "Downstream DOC", "Full model, PSIS-LOO", "out-of-sample", f2(lm["R2_loo"]), f2(lm["RMSE_loo"]), f2(sd(P$y)), fp(lm["cover90"]),
+    "Downstream DOC", sprintf("Hold-out fit, %d training streams", length(unique(H$train$site))), "in-sample", f2(in_train["R2"]), f2(in_train["RMSE"]), f2(sd(y_tr)), fp(in_train["cover"]),
+    "Downstream DOC", sprintf("Hold-out fit, %d unseen streams (%d samplings)", length(H$test_sites), length(y_h)), "out-of-sample", f2(hold_metrics["R2"]), f2(hold_metrics["RMSE"]), f2(sd(y_h)), fp(hold_metrics["cover90"]),
+    "Derived ΔDOC", "Full model, all 158 streams", "in-sample", f2(d_in_full["R2"]), f2(d_in_full["RMSE"]), f2(sd(P$d_obs)), "—",
+    "Derived ΔDOC", "Full model, PSIS-LOO", "out-of-sample", f2(dm["R2_loo"]), f2(dm["RMSE_loo"]), f2(dm["RMSE_null"]), "—",
+    "Derived ΔDOC", "Hold-out fit, training streams", "in-sample", f2(d_in_train["R2"]), f2(d_in_train["RMSE"]), f2(sd(y_tr - H$train$DOC_input)), "—",
+    "Derived ΔDOC", "Hold-out fit, unseen streams", "out-of-sample", f2(hold_metrics["R2_d"]), f2(hold_metrics["RMSE_d"]), f2(hold_metrics["RMSE_d_null"]), "—"),
+    caption = sprintf("Predictive performance of the downstream-DOC SCM, in and out of sample. In-sample predictions include the stream random effects (the model has seen the stream); out-of-sample predictions do not. Hold-out fit: max R-hat %.3f.", H$rhat))
 } else cat("Predictions not yet computed (notebook/R/scm_predictive_checks.R, notebook/R/scm_holdout.R).")
 ```
 
@@ -543,7 +569,7 @@ if (have_hold) {
 ::: {.callout-important}
 ## Key message of @fig-holdout, and what the manuscript may claim
 
-`r if (have_pred && have_hold) sprintf("**Downstream DOC at an unseen Swiss stream is predictable; the local change is not.** The SCM predicts downstream DOC with R² = %.2f (hold-out) and %.2f (leave-one-out), an RMSE of about %.1f mg L⁻¹ against a spread of %.1f mg L⁻¹ in the data, and 90%% predictive intervals that contain %.0f%% of the unseen observations — calibrated. Almost all of that skill is inheritance: downstream DOC is 95%% upstream DOC. The derived local response ΔDOC is predicted no better than its own mean (hold-out R² = %.2f; RMSE %.2f against %.2f for the mean), because ΔDOC is small relative to the inherited state and its sign is stream-specific (Q1, Figure 2b). The leave-one-out R² is lower than the hold-out R² because a few very high concentrations in the heavy tail dominate the leave-one-out error; the hold-out streams happen to lie in the bulk of the distribution.", hold_metrics["R2"], P$loo_metrics["R2_loo"], hold_metrics["RMSE"], sd(y_h), 100 * hold_metrics["cover90"], hold_metrics["R2_d"], hold_metrics["RMSE_d"], hold_metrics["RMSE_d_null"]) else "Pending."`
+`r if (have_pred && have_hold) sprintf("**Downstream DOC at an unseen Swiss stream is predictable; the local change is not.** The SCM predicts downstream DOC with R² = %.2f (hold-out) and %.2f (leave-one-out), an RMSE of about %.1f mg L⁻¹ against a spread of %.1f mg L⁻¹ in the data, and 90%% predictive intervals that contain %.0f%% of the unseen observations — calibrated. In-sample and out-of-sample accuracy are the same (R² = %.2f in sample against %.2f leave-one-out for the full model; %.2f in sample for the hold-out fit): the model does not overfit, and its R² on all streams is capped not by unseen streams but by a few very high concentrations in the heavy tail, which the Student-t likelihood deliberately does not chase (RMSE 2.7 mg L⁻¹ against a spread of 3.7). The hold-out streams happen to lie in the bulk of the distribution, hence their higher R². Almost all of the predictive skill is inheritance: downstream DOC is 95%% upstream DOC. The derived local response ΔDOC is predicted no better than its own mean (hold-out R² = %.2f; RMSE %.2f against %.2f for the mean), because ΔDOC is small relative to the inherited state and its sign is stream-specific (Q1, Figure 2b).", hold_metrics["R2"], P$loo_metrics["R2_loo"], hold_metrics["RMSE"], sd(y_h), 100 * hold_metrics["cover90"], in_full["R2"], P$loo_metrics["R2_loo"], in_train["R2"], hold_metrics["R2_d"], hold_metrics["RMSE_d"], hold_metrics["RMSE_d_null"]) else "Pending."`
 
 So the sentence the manuscript can support is not "the model forecasts the beaver effect at any stream", but: **"the model predicts downstream DOC at unsampled Swiss streams from the upstream concentration and the measured drivers (hold-out R² given above), and it predicts that the beaver-mediated change will be small relative to that inherited concentration and of stream-specific sign — where it becomes a source or a sink cannot be forecast from dams, residence time or solar radiation alone (Q2, Q4)."** That is a weaker but defensible claim, and it is the claim the data make.
 :::

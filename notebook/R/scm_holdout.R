@@ -48,6 +48,13 @@ nd <- test |> mutate(across(c(macrophy_abun_z, plankton_abun_z, cover_litter_z, 
                              solar_z, dam_height_z), ~ ifelse(is.na(.x), 0, .x)))
 ep <- posterior_epred(fit_train, resp = "DOCout", newdata = nd, re_formula = NA)
 pp <- posterior_predict(fit_train, resp = "DOCout", newdata = nd, re_formula = NA)
+# in-sample predictions for the training streams (site effects known)
+tr <- train |> filter(!is.na(DOC_out), !is.na(DOC_input)) |> mutate(site = droplevels(site))
+ep_tr <- posterior_epred(fit_train, resp = "DOCout", newdata = tr |> mutate(across(c(macrophy_abun_z, plankton_abun_z,
+            cover_litter_z, water_res_time_z, solar_z, dam_height_z), ~ ifelse(is.na(.x), 0, .x))))
+pp_tr <- posterior_predict(fit_train, resp = "DOCout", newdata = tr |> mutate(across(c(macrophy_abun_z, plankton_abun_z,
+            cover_litter_z, water_res_time_z, solar_z, dam_height_z), ~ ifelse(is.na(.x), 0, .x))))
 saveRDS(list(test = nd, epred = ep, pred = pp, test_sites = test_sites,
+             train = tr, epred_train = ep_tr, pred_train = pp_tr,
              rhat = max(rhat(fit_train), na.rm = TRUE)), here("results", "holdout_pred.rds"))
 cat("holdout done, max Rhat:", round(max(rhat(fit_train), na.rm = TRUE), 3), " test rows:", nrow(nd), "\n")
