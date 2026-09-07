@@ -1,0 +1,215 @@
+---
+title: "Why the structural causal model predicts downstream DOC, and how ΔDOC is derived from it"
+subtitle: "Answers to Francesco Pomati's questions on the choice of the response variable"
+author: "Leonardo Capitani"
+date: last-modified
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    code-fold: true
+    embed-resources: true
+    fig-width: 9
+    fig-align: center
+bibliography: references.bib
+csl: ecology-letters.csl
+execute:
+  echo: true
+  message: false
+  warning: false
+---
+
+```{r setup}
+#| include: false
+library(tidyverse); library(ggdist); library(patchwork); library(knitr); library(here); library(bayesplot); library(scales)
+invisible(Sys.setlocale("LC_CTYPE", "en_US.UTF-8"))
+```
+
+::: {.callout-tip appearance="simple"}
+## The questions
+
+1.  Why is the response variable of the structural causal model (SCM) **downstream DOC** and not **ΔDOC**, which is the process we want to model?
+2.  Does this choice **improve the inference**, or change the story of the manuscript?
+3.  Where is the evidence that the model predicts downstream DOC well (predicted vs observed), and **how is ΔDOC estimated a posteriori** from a model that never sees it?
+:::
+
+::: {.callout-important}
+## Short answer
+
+The two models are **the same model written in two ways**: subtracting upstream DOC from both sides of the downstream-DOC equation gives the ΔDOC equation, and the fitted mediator effects agree to the second decimal (@tbl-equivalence). Nothing in the results changes. What changes is the **reading**: with downstream DOC as the outcome, upstream DOC plays one role (the inherited state, slope 0.95 mg per mg) instead of two (a predictor *and* half of the response), and the mediator effects read as what beaver-engineering *adds* to that inherited state, not as "retention" of it. ΔDOC is then a **derived quantity**: for every posterior draw, predicted downstream DOC minus upstream DOC (@sec-derived). The model predicts observed downstream DOC well out of sample (@fig-ppc), and the derived ΔDOC reproduces both the observed ΔDOC of each sampling and the seasonal averages of the Q1 model (@fig-ddoc).
+:::
+
+# 1. The two parameterizations are one model
+
+Write the SCM's outcome equation with ΔDOC as the response (the manuscript's original Equation for the SCM), with mediators $M_k$ (macrophytes, phytoplankton, litter cover, water residence time) and a stream random intercept $u$:
+
+$$
+\Delta\text{DOC}_i \;=\; \text{DOC}_{down,i} - \text{DOC}_{up,i} \;\sim\; \text{Student-}t\!\left(\nu,\; \mu^{\Delta}_i,\; \sigma\right), \qquad
+\mu^{\Delta}_i \;=\; \alpha + \beta_1\,\text{DOC}_{up,i} + \sum_k \beta_k M_{k,i} + u_{site(i)}
+$$ {#eq-delta}
+
+and the same SCM with downstream DOC as the response:
+
+$$
+\text{DOC}_{down,i} \;\sim\; \text{Student-}t\!\left(\nu,\; \mu_i,\; \sigma\right), \qquad
+\mu_i \;=\; \alpha' + \beta_{inh}\,\text{DOC}_{up,i} + \sum_k \beta'_k M_{k,i} + u'_{site(i)}
+$$ {#eq-down}
+
+Subtract $\text{DOC}_{up,i}$ from both sides of @eq-down:
+
+$$
+\text{DOC}_{down,i} - \text{DOC}_{up,i} \;=\; \alpha' + (\beta_{inh} - 1)\,\text{DOC}_{up,i} + \sum_k \beta'_k M_{k,i} + u'_{site(i)} + \varepsilon_i
+$$ {#eq-subtract}
+
+which is @eq-delta with $\beta_1 = \beta_{inh} - 1$ (on the mg L$^{-1}$ scale; times the SD of upstream DOC on the standardized scale), $\beta_k = \beta'_k$, and the same $\nu$, $\sigma$ and $u$. The two are therefore **not two models but one model in two coordinate systems**: the likelihood is identical, only the name of the outcome and the reading of the upstream-DOC coefficient differ. The negative "effect of upstream DOC on ΔDOC" ($\beta_1 < 0$) is the inheritance slope being slightly below one ($\beta_{inh} < 1$).
+
+```{r}
+#| label: tbl-equivalence
+#| tbl-cap: "The same SCM fitted with ΔDOC as the outcome (b1, the manuscript's original model) and with downstream DOC as the outcome (b1_downstream). Posterior mean [95% credible interval]. The inheritance slope implied by b1 is 1 + β₁/SD(upstream DOC)."
+#| echo: false
+cmp <- readRDS(here("results", "scm_downstream_comparison.rds"))
+d1 <- cmp$d1; d2 <- cmp$d2
+q <- function(x) sprintf("%.3f [%.3f, %.3f]", mean(x), quantile(x, .025), quantile(x, .975))
+kable(tribble(
+  ~Parameter, ~`b1: outcome ΔDOC`, ~`b1_downstream: outcome downstream DOC`,
+  "Inheritance slope (mg per mg)", q(1 + d1$bsp_deltaDOC_miDOC_input_z / cmp$s_up), q(d2$bsp_DOCout_miDOC_input),
+  "Macrophytes",         q(d1$bsp_deltaDOC_mimacrophy_abun_z),  q(d2$bsp_DOCout_mimacrophy_abun_z),
+  "Phytoplankton",       q(d1$bsp_deltaDOC_miplankton_abun_z),  q(d2$bsp_DOCout_miplankton_abun_z),
+  "Soil litter cover",   q(d1$bsp_deltaDOC_micover_litter_z),   q(d2$bsp_DOCout_micover_litter_z),
+  "Water residence time",q(d1$bsp_deltaDOC_miwater_res_time_z), q(d2$bsp_DOCout_miwater_res_time_z),
+  "Between-stream SD",   q(d1$sd_site__deltaDOC_Intercept),     q(d2$sd_site__DOCout_Intercept),
+  "Residual scale σ",    q(d1$sigma_deltaDOC),                  q(d2$sigma_DOCout),
+  "Degrees of freedom ν",q(d1$nu_deltaDOC),                     q(d2$nu_DOCout),
+  "Average ΔDOC (b1 intercept; b1_downstream evaluated at mean upstream DOC)",
+     q(d1$b_deltaDOC_Intercept), q(d2$b_DOCout_Intercept + (d2$bsp_DOCout_miDOC_input - 1) * cmp$mu_up)))
+```
+
+A further check: fixing the inheritance slope at exactly 1 (so that @eq-subtract has no upstream term at all, the pure paired contrast) leaves every mediator effect inside its credible interval (`analysis_plan.qmd`, section 4). The mediator story does not depend on how upstream DOC is handled.
+
+# 2. What the choice buys, and what it does not
+
+**It does not buy a better fit or different numbers.** Same likelihood, same posterior; @tbl-equivalence is the proof. Anyone who prefers to read the SCM as a ΔDOC model can do so without loss.
+
+**It buys three things for the story:**
+
+1.  **One role for upstream DOC.** In @eq-delta, upstream DOC is a predictor *and* is subtracted inside the response. That is legitimate but invites the misreading the manuscript originally contained: "high upstream DOC causes greater retention". In @eq-down upstream DOC is simply the state the stream inherits, and $\beta_{inh} = 0.95$ says directly that downstream DOC carries 95% of the upstream concentration, mg per mg.
+2.  **The mediators read as what beaver-engineering adds.** With the inherited state as the baseline, phytoplankton (+0.14), macrophytes (+0.08) and litter (+0.07) are local additions to an inherited background. This is the same sentence the rest of the manuscript needs: the inherited seasonal contrast $S$, the relative response $R_s$ and the seasonal gain $G$ (Q3) are all built on "inherited state + local modification".
+3.  **ΔDOC keeps its meaning without being the outcome.** ΔDOC is recovered from the posterior for every stream and draw (@sec-derived), and its seasonal averages reproduce the Q1 result (@fig-ddoc b). Nothing is lost.
+
+One thing the choice does **not** touch: Q1 (direction) is still answered by the paired-contrast model on the raw upstream and downstream concentrations (the measurement-error model behind Figure 1a), and Q3 by the four-concentration measurement-error model behind $S$, $R_s$, $B$ and $G$. The SCM parameterization concerns Q2 only.
+
+# 3. Does the model predict downstream DOC? {#sec-ppc}
+
+```{r load-pred}
+#| echo: false
+P <- readRDS(here("results", "scm_downstream_pred.rds"))
+dat <- P$dat; obs <- P$obs
+```
+
+Out-of-sample check by Pareto-smoothed importance-sampling leave-one-out cross-validation (PSIS-LOO): for each observed downstream concentration, the prediction is made *as if that observation had been left out of the fit*. Metrics on the `r length(obs)` observed downstream concentrations:
+
+```{r loo-table}
+#| echo: false
+lm <- P$loo_metrics; r2 <- P$r2_in
+k <- P$loo$diagnostics$pareto_k
+kable(tribble(
+  ~Metric, ~Value,
+  "In-sample Bayes R² (posterior mean [95% CrI])", sprintf("%.2f [%.2f, %.2f]", r2[1, "Estimate"], r2[1, "Q2.5"], r2[1, "Q97.5"]),
+  "LOO R² (leave-one-out predictive mean vs observed)", sprintf("%.2f", lm["R2_loo"]),
+  "LOO RMSE (mg L⁻¹)", sprintf("%.2f", lm["RMSE_loo"]),
+  "Coverage of the 90% LOO predictive interval", sprintf("%.0f%%", 100 * lm["cover90"]),
+  "PSIS-LOO ELPD (SE)", sprintf("%.1f (%.1f)", P$loo$estimates["elpd_loo", "Estimate"], P$loo$estimates["elpd_loo", "SE"]),
+  "Pareto k > 0.7 (observations with unreliable LOO)", sprintf("%d of %d", sum(k > 0.7), length(k))),
+  caption = "Predictive performance of the downstream-DOC SCM for downstream DOC.")
+```
+
+```{r fig-ppc}
+#| fig-height: 4.5
+#| fig-cap: "**Downstream DOC: predicted vs observed.** (a) Leave-one-out predictive mean of downstream DOC against the observed concentration, one point per sampling; vertical segments: 90% LOO predictive interval; dashed line: 1:1. (b) Posterior predictive check: density of the observed downstream concentrations (dark) against 100 replicated datasets drawn from the model (light)."
+y <- P$y; mu <- P$mu_loo; q <- P$q_loo
+pa <- ggplot(tibble(y, mu, lo = q[1, ], hi = q[2, ]), aes(y, mu)) +
+  geom_abline(slope = 1, intercept = 0, linetype = "dashed", colour = "grey45") +
+  geom_linerange(aes(ymin = lo, ymax = hi), colour = "grey70", alpha = .6) +
+  geom_point(size = 1.4, colour = "#3B9AD1") +
+  labs(x = expression("Observed downstream DOC (mg "*L^-1*")"), y = expression("LOO-predicted downstream DOC (mg "*L^-1*")")) +
+  theme_bw(base_size = 12) + theme(panel.grid.minor = element_blank())
+pb <- ppc_dens_overlay(y, P$pp_sub[1:100, obs]) + xlim(0, 20) +
+  labs(x = expression("Downstream DOC (mg "*L^-1*")")) + theme_bw(base_size = 12) + theme(panel.grid.minor = element_blank())
+pa + pb + plot_annotation(tag_levels = "a")
+```
+
+# 4. How ΔDOC is derived a posteriori {#sec-derived}
+
+The model never sees ΔDOC. It is computed **after** fitting, once per posterior draw $d$ and sampling $i$, from two numbers the draw already contains — the predicted downstream concentration and the upstream concentration:
+
+$$
+\Delta\text{DOC}^{(d)}_i \;=\; \mu^{(d)}_i - \text{DOC}_{up,i}
+\;=\; \alpha'^{(d)} + \left(\beta_{inh}^{(d)} - 1\right)\text{DOC}_{up,i} + \sum_k \beta'^{(d)}_k M_{k,i} + u'^{(d)}_{site(i)}
+$$ {#eq-derived}
+
+(where the 20 missing upstream values are the draw's imputed values, $\text{DOC}^{(d)}_{up,i}$). Doing this for all `r nrow(P$dd_sub)` (thinned) draws gives ΔDOC a full posterior distribution for every sampling, with no additional model. The seasonal average is the same operation, averaged over the samplings of a season:
+
+$$
+\overline{\Delta\text{DOC}}^{(d)}_{s} \;=\; \frac{1}{n_s}\sum_{i \in s} \Delta\text{DOC}^{(d)}_i
+$$ {#eq-avg}
+
+```{r fig-ddoc}
+#| fig-height: 4.5
+#| fig-cap: "**ΔDOC recovered from the downstream-DOC model.** (a) Posterior median of the derived ΔDOC (@eq-derived) against the observed ΔDOC (downstream minus upstream reading) for every sampling with both concentrations measured; dashed line: 1:1. (b) Posterior distribution of the derived seasonal average ΔDOC (@eq-avg); point: median, bars: 66% and 95% credible intervals; the open diamonds are the seasonal averages of the Q1 paired-contrast model reported in the manuscript (+0.14 mg L⁻¹ summer, 0.00 winter)."
+dm <- apply(P$dd_sub, 2, median)
+pa <- ggplot(tibble(obs = P$d_obs, med = dm), aes(obs, med)) +
+  geom_abline(slope = 1, intercept = 0, linetype = "dashed", colour = "grey45") +
+  geom_hline(yintercept = 0, colour = "grey80") + geom_vline(xintercept = 0, colour = "grey80") +
+  geom_point(size = 1.4, colour = "#3B9AD1", alpha = .8) +
+  labs(x = expression("Observed "*Delta*"DOC (mg "*L^-1*")"), y = expression("Derived "*Delta*"DOC, posterior median (mg "*L^-1*")")) +
+  theme_bw(base_size = 12) + theme(panel.grid.minor = element_blank())
+av <- as_tibble(P$avg_season) |> pivot_longer(everything(), names_to = "season", values_to = "v") |>
+  mutate(season = factor(season, levels = c("winter", "summer")))
+q1 <- tibble(season = factor(c("winter", "summer"), levels = c("winter", "summer")), v = c(0.00, 0.14))
+pb <- ggplot(av, aes(v, season)) +
+  geom_vline(xintercept = 0, linetype = "dashed", colour = "grey45") +
+  stat_halfeye(.width = c(.66, .95), point_interval = "median_qi", fill = "grey80") +
+  geom_point(data = q1, shape = 23, size = 3, fill = "white", colour = "#E8603C", stroke = 1.2) +
+  labs(x = expression("Derived seasonal average "*Delta*"DOC (mg "*L^-1*")"), y = NULL) +
+  theme_bw(base_size = 12) + theme(panel.grid.minor = element_blank())
+pa + pb + plot_annotation(tag_levels = "a")
+```
+
+```{r ddoc-metrics}
+#| echo: false
+dm2 <- P$ddoc_metrics
+```
+
+For ΔDOC itself, the leave-one-out predictive mean has RMSE `r sprintf("%.2f", dm2["RMSE_loo"])` mg L$^{-1}$ against `r sprintf("%.2f", dm2["RMSE_null"])` mg L$^{-1}$ for predicting the grand mean (LOO R² = `r sprintf("%.2f", dm2["R2_loo"])`). This is the honest picture: the model predicts *downstream DOC* well because most of it is inherited; it predicts the *local change* only weakly, because the local change is small relative to the inherited state and, as Q1 shows, its sign is stream-specific. Both numbers belong in the Methods.
+
+# 5. The pipeline in one picture
+
+```{mermaid}
+%%| fig-cap: "From the four measured concentrations to the quantities reported in the manuscript. The SCM (Q2) predicts downstream DOC; ΔDOC is derived from its posterior. Q1 and Q3 use the concentrations directly through their own measurement-error models."
+flowchart LR
+  A["Measured per stream and season:<br/>DOC upstream, DOC downstream<br/>(0.2 mg/L instrument error)"] --> Q1
+  A --> SCM
+  A --> Q3
+  M["Mediators (16 streams):<br/>producers, litter, residence time,<br/>solar radiation, dams"] --> SCM
+  Q1["Q1 paired-contrast model<br/>outcome: ΔDOC per sampling"] --> F1["Figure 1a<br/>direction, ROPE"]
+  SCM["Q2 structural causal model<br/>outcome: downstream DOC<br/>upstream DOC = inherited state (β = 0.95)"] --> P["Posterior draws:<br/>β, mediators, u_site"]
+  P --> F1b["Figure 1b<br/>drivers"]
+  P --> D["Derived per draw:<br/>ΔDOC = predicted downstream − upstream"]
+  D --> CHK["Predicted vs observed,<br/>seasonal averages (this document)"]
+  Q3["Q3 measurement-error model<br/>per concentration, per stream"] --> DV["Derived per draw:<br/>S, ΔDOC_s, R_s, B, G"]
+  DV --> F2["Figure 2<br/>relative response, seasonal gain"]
+```
+
+# 6. Reproducibility
+
+```{r session}
+#| echo: false
+cat("Models: results/models_fit/b1.rds (ΔDOC outcome), b1_downstream.rds (downstream outcome), b1_downstream_fixed.rds (slope fixed at 1)\n",
+    "Predictions and LOO: notebook/R/scm_predictive_checks.R -> results/scm_downstream_pred.rds\n")
+sessionInfo()$R.version$version.string
+```
+
+# References
+
+::: {#refs}
+:::
