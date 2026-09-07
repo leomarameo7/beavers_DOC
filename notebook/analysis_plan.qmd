@@ -271,7 +271,7 @@ g_med <- median(apply(G_m, 1, function(g) median(g)))  # posterior median of the
 #| fig-cap: "**Relative response $R_s$ and seasonal gain $G$ of beaver-engineering.** (a) Posterior distribution of the median relative response across the 158 streams, in winter and summer; point: posterior median, bars: 66% and 95% credible intervals; dashed line: no response. (b) Relative response of each stream in summer: posterior median with 66% (thick) and 95% (thin) credible intervals, streams ranked by their median; the grey band marks $\\lvert R_{summer} \\rvert < 0.1$. The vertical axis is linear between $-0.1$ and $0.1$ and logarithmic beyond, so small and large responses are both readable. In panels (a) and (b) skyblue: source (beaver-engineering adds DOC, P > 0.90), coral: sink (removes DOC, P > 0.90), grey: no-evidence — the same colours as in the direction figure. (c) Out of the 158 streams, what percentage reinforce ($G > 0$, make the inherited seasonal contrast bigger), dampen ($-1 < G < 0$, make it smaller) or reverse ($G < -1$, flip its sign)? Each stream is classified on every posterior draw, so each bar is a full posterior distribution of that percentage, with its own uncertainty — not a single count of streams sorted into fixed bins; point: posterior median percentage, bars: 66% and 95% credible intervals."
 # classify by posterior probability: add if P(R > 0) > 0.90, remove if P(R < 0) > 0.90, else no-evidence
 cls <- function(p_add) case_when(p_add > 0.90 ~ "add", p_add < 0.10 ~ "remove", TRUE ~ "none")
-lab <- c(add = "source (adds DOC, P > 0.90)", remove = "sink (removes DOC, P > 0.90)", none = "no-evidence")
+lab <- c(add = "source (adds DOC)", remove = "sink (removes DOC)", none = "no-evidence")   # P > 0.90 stated once, in the caption
 
 # ---- panel (a): across-stream median, winter and summer --------------------
 pop <- bind_rows(tibble(season = "summer", v = medR(R_s)), tibble(season = "winter", v = medR(R_w))) |>
@@ -327,6 +327,15 @@ fig2
 # summary of panel (c) for the key message, one row per zone
 gsum <- gprop |> group_by(zone) |> summarise(med = median(p), lo = quantile(p, .025), hi = quantile(p, .975))
 gz <- function(z) gsum |> filter(zone == z)
+
+# same +/-0.1 ROPE as panel (b)'s grey band, applied to R_summer, to compare
+# against @fig-q1's ROPE logic (see the note below)
+zone_r <- function(r) case_when(r > 0.1 ~ "source", r < -0.1 ~ "sink", TRUE ~ "negligible")
+rzmat <- apply(R_s, c(1, 2), zone_r)
+rprop <- as_tibble(t(apply(rzmat, 1, function(row)
+  c(source = mean(row == "source"), negligible = mean(row == "negligible"), sink = mean(row == "sink"))))) |>
+  pivot_longer(everything(), names_to = "zone", values_to = "p")
+rz <- function(z) rprop |> filter(zone == z) |> summarise(med = median(p))
 ```
 
 ::: {.callout-important}
@@ -337,6 +346,17 @@ gz <- function(z) gsum |> filter(zone == z)
 **Panel (b) of @fig-R.** The streams do not behave alike. In summer, `r sprintf("%.0f%%", 100 * n_add / n_str)` of the beaver-engineered streams (`r n_add` of `r n_str`) are DOC sources; `r sprintf("%.0f%%", 100 * n_rem / n_str)` (`r n_rem`) are DOC sinks; the rest are no-evidence.
 
 **Panel (c) of @fig-R.** The seasonal gain is heterogeneous: `r sprintf("%.0f%%", 100*gz("reinforce")$med)` of the streams (95% CrI `r sprintf("%.0f–%.0f%%", 100*gz("reinforce")$lo, 100*gz("reinforce")$hi)`) reinforce the inherited seasonal contrast, `r sprintf("%.0f%%", 100*gz("dampen")$med)` (`r sprintf("%.0f–%.0f%%", 100*gz("dampen")$lo, 100*gz("dampen")$hi)`) dampen it, and `r sprintf("%.0f%%", 100*gz("reverse")$med)` (`r sprintf("%.0f–%.0f%%", 100*gz("reverse")$lo, 100*gz("reverse")$hi)`) reverse it; the median gain across streams is `r sprintf("%.2f", g_med)`. Beaver-engineering does not shift the seasonal contrast in one direction; it redistributes it stream by stream.
+:::
+
+::: {.callout-note}
+## Why @fig-q1 looks "negligible" while @fig-R looks decisive
+
+@fig-q1 and @fig-R answer different questions from the same model, and that is why one reads as "mostly no effect" and the other as "most streams have a clear sign."
+
+- **@fig-q1 is a posterior *predictive* distribution**: it asks *"if I sample this stream once more, what change would I likely measure?"* That includes the 0.2 mg L$^{-1}$ instrument error and the residual variability of a single sampling on top of the estimated true concentration — so the distribution is wide, and a single sampling stays inside the $\pm$0.5 mg L$^{-1}$ ROPE about three times in four.
+- **@fig-R uses the posterior of each stream's *estimated true* concentration** (the same measurement-error model, but the parameter itself, not a new predicted sample): *"what is this stream's underlying relative response, once the known instrument error is accounted for?"* That posterior is narrower, because it does not add the observation-level noise back in — so most streams resolve to a clear sign even though a single new sampling would often look negligible.
+
+Both are correct; they are the predictive distribution and the parameter posterior of the same model, not two different results. If it helps, applying @fig-q1's own ROPE logic to $R_{summer}$ (a $\pm$0.1 band, matching the grey "negligible" band already drawn in panel (b)) still leaves only `r sprintf("%.0f%%", 100*rz("negligible")$med)` of streams negligible, versus `r sprintf("%.0f%%", 100*rz("source")$med)` source and `r sprintf("%.0f%%", 100*rz("sink")$med)` sink — confirming this is the predictive/parameter distinction, not an inconsistency in the data.
 :::
 
 # 6. Spatial coherence: is the beaver seasonal modification regional or local?
