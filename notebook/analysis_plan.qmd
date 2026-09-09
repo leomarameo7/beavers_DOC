@@ -717,9 +717,9 @@ if (have_sens) {
   # data-driven wording for the added paths
   pp <- function(nm, par) mean(SENS$models[[nm]]$extra[, par] > 0)
   e1 <- colnames(SENS$models$dag1$extra); e2 <- colnames(SENS$models$dag2$extra)
-  p_pla <- e1[grepl("planktonabunz", e1)][1]; p_mac <- e1[grepl("macrophyabunz", e1)][1]; p_sol <- e2[grepl("DOCout", e2)][1]
+  p_pla <- e1[grepl("planktonabunz.*miDOC_input", e1)][1]; p_mac <- e1[grepl("macrophyabunz.*miDOC_input", e1)][1]; p_sol <- e2[grepl("DOCout.*misolar", e2)][1]
   sup <- function(p) if (p > 0.90) "supported (P > 0.90)" else if (p < 0.10) "supported, negative (P < 0.10)" else "no-evidence"
-  dag1_msg <- sprintf("- **DAG 1 (upstream DOC → producers), Leonardo's alternative:** the added paths are %s (phytoplankton) and %s (macrophytes) per mg L⁻¹ of upstream DOC — %s and %s. A DOC-rich inflow goes with more producers, consistent with the failed independence in @fig-dag-tests. The mediator effects on downstream DOC under DAG 1 are nevertheless indistinguishable from DAG 0 (@fig-dag-compare b): the added arrow changes the picture of what drives the producers, not what the producers do to DOC.",
+  dag1_msg <- sprintf("- **DAG 1 (upstream DOC → producers), Leonardo's alternative:** the added paths are %s (phytoplankton) and %s (macrophytes) per mg L⁻¹ of upstream DOC — %s and %s. A DOC-rich inflow goes with more macrophytes (consistent with the failed independence in @fig-dag-tests), not with more phytoplankton. The mediator effects on downstream DOC under DAG 1 are nevertheless indistinguishable from DAG 0 (@fig-dag-compare b): the added arrow changes the picture of what drives the producers, not what the producers do to DOC.",
                       np("dag1", p_pla), np("dag1", p_mac), sup(pp("dag1", p_pla)), sup(pp("dag1", p_mac)))
   dag2_msg <- sprintf("- **DAG 2 (direct solar → DOC):** the direct path is %s — %s; it is the nominally best structure by LOO. Under DAG 2 the producer effects shrink somewhat (part of the solar effect no longer has to travel through them) but keep their sign.",
                       np("dag2", p_sol), sup(pp("dag2", p_sol)))
