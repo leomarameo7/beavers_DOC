@@ -94,6 +94,9 @@ Because $A_\text{beaver}$ is a very small part of $A_\text{floodplain}$ (footpri
 **Q4 — Intensity.** *Does the local response scale with the intensity of beaver-engineering — the number of dams and the water residence time — or is it organised by something else?*
 Hypothesis: if the number of dams and the water residence time increase, then $R_{summer}$ and $G$ will become more positive, because longer impoundment retains nutrients and creates habitat for the primary producers that add DOC in summer [@westbrook2006; @majerova2015; @feuchtmayr2009]. Because Q2 found only weak paths from the dams through water residence time, we expect at most a weak ordering of the streams along these gradients. Q4 is descriptive and belongs in Appendix S1; it answers the question a reader asks after Figure 2b: "are the streams on the right the ones with more dams?"
 
+**Q5 — Mechanism of the sign.** *Why do some beaver-engineered streams enrich and others deplete DOC, and why does the same stream change role between seasons?*
+Hypothesis: if enrichment occurs where the biological and organic-matter pathways of the SCM (phytoplankton, macrophytes, litter) contribute most, and depletion where these contributions are weak and removal dominates, then decomposing the SCM's predicted local modification into pathway contributions will separate sources from sinks, and the summer-minus-winter change of the producer contributions will track the beaver seasonal modification $B$ [@mulholland1997; @battin2023]. Removal processes (mineralization, photodegradation) were not measured, so whatever the measured pathways cannot explain is reported as an unresolved component, not attributed.
+
 The division of labour between the two quantities is fixed: **$R_s$ answers "how much, in season $s$" (Figure 2a, b); $G$ answers "what does that do to the seasonal contrast itself" (Figure 2c)**.
 
 | Question | Answered by | This document | Manuscript |
@@ -103,6 +106,7 @@ The division of labour between the two quantities is fixed: **$R_s$ answers "how
 | Q3 Magnitude and seasonal modification | $R_s$ (figure), $G$ (text), $F$ as context | @fig-R | Figure 2 (main text) |
 | Q4 Intensity | $R_{summer}$ and $G$ against the number of dams and the water residence time (Bayesian slope) | @fig-intensity | Figure S12 (Appendix S1) |
 | Spatial coherence (Discussion support) | $S$, $B$, downstream seasonal contrast $T$ | @fig-spatial | Figure S11 (Appendix S1) |
+| Q5 Mechanism of the sign | pathway decomposition of the SCM's local modification | @fig-decomp, @fig-decomp-season | Figure S18 (Appendix S1) |
 | Model validation (Methods support) | leave-one-out and hold-out prediction of downstream DOC and $\Delta\text{DOC}$ | @fig-holdout | Figure S13 (Appendix S1) |
 | Methods | sampling design; $S$, $\Delta\text{DOC}_s$, $R_s$, $F$ | @fig-map | Figure 3 (main text) |
 | Derivation of the variables | — | @fig-dag | Figure S10 (Appendix S1) |
@@ -520,7 +524,13 @@ ps
 
 # 8. Model validation: can the SCM predict downstream DOC at a stream it has not seen?
 
-The manuscript claims that the model can be used to anticipate the effect of beaver-engineering on stream DOC in Switzerland. That claim needs an out-of-sample test. Two are reported: (i) Pareto-smoothed importance-sampling leave-one-out cross-validation (PSIS-LOO) of the downstream-DOC SCM, in which every observed downstream concentration is predicted as if it had been left out of the fit; and (ii) a hold-out test, in which the SCM is refitted on 80% of the streams and predicts downstream DOC at the remaining 20% (`r if (file.exists(here("results","holdout_pred.rds"))) length(readRDS(here("results","holdout_pred.rds"))$test_sites) else "…"` streams), which it has never seen. At an unseen stream the site effect is unknown and the mediators are mostly unmeasured (they enter at their mean), so the hold-out prediction is what a user in Switzerland would actually have: upstream DOC, the dams, the channel gradient and solar radiation. For both tests, the derived $\Delta\text{DOC}$ (predicted downstream DOC minus upstream DOC) is scored as well, because that is the quantity the claim is about. Details of the derivation in `scm_outcome_choice.qmd`.
+The manuscript claims that the model can be used to anticipate the effect of beaver-engineering on stream DOC in Switzerland. That claim needs an out-of-sample test. Two are reported: (i) Pareto-smoothed importance-sampling leave-one-out cross-validation (PSIS-LOO) of the downstream-DOC SCM, in which every observed downstream concentration is predicted as if it had been left out of the fit; and (ii) a hold-out test, in which the SCM is refitted on 80% of the streams and predicts downstream DOC at the remaining 20% (`r if (file.exists(here("results","holdout_pred.rds"))) length(readRDS(here("results","holdout_pred.rds"))$test_sites) else "…"` streams), which it has never seen. At an unseen stream the site effect is unknown and the mediators are mostly unmeasured (they enter at their mean), so the hold-out prediction is what a user in Switzerland would actually have: upstream DOC, the dams, the channel gradient and solar radiation. For both tests, the derived $\Delta\text{DOC}$ is scored as well, because that is the quantity the claim is about; it is computed per posterior draw $d$ and sampling $i$ as
+
+$$
+\Delta\text{DOC}^{(d)}_i = \mu^{(d)}_i - \text{DOC}_{up,i}
+$$ {#eq-derived-plan}
+
+with $\mu_i$ the SCM's expected downstream DOC. Details of the derivation in `scm_outcome_choice.qmd`.
 
 **Manuscript placement: Appendix S1 (Figure S13), with one sentence in the Methods and one in the Discussion.**
 
@@ -878,7 +888,109 @@ kable(tribble(
 -   This is not a weakness to hide: it is the honest statement of what a national survey with a 16-stream mechanistic subset can and cannot identify, and it points to the next study — residence time and producers measured at the same streams, in both seasons.
 :::
 
-# 10. Methods figure
+# 10. Q5 — Pathway decomposition: why do some streams enrich and others deplete, and why does that change with season?
+
+The regional analysis (section 7) says an inherited DOC signal exists; the SCM (section 4) says which local processes modify it. What neither says is *why* a given stream ends up enriching or depleting, and why the same stream can change role between winter and summer. Josh's proposal is to use the fitted SCM itself: for every sampling, season and posterior draw, split the predicted local modification (predicted downstream DOC minus upstream DOC) into the contribution of each modelled pathway, and compare the balance between enriching and depleting streams and between seasons.
+
+From @eq-derived-plan the local modification of sampling $i$ in draw $d$ is a sum of named parts:
+
+$$
+\begin{aligned}
+L^{(d)}_i \;=\; \mu^{(d)}_i - \text{DOC}_{up,i}
+&= \underbrace{(\beta_{inh}^{(d)} - 1)\,\text{DOC}_{up,i}}_{\text{inheritance shortfall}}
+ + \underbrace{\beta^{(d)}_{pla} M_{pla,i}}_{\text{phytoplankton}}
+ + \underbrace{\beta^{(d)}_{mac} M_{mac,i}}_{\text{macrophytes}} \\
+&\quad + \underbrace{\beta^{(d)}_{lit} M_{lit,i}}_{\text{litter}}
+ + \underbrace{\beta^{(d)}_{wrt} M_{wrt,i}}_{\text{hydrology}}
+ + \underbrace{\alpha^{(d)} + u^{(d)}_{site(i)}}_{\text{unresolved}}
+\end{aligned}
+$$ {#eq-decomp}
+
+The last term is what the model cannot attribute to a measured pathway: the intercept and the stream's own effect. Following Josh's fourth point it is reported as an **unresolved net removal/transformation component**, not assigned to any process. Two limits are stated before the results, because they decide how much this analysis can say:
+
+-   **The producers were measured at 16 streams, in summer only, and water residence time at none of them.** At every other sampling the mediator values in @eq-decomp are the draw's *imputed* values, generated by the mediator sub-models from solar radiation and residence time — and, because the model is joint, partly from the outcome itself. The pathway contributions at imputed samplings are therefore model-implied, not measured, and can partly re-label the residual. The decomposition is shown for all samplings and, separately, for the 16 measured streams.
+-   **The decomposition is only as good as the SCM's paths**, and section 9 showed the producer effects to be prior-informed.
+
+**Manuscript placement: Appendix S1 (Figure S18), with two sentences in the Discussion.**
+
+```{r decomp-load}
+#| echo: false
+dec_path <- here("results", "pathway_decomposition.rds"); have_dec <- file.exists(dec_path)
+if (have_dec) DEC <- readRDS(dec_path)
+comp_lv <- c("phytoplankton", "macrophytes", "litter", "hydrology", "inheritance", "unresolved")
+comp_lab <- c(phytoplankton = "phytoplankton", macrophytes = "macrophytes", litter = "litter / organic inputs",
+              hydrology = "hydrology (residence time)", inheritance = "inheritance shortfall", unresolved = "unresolved (intercept + stream effect)")
+comp_pal <- c(phytoplankton = "#3B9AD1", macrophytes = "#41AB5D", litter = "#B5651D", hydrology = "#8856A7", inheritance = "grey40", unresolved = "grey75")
+```
+
+```{r fig-decomp}
+#| fig-height: 7
+#| fig-cap: "**What the modelled pathways contribute to the local modification, in enriching and depleting samplings.** Posterior mean contribution (mg L⁻¹) of each component of @eq-decomp to the predicted local modification, averaged over the samplings classified as source (P(L > 0) > 0.90), sink (P(L < 0) > 0.90) or no-evidence; point: posterior median, bars: 66% and 95% credible intervals. (a) All samplings (mediators imputed where not measured). (b) The 16 streams where the producers were measured. (c) Source-minus-sink difference per component, all samplings; a component whose interval excludes zero is one that distinguishes enriching from depleting streams. Variables defined in @tbl-variables; $L$ is the derived local response of the SCM."
+if (have_dec) {
+  mk <- function(df) df |> mutate(component = factor(component, levels = rev(comp_lv)), class = factor(class, levels = c("source", "no-evidence", "sink")))
+  pl <- function(df, ttl) ggplot(mk(df), aes(x = med, y = component, colour = class)) +
+    geom_vline(xintercept = 0, linetype = "dashed", colour = "grey45") +
+    geom_pointrange(aes(xmin = lo, xmax = hi), position = position_dodge(width = .6), size = .35) +
+    scale_colour_manual(values = c(source = "#3B9AD1", `no-evidence` = "grey60", sink = "#E8603C"), name = NULL) +
+    scale_y_discrete(labels = comp_lab) +
+    labs(x = expression("Contribution to the local modification (mg "*L^-1*")"), y = NULL, subtitle = ttl) +
+    theme_bw(base_size = 11) + theme(panel.grid.minor = element_blank(), legend.position = "top")
+  pa <- pl(DEC$summ_all, sprintf("All samplings (source n = %d, sink n = %d, no-evidence n = %d)", DEC$n_class["source"], DEC$n_class["sink"], DEC$n_class["no-evidence"]))
+  pb <- pl(DEC$summ_meas, "The 16 measured streams (summer)")
+  pc <- ggplot(DEC$diff_all |> mutate(component = factor(component, levels = rev(comp_lv))), aes(x = med, y = component)) +
+    geom_vline(xintercept = 0, linetype = "dashed", colour = "grey45") +
+    geom_pointrange(aes(xmin = lo, xmax = hi), size = .4) + scale_y_discrete(labels = comp_lab) +
+    labs(x = expression("Source minus sink (mg "*L^-1*")"), y = NULL, subtitle = "What distinguishes enriching from depleting samplings") +
+    theme_bw(base_size = 11) + theme(panel.grid.minor = element_blank())
+  fig_dec <- (pa + pb) / pc + plot_layout(heights = c(1.2, 1)) + plot_annotation(tag_levels = "a")
+  ggsave(here("results", "figures", "plan", "fig_decomp.png"), fig_dec, width = 11, height = 7, dpi = 300, bg = "white"); fig_dec
+} else cat("Decomposition not yet computed (notebook/R/pathway_decomposition.R).")
+```
+
+```{r fig-decomp-season}
+#| fig-height: 4.5
+#| fig-cap: "**The seasonal change of each pathway contribution, by the sign of the beaver seasonal modification B.** For every stream with both seasons, the summer-minus-winter change of each component of @eq-decomp, averaged over the streams whose B (derived from the SCM) is credibly positive, credibly negative, or no-evidence; point: posterior median, bars: 66% and 95% credible intervals. Right: the share of B carried by each component — the posterior slope of the component's seasonal change on B across streams (the shares sum to one)."
+if (have_dec) {
+  lvB <- c("B > 0 (summer > winter)", "no-evidence", "B < 0 (winter > summer)")
+  pa <- ggplot(DEC$seas |> mutate(component = factor(component, levels = rev(comp_lv)), classB = factor(classB, levels = lvB)),
+               aes(x = med, y = component, colour = classB)) +
+    geom_vline(xintercept = 0, linetype = "dashed", colour = "grey45") +
+    geom_pointrange(aes(xmin = lo, xmax = hi), position = position_dodge(width = .6), size = .35) +
+    scale_colour_manual(values = c(`B > 0 (summer > winter)` = "#8856A7", `no-evidence` = "grey60", `B < 0 (winter > summer)` = "#41AB5D"), name = NULL) +
+    scale_y_discrete(labels = comp_lab) +
+    labs(x = expression("Summer minus winter contribution (mg "*L^-1*")"), y = NULL) +
+    theme_bw(base_size = 11) + theme(panel.grid.minor = element_blank(), legend.position = "top")
+  pb <- ggplot(DEC$share |> mutate(component = factor(component, levels = rev(comp_lv))), aes(x = med, y = component)) +
+    geom_vline(xintercept = 0, linetype = "dashed", colour = "grey45") +
+    geom_pointrange(aes(xmin = lo, xmax = hi), size = .4) + scale_y_discrete(labels = comp_lab) +
+    labs(x = "Share of B carried by the component", y = NULL) + theme_bw(base_size = 11) + theme(panel.grid.minor = element_blank())
+  fig_ds <- pa + pb + plot_layout(widths = c(1.4, 1)) + plot_annotation(tag_levels = "a")
+  ggsave(here("results", "figures", "plan", "fig_decomp_season.png"), fig_ds, width = 11, height = 4.5, dpi = 300, bg = "white"); fig_ds
+}
+```
+
+```{r decomp-numbers}
+#| echo: false
+if (have_dec) {
+  vs <- DEC$vshare |> mutate(txt = sprintf("%s %.0f%% [%.0f–%.0f%%]", comp_lab[component], 100*med, 100*lo, 100*hi))
+  df <- DEC$diff_all |> mutate(txt = sprintf("%s %.2f [%.2f, %.2f]", comp_lab[component], med, lo, hi))
+  sh <- DEC$share |> mutate(txt = sprintf("%s %.0f%% [%.0f–%.0f%%]", comp_lab[component], 100*med, 100*lo, 100*hi))
+  top_v <- vs |> arrange(desc(med)) |> slice(1); top_d <- df |> filter(component != "unresolved") |> arrange(desc(abs(med))) |> slice(1)
+}
+```
+
+::: {.callout-important}
+## Key message of @fig-decomp and @fig-decomp-season
+
+`r if (have_dec) sprintf("- **Where the variation in the local modification comes from (share of variance across samplings):** %s.", paste(vs$txt, collapse = "; ")) else "- pending"`
+`r if (have_dec) sprintf("- **What distinguishes sources from sinks (source minus sink, mg L⁻¹):** %s.", paste(df$txt, collapse = "; ")) else ""`
+`r if (have_dec) sprintf("- **What carries the seasonal change B (share of B):** %s; %d samplings-pairs with both seasons in the SCM data (m6), of which %d have B credibly positive and %d credibly negative.", paste(sh$txt, collapse = "; "), DEC$n_pairs, DEC$n_classB["B > 0 (summer > winter)"], DEC$n_classB["B < 0 (winter > summer)"]) else ""`
+`r if (have_dec) { gd <- function(k) df$med[df$component == k]; gs <- function(k) 100*sh$med[sh$component == k]; sprintf("- **Implication: the sign is set first by what comes in, then by phytoplankton.** The component that separates sources from sinks is the inheritance shortfall (%.2f mg L⁻¹ more negative in sinks): the streams that deplete are the ones receiving the most DOC, where a 5%% shortfall on a large inherited concentration outweighs the biological additions. Phytoplankton is the only measured pathway that also separates them (%.2f mg L⁻¹, credible), and at the 16 measured streams its contribution is clearly positive in sources and negative in sinks (@fig-decomp b). Macrophytes, litter and residence time do not distinguish the two.", gd("inheritance"), gd("phytoplankton")) } else ""`
+`r if (have_dec) sprintf("- **Implication for the seasons.** The summer-minus-winter change B is carried by the producers (phytoplankton %.0f%%, macrophytes %.0f%%) and by the seasonal change of the inherited state itself (%.0f%%): streams whose B is positive gain phytoplankton and macrophyte contributions in summer, streams whose B is negative lose through the inheritance term (their upstream DOC rises more than the producers can add). The unresolved component carries none of the seasonal change **by construction** — the SCM has one stream effect for both seasons — so seasonal switching is forced onto the measured and imputed pathways; a season-specific stream effect would be needed to test whether unmeasured removal also changes with season.", gs("phytoplankton"), gs("macrophytes"), gs("inheritance")) else ""`
+`r if (have_dec) sprintf("- **What can and cannot be claimed.** With the producers imputed at all but 16 streams, the phytoplankton and macrophyte shares (%.0f%% and %.0f%% of the variance) are model-implied outside those 16; the inheritance result rests on all 158 streams and is solid. The decomposition supports Josh's framing — an inherited signal, locally modified, with enrichment where phytoplankton adds to a modest inflow and depletion where a rich inflow is not matched by production — but the removal side (mineralization, photodegradation) is unmeasured and appears here only as the 5%% shortfall, which is why it must be described as unresolved net removal rather than attributed.", 100*vs$med[vs$component == "phytoplankton"], 100*vs$med[vs$component == "macrophytes"]) else ""`
+:::
+
+# 11. Methods figure
 
 **Manuscript placement: main text, Figure 3 (both panels redrawn: panel a shows the 158 analysed streams, panel b shows $S$, $\Delta\text{DOC}_s$, $R_s$ and $F$ in place of the amplification-factor quantities).**
 
@@ -919,7 +1031,7 @@ ggsave(here("results", "figures", "plan", "fig_map_schematic.png"), fig3, width 
 fig3
 ```
 
-# 11. Figures for the manuscript
+# 12. Figures for the manuscript
 
 ```{r inventory}
 #| echo: false
@@ -934,6 +1046,7 @@ kable(tribble(
   "Figure S11", "Spatial coherence of $S$, $B$ and $T$", "Discussion support", "@fig-spatial", "**new**",
   "Figure S12", "$R_{summer}$ and $G$ against the number of dams and the water residence time", "Q4", "@fig-intensity", "**new**",
   "Figure S13", "Hold-out prediction of downstream DOC and $\\Delta\\text{DOC}$", "Methods support", "@fig-holdout", "**new**",
+  "Figure S18", "Pathway decomposition of the local modification: sources vs sinks, and the seasonal change", "Q5", "@fig-decomp, @fig-decomp-season", "**new**",
   "Figures S14–S17, Table S2", "Structural and causal sensitivity: alternative DAGs, unmeasured confounding, falsification tests, prior and spatial checks, causal knowledge analysis", "Q2 support", "@fig-dag-tests, @fig-dag-compare, @fig-sensemakr, @fig-negative-controls, @fig-prior-sens, @fig-spatial-resid, @tbl-cka", "**new**"))
 ```
 
@@ -949,7 +1062,7 @@ kable(tribble(
 7.  **Methods and Discussion.** One sentence each on validation: the SCM predicts downstream DOC at unseen streams (hold-out R², coverage), but not the sign of the local change; the "predictive basis" claim of the Discussion is reworded accordingly (section 8).
 :::
 
-# 12. Reproducibility
+# 13. Reproducibility
 
 ```{r session}
 #| echo: false

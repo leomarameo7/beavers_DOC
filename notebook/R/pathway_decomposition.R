@@ -5,6 +5,9 @@
 suppressMessages({library(brms); library(dplyr); library(tidyr); library(here); library(posterior)})
 fit <- readRDS(here("results", "models_fit", "b1_downstream.rds"))
 dat <- fit$data
+# season is not in the model formula, so take it from m6 (same rows, same order)
+m6 <- read.csv(here("data/processed/m6.csv")); stopifnot(nrow(m6) == nrow(dat), all(as.character(m6$site) == as.character(dat$site)))
+dat$season <- m6$season; dat$beaver_territory <- m6$beaver_territory
 set.seed(7); nd <- 1000; keep <- sort(sample(ndraws(fit), nd))
 dr <- as_draws_df(fit) |> subset_draws(draw = keep)
 g <- function(pat) as.matrix(dr[, grep(pat, names(dr), value = TRUE), drop = FALSE])
