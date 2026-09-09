@@ -208,31 +208,44 @@ pq2
 
 **Parameterization.** The structural causal model is reported with **downstream DOC as the outcome**: upstream DOC enters as a latent true concentration (its reading carries a 0.2 mg L$^{-1}$ instrument error) with a freely estimated inheritance slope, and $\Delta\text{DOC}_s$ is computed from the posterior afterwards as $\text{DOC}_{down,s} - \text{DOC}_{up,s}$, so upstream DOC is never both a predictor and part of the outcome. This reading replaces the older wording of Q2, which described the upstream-DOC path as upstream DOC *causing greater retention*; downstream DOC instead **inherits** the upstream state (slope `r sprintf("%.2f", gme(tO,"bsp_DOCout_miDOC_input")$mean)` mg per mg), and the hydrological/biological pathways are local modifications around that inherited background, not retention of it. Two causal links complete the picture: upstream DOC also feeds the primary producers directly, tested by adding upstream DOC → macrophytes and upstream DOC → phytoplankton to the DAG (supported for macrophytes, not for phytoplankton, above). This model (`downstream_DOC_me`, fit in `notebook/fitting/me_refits.R`, compared against the ΔDOC parameterization in `notebook/correspondence/scm_outcome_choice.qmd`) is the $\Delta$DOC model in a different parameterization: every mediator effect agrees to the second decimal, and the upstream-DOC path is re-read as an inheritance slope of **`r sprintf("%.2f", gme(tO,"bsp_DOCout_miDOC_input")$mean)` [`r sprintf("%.2f", gme(tO,"bsp_DOCout_miDOC_input")$lo)`, `r sprintf("%.2f", gme(tO,"bsp_DOCout_miDOC_input")$hi)`]** — downstream DOC inherits `r sprintf("%.0f", 100*gme(tO,"bsp_DOCout_miDOC_input")$mean)`% of the upstream concentration, mg per mg. Figure 1b is redrawn accordingly (@fig-q2); the Methods gain one sentence stating the parameterization, the inheritance slope, and the two added producer links.
 
-**Robustness check: does fixing the inheritance slope at 1 change anything else?** `b1_downstream` estimates the slope freely (prior Normal(1, 0.3), posterior 0.95). A second fit, `b1_downstream_fixed` (`notebook/scm_downstream_fixed_fit.R`), pins it at 1 (prior Normal(1, 0.001), the standard way to fix an `mi()` coefficient in brms) and is otherwise identical.
+**Robustness check: does fixing the inheritance slope at 1 change anything else?** `downstream_DOC_me` estimates the slope freely (prior Normal(1, 0.3), posterior `r sprintf("%.2f", gme(tO,"bsp_DOCout_miDOC_input")$mean)`). A second fit, `downstream_DOC_me_fixed` (`notebook/fitting/downstream_DOC_me_fixed_fit.R`), pins it at 1 (prior Normal(1, 0.001), the standard way to fix an `mi()` coefficient in brms) and is otherwise identical, including the two upstream → producer links and the upstream measurement error.
 
 ```{r robustness-inheritance}
 #| echo: false
-fx_path <- here("results", "models_fit", "b1_downstream_fixed.rds")
+fx_path <- here("results", "models_fit", "downstream_DOC_me_fixed.rds")
 if (file.exists(fx_path)) {
   library(brms)
-  d_free <- as_draws_df(readRDS(here("results", "models_fit", "b1_downstream.rds")))
-  d_fix  <- as_draws_df(readRDS(fx_path))
+  fit_free <- readRDS(here("results", "models_fit", "downstream_DOC_me.rds")); fit_fix <- readRDS(fx_path)
+  d_free <- as_draws_df(fit_free); d_fix  <- as_draws_df(fit_fix)
   qf2 <- function(x) sprintf("%.3f [%.3f, %.3f]", mean(x), quantile(x, .025), quantile(x, .975))
   rob <- tribble(
-    ~Parameter, ~`Free slope (b1_downstream)`, ~`Fixed at 1 (b1_downstream_fixed)`,
+    ~Parameter, ~`Free slope (downstream_DOC_me)`, ~`Fixed at 1 (downstream_DOC_me_fixed)`,
     "Inheritance slope",  qf2(d_free$bsp_DOCout_miDOC_input),      qf2(d_fix$bsp_DOCout_miDOC_input),
     "Macrophytes",        qf2(d_free$bsp_DOCout_mimacrophy_abun_z), qf2(d_fix$bsp_DOCout_mimacrophy_abun_z),
     "Phytoplankton",      qf2(d_free$bsp_DOCout_miplankton_abun_z), qf2(d_fix$bsp_DOCout_miplankton_abun_z),
     "Soil litter cover",  qf2(d_free$bsp_DOCout_micover_litter_z),  qf2(d_fix$bsp_DOCout_micover_litter_z),
     "Water residence time", qf2(d_free$bsp_DOCout_miwater_res_time_z), qf2(d_fix$bsp_DOCout_miwater_res_time_z),
+    "Upstream DOC → macrophytes", qf2(d_free$bsp_macrophyabunz_miDOC_input), qf2(d_fix$bsp_macrophyabunz_miDOC_input),
+    "Upstream DOC → phytoplankton", qf2(d_free$bsp_planktonabunz_miDOC_input), qf2(d_fix$bsp_planktonabunz_miDOC_input),
     "Intercept",          qf2(d_free$b_DOCout_Intercept),           qf2(d_fix$b_DOCout_Intercept))
   kable(rob, caption = "Posterior mean [95% CrI]. Fixing the inheritance slope at 1 is a robustness check, not a preferred model.")
-} else {
-  cat("Fit in progress (notebook/scm_downstream_fixed_fit.R) -- table will appear once results/models_fit/b1_downstream_fixed.rds exists.")
+  # largest shift among the mediator/producer-link paths, free vs fixed
+  shift_pars <- c("bsp_DOCout_mimacrophy_abun_z", "bsp_DOCout_miplankton_abun_z", "bsp_DOCout_micover_litter_z",
+                   "bsp_DOCout_miwater_res_time_z", "bsp_macrophyabunz_miDOC_input", "bsp_planktonabunz_miDOC_input")
+  shift_lab <- c(bsp_DOCout_mimacrophy_abun_z = "macrophytes", bsp_DOCout_miplankton_abun_z = "phytoplankton",
+                 bsp_DOCout_micover_litter_z = "soil litter cover", bsp_DOCout_miwater_res_time_z = "water residence time",
+                 bsp_macrophyabunz_miDOC_input = "upstream DOC → macrophytes", bsp_planktonabunz_miDOC_input = "upstream DOC → phytoplankton")
+  shifts <- sapply(shift_pars, function(p) abs(mean(d_free[[p]]) - mean(d_fix[[p]])))
+  worst <- names(which.max(shifts))
+  rob_msg <- sprintf("Both fits converge cleanly (max R-hat %.2f and %.2f). Every mediator effect and both upstream → producer links agree within their credible intervals whether the inheritance slope is estimated freely (%.2f) or pinned at 1 — the largest shift is %s, %.3f to %.3f. Only the intercept moves (%.2f to %.2f), which is expected: fixing the slope at exactly 1 forces the intercept to absorb the small remaining offset.",
+    max(rhat(fit_free), na.rm = TRUE), max(rhat(fit_fix), na.rm = TRUE), mean(d_free$bsp_DOCout_miDOC_input),
+    shift_lab[worst], mean(d_free[[worst]]), mean(d_fix[[worst]]), mean(d_free$b_DOCout_Intercept), mean(d_fix$b_DOCout_Intercept))
+} else { rob_msg <- "pending"
+  cat("Fit in progress (notebook/fitting/downstream_DOC_me_fixed_fit.R) -- table will appear once results/models_fit/downstream_DOC_me_fixed.rds exists.")
 }
 ```
 
-**Result: fixing the slope changes nothing else.** Both fits converge cleanly (max R-hat 1.00). Every mediator effect (macrophytes, phytoplankton, litter, water residence time) agrees within its credible interval whether the inheritance slope is estimated freely (0.945) or pinned at 1 — the largest shift is Phytoplankton, 0.141 to 0.130, well inside both intervals. Only the intercept moves (0.15 to 0.02), which is expected: fixing the slope at exactly 1 forces the intercept to absorb the small remaining offset. The mediator story of Figure 1b does not depend on which value the inheritance slope takes.
+**Result: fixing the slope changes nothing else.** `r rob_msg` The mediator story of Figure 1b does not depend on which value the inheritance slope takes.
 
 # 5. Q3 — Magnitude and seasonal modification: $R_s$ and $G$
 
@@ -615,7 +628,7 @@ The SCM of Q2 rests on causal assumptions that the data cannot fully verify: the
 #| echo: false
 library(brms); library(dagitty)
 m6 <- read.csv(here("data", "processed", "m6.csv")) |> mutate(across(c(season, site), as.factor))
-sens_path <- here("results", "dag_sensitivity.rds"); have_sens <- file.exists(sens_path)
+sens_path <- here("results", "dag_sensitivity_me.rds"); have_sens <- file.exists(sens_path)
 if (have_sens) SENS <- readRDS(sens_path)
 med_names <- c(bsp_DOCout_miDOC_input = "inheritance slope", bsp_DOCout_mimacrophy_abun_z = "macrophytes",
                bsp_DOCout_miplankton_abun_z = "phytoplankton", bsp_DOCout_micover_litter_z = "soil litter cover",
@@ -624,10 +637,10 @@ med_names <- c(bsp_DOCout_miDOC_input = "inheritance slope", bsp_DOCout_mimacrop
 
 ## A. Alternative DAGs
 
-Four structures, all keeping the mediator core of Figure 1b:
+Four structures, all keeping the mediator core of Figure 1b, which is now DAG 0 itself:
 
--   **DAG 0** — the manuscript's model.
--   **DAG 1** — upstream DOC also drives the primary producers (upstream DOC → phytoplankton, macrophytes): a DOC-rich inflow could feed or shade the producers.
+-   **DAG 0** — the manuscript's model (@fig-q2): upstream DOC → macrophytes and → phytoplankton are included, alongside the upstream measurement error.
+-   **DAG 1** — the two upstream → producer links **removed**: the structure used before this revision. Does keeping them change the mediator story, or only the picture of what drives the producers?
 -   **DAG 2** — solar radiation acts directly on downstream DOC (photodegradation), not only through the producers.
 -   **DAG 3** — season is a common cause of the producers and of downstream DOC, left unblocked in DAG 0.
 
@@ -638,16 +651,16 @@ Each DAG implies conditional independencies that can be checked on the data with
 #| fig-cap: "**Conditional independencies implied by DAG 0, tested on the data.** Each row is one independence the manuscript's DAG implies (X ⊥ Y | Z); the point is the partial correlation on the rows complete for the variables involved, with its 95% interval and the number of samplings used. Filled points: the interval excludes zero (the independence fails). The right-hand label says which alternative DAG(s) would drop that independence, i.e. which alternative a failure supports. Tests with fewer than 10 complete rows are not run."
 dag_txt <- list(
   dag0 = "dag { n_dams -> wrt; dam_height -> wrt; slope -> wrt; solar -> plankton; solar -> macro; solar -> litter;
-           wrt -> plankton; wrt -> macro; wrt -> DOC_out; plankton -> DOC_out; macro -> DOC_out; litter -> DOC_out; DOC_in -> DOC_out }",
-  dag1 = "dag { n_dams -> wrt; dam_height -> wrt; slope -> wrt; solar -> plankton; solar -> macro; solar -> litter;
            wrt -> plankton; wrt -> macro; wrt -> DOC_out; plankton -> DOC_out; macro -> DOC_out; litter -> DOC_out; DOC_in -> DOC_out;
            DOC_in -> plankton; DOC_in -> macro }",
+  dag1 = "dag { n_dams -> wrt; dam_height -> wrt; slope -> wrt; solar -> plankton; solar -> macro; solar -> litter;
+           wrt -> plankton; wrt -> macro; wrt -> DOC_out; plankton -> DOC_out; macro -> DOC_out; litter -> DOC_out; DOC_in -> DOC_out }",
   dag2 = "dag { n_dams -> wrt; dam_height -> wrt; slope -> wrt; solar -> plankton; solar -> macro; solar -> litter;
            wrt -> plankton; wrt -> macro; wrt -> DOC_out; plankton -> DOC_out; macro -> DOC_out; litter -> DOC_out; DOC_in -> DOC_out;
-           solar -> DOC_out }",
+           DOC_in -> plankton; DOC_in -> macro; solar -> DOC_out }",
   dag3 = "dag { n_dams -> wrt; dam_height -> wrt; slope -> wrt; solar -> plankton; solar -> macro; solar -> litter;
            wrt -> plankton; wrt -> macro; wrt -> DOC_out; plankton -> DOC_out; macro -> DOC_out; litter -> DOC_out; DOC_in -> DOC_out;
-           season -> plankton; season -> macro; season -> litter; season -> DOC_out }")
+           DOC_in -> plankton; DOC_in -> macro; season -> plankton; season -> macro; season -> litter; season -> DOC_out }")
 gs <- lapply(dag_txt, dagitty)
 dd <- m6 |> transmute(n_dams = n_dams_z, dam_height = dam_height_z, slope = slope_z, solar = solar_z,
                       plankton = plankton_abun_z, macro = macrophy_abun_z, litter = cover_litter_z, wrt = water_res_time_z,
@@ -711,19 +724,19 @@ a_msg <- sprintf("- **Conditional-independence tests** (@fig-dag-tests): %d of t
   if (nrow(fx)) paste(sprintf("%s (r = %.2f [%.2f, %.2f], n = %d; supports %s)", strip(fx$test), fx$r, fx$lo, fx$hi, fx$n, fx$dropped_by), collapse = "; ") else "none",
   paste(head(strip(fl$test[fl$dropped_by == "none"]), 3), collapse = "; "))
 if (have_sens) {
+  np_tO <- function(par) { g <- gme(tO, par); sprintf("%.2f [%.2f, %.2f], P(> 0) = %.2f", g$mean, g$lo, g$hi, g$p_pos) }
+  sup_tO <- function(par) { p <- gme(tO, par)$p_pos; if (p > 0.90) "supported (P > 0.90)" else if (p < 0.10) "supported, negative (P < 0.10)" else "no-evidence" }
   np <- function(nm, par) { x <- SENS$models[[nm]]$extra[, par]; sprintf("%.2f [%.2f, %.2f], P(> 0) = %.2f", median(x), quantile(x, .025), quantile(x, .975), mean(x > 0)) }
-  e1 <- colnames(SENS$models$dag1$extra); e2 <- colnames(SENS$models$dag2$extra)
+  pp <- function(nm, par) mean(SENS$models[[nm]]$extra[, par] > 0)
+  e2 <- colnames(SENS$models$dag2$extra); p_sol <- e2[grepl("DOCout.*misolar", e2)][1]
+  sup <- function(p) if (p > 0.90) "supported (P > 0.90)" else if (p < 0.10) "supported, negative (P < 0.10)" else "no-evidence"
   rh <- sapply(SENS$models[c("dag0","dag1","dag2","dag3")], `[[`, "rhat")
   cm <- as.data.frame(SENS$loo_compare); if (!"model" %in% names(cm)) cm$model <- rownames(cm)
   best <- gsub("dag", "DAG ", cm$model[1]); d0 <- cm[cm$model == "dag0", ]
-  # data-driven wording for the added paths
-  pp <- function(nm, par) mean(SENS$models[[nm]]$extra[, par] > 0)
-  e1 <- colnames(SENS$models$dag1$extra); e2 <- colnames(SENS$models$dag2$extra)
-  p_pla <- e1[grepl("planktonabunz.*miDOC_input", e1)][1]; p_mac <- e1[grepl("macrophyabunz.*miDOC_input", e1)][1]; p_sol <- e2[grepl("DOCout.*misolar", e2)][1]
-  sup <- function(p) if (p > 0.90) "supported (P > 0.90)" else if (p < 0.10) "supported, negative (P < 0.10)" else "no-evidence"
-  dag1_msg <- sprintf("- **DAG 1 (upstream DOC → producers):** the added paths are %s (phytoplankton) and %s (macrophytes) per mg L⁻¹ of upstream DOC — %s and %s. A DOC-rich inflow goes with more macrophytes (consistent with the failed independence in @fig-dag-tests), not with more phytoplankton. The mediator effects on downstream DOC under DAG 1 are nevertheless indistinguishable from DAG 0 (@fig-dag-compare b): the added arrow changes the picture of what drives the producers, not what the producers do to DOC.",
-                      np("dag1", p_pla), np("dag1", p_mac), sup(pp("dag1", p_pla)), sup(pp("dag1", p_mac)))
-  dag2_msg <- sprintf("- **DAG 2 (direct solar → DOC):** the direct path is %s — %s; it is the nominally best structure by LOO. Under DAG 2 the producer effects shrink somewhat (part of the solar effect no longer has to travel through them) but keep their sign.",
+  dag1_msg <- sprintf("- **DAG 1 (upstream → producer links removed):** in DAG 0 those links are %s (macrophytes) and %s (phytoplankton) per mg L⁻¹ of upstream DOC — %s and %s. Removing them (DAG 1) leaves the mediator effects on downstream DOC indistinguishable from DAG 0 (@fig-dag-compare b), and the LOO fit is no better without them (@fig-dag-compare a): the links matter for what predicts the producers, not for what the producers do to downstream DOC.",
+                      np_tO("bsp_macrophyabunz_miDOC_input"), np_tO("bsp_planktonabunz_miDOC_input"),
+                      sup_tO("bsp_macrophyabunz_miDOC_input"), sup_tO("bsp_planktonabunz_miDOC_input"))
+  dag2_msg <- sprintf("- **DAG 2 (direct solar → DOC):** on top of DAG 0, the direct path is %s — %s. Under DAG 2 the producer effects shrink somewhat (part of the solar effect no longer has to travel through them) but keep their sign.",
                       np("dag2", p_sol), sup(pp("dag2", p_sol)))
   loo_msg <- sprintf("- **No alternative structure fits meaningfully better.** By PSIS-LOO the nominally best structure is %s; the manuscript's DAG 0 sits %.1f ELPD below it (SE %.1f), a difference of about %.1f standard errors and below the usual threshold of 4 ELPD for a meaningful preference. Max R-hat across the four fits: %.3f.",
                      best, -d0$elpd_diff, d0$se_diff, abs(d0$elpd_diff / d0$se_diff), max(rh))
@@ -738,8 +751,8 @@ if (have_sens) {
 `r if (have_sens) dag2_msg else ""`
 `r if (have_sens) "- **DAG 3 (season as confounder):** because the producers were measured in summer only, the season term in the producer equations is informed by priors and imputation alone; the DAG-3 mediator effects should be read as 'unchanged under a prior-driven adjustment', not as a data-based test." else ""`
 `r a_msg`
--   **Tests involving the producers rest on 16 rows** and are wide; the DAG-1 support above is real but weak, and it is the DAG-1 *fit* (@fig-dag-compare) that says whether the added path changes anything that matters.
--   **What this settles:** the mediator effects are not an artefact of the particular arrows drawn. **What it cannot settle:** whether the producer paths are right at all — that rests on 16 summer samplings and on the priors, which B and D address.
+-   **Tests involving the producers rest on 16 rows** and are wide; the DAG-1 comparison above is real but weak, and it is the DAG-1 *fit* (@fig-dag-compare) that says whether removing the links changes anything that matters.
+-   **What this settles:** the mediator effects are not an artefact of the particular arrows drawn, whether or not the two upstream → producer links are included. **What it cannot settle:** whether the producer paths, or the two new links themselves, are right at all — that rests on 16 summer samplings and on the priors, which B and D address.
 :::
 
 ## B. Unmeasured confounding of the mediator → DOC paths
@@ -765,7 +778,7 @@ draw_sm()
 ::: {.callout-important}
 ## Conclusions — B. Unmeasured confounding
 
--   **The raw 16-stream relationship is not the SCM's.** In the linear outcome equation the estimates are `r sprintf("%.2f", rv["est","macrophy_abun_z"])` (macrophytes), `r sprintf("%.2f", rv["est","plankton_abun_z"])` (phytoplankton) and `r sprintf("%.2f", rv["est","cover_litter_z"])` (litter), against +0.08, +0.14 and +0.07 in the SCM. The SCM's positive producer effects are therefore carried substantially by the informative priors (Normal(0.2, 0.075) on each producer path) and by the hierarchical structure, not by these 16 samplings alone. This is the single most important sensitivity result of the section, and it is confirmed by the prior-sensitivity fits in D.
+-   **The raw 16-stream relationship is not the SCM's.** In the linear outcome equation the estimates are `r sprintf("%.2f", rv["est","macrophy_abun_z"])` (macrophytes), `r sprintf("%.2f", rv["est","plankton_abun_z"])` (phytoplankton) and `r sprintf("%.2f", rv["est","cover_litter_z"])` (litter), against `r sprintf("+%.2f", gme(tO,"bsp_DOCout_mimacrophy_abun_z")$mean)`, `r sprintf("+%.2f", gme(tO,"bsp_DOCout_miplankton_abun_z")$mean)` and `r sprintf("+%.2f", gme(tO,"bsp_DOCout_micover_litter_z")$mean)` in the SCM. The SCM's positive producer effects are therefore carried substantially by the informative priors (Normal(0.2, 0.075) on each producer path) and by the hierarchical structure, not by these 16 samplings alone. This is the single most important sensitivity result of the section, and it is confirmed by the prior-sensitivity fits in D.
 -   **Robustness values** (strength a confounder needs to erase the raw effect): macrophytes `r sprintf("%.2f", rv["rv","macrophy_abun_z"])`, litter `r sprintf("%.2f", rv["rv","cover_litter_z"])`, phytoplankton `r sprintf("%.2f", rv["rv","plankton_abun_z"])`; solar radiation, the strongest measured covariate, explains only `r sprintf("%.0f%%", 100 * rv["r2_solar","macrophy_abun_z"])`–`r sprintf("%.0f%%", 100 * max(rv["r2_solar",]))` of the residual variance of any producer, so a confounder several times stronger than solar would be needed to remove the macrophyte or litter relationship, and almost none to remove the phytoplankton one.
 -   **Water residence time cannot be assessed** this way: it was never measured at a producer stream.
 -   **What the manuscript should say:** the producer → DOC paths are consistent with the literature-based priors and are not overturned by plausible confounding, but with 16 summer samplings they are prior-informed estimates rather than data-driven ones; the Methods should state the prior for each path and D should be cited.
@@ -828,13 +841,13 @@ if (have_sens) {
 
 ```{r fig-spatial-resid}
 #| fig-height: 2.8
-#| fig-cap: "**Spatial autocorrelation of the residuals of downstream DOC.** For each posterior draw, the Spearman correlation between each sampling's residual (observed minus expected downstream DOC) and the mean residual of its 8 nearest neighbouring samplings, using the stream coordinates; point: median, bars: 66% and 95% credible intervals; dashed line: no spatial autocorrelation."
-P2 <- readRDS(here("results", "scm_downstream_pred.rds")); obs2 <- P2$obs
+#| fig-cap: "**Spatial autocorrelation of the residuals of downstream DOC (model downstream_DOC_me).** For each posterior draw, the Spearman correlation between each sampling's residual (observed minus expected downstream DOC) and the mean residual of its 8 nearest neighbouring samplings, using the stream coordinates; point: median, bars: 66% and 95% credible intervals; dashed line: no spatial autocorrelation."
+PME <- readRDS(here("results", "me_predictions.rds")); obs2 <- PME$obsO
 lon <- m6$x_upstream[obs2]; lat <- m6$y_upstream[obs2]; okc <- !is.na(lon)
 kmx2 <- (lon - mean(lon, na.rm = TRUE)) * 111.32 * cos(mean(lat, na.rm = TRUE) * pi / 180); kmy2 <- (lat - mean(lat, na.rm = TRUE)) * 110.57
 D2 <- as.matrix(dist(cbind(kmx2[okc], kmy2[okc]))); diag(D2) <- Inf
 nb2 <- t(apply(D2, 1, function(r) order(r)[1:8]))
-resid <- sweep(-P2$ep_sub[, obs2][, okc], 2, -P2$y[okc])
+resid <- sweep(-PME$O$ep_sub[, obs2][, okc], 2, -m6$DOC_out[obs2][okc])
 rho_res <- apply(resid, 1, function(r) cor(r, rowMeans(matrix(r[as.vector(nb2)], nrow = length(r))), method = "spearman"))
 ggplot(tibble(rho = rho_res), aes(x = rho, y = 1)) +
   geom_vline(xintercept = 0, linetype = "dashed", colour = "grey45") +
@@ -874,8 +887,8 @@ kable(tribble(
   ~`Question`, ~`Answer for the beaver–DOC system`, ~`Where addressed`,
   "1. What causal quantity is sought?", "The local modification that beaver-engineering adds to downstream DOC, decomposed into its hydrological and biological pathways; and its size relative to the inherited seasonal contrast.", "Q2 (SCM), Q3 ($R_s$, $G$)",
   "2. What is the causal system and its boundary?", "The beaver-engineered stream from the first to the last dam; inputs are upstream DOC, solar radiation, channel gradient, dams; the floodplain and the catchment are outside, represented by upstream DOC and $S$.", "Figure 3b, DAG (Figure 1b)",
-  "3. What is assumed about the structure (arrows present)?", "Dams → residence time → producers → DOC; solar → producers → DOC; litter → DOC; upstream DOC inherited with slope near 1.", "Table S1 (13 hypotheses), section 2",
-  "4. What is assumed absent (arrows omitted, no confounding)?", "No direct solar → DOC, no upstream DOC → producers, no season confounding, no unmeasured common cause of producers and DOC.", "Section 9 A–C: none of the omitted arrows is supported; placebo and implied nulls in C",
+  "3. What is assumed about the structure (arrows present)?", "Dams → residence time → producers → DOC; solar → producers → DOC; litter → DOC; upstream DOC inherited with slope near 1; upstream DOC → macrophytes (and, more weakly, → phytoplankton).", "Table S1 (13 hypotheses), section 2",
+  "4. What is assumed absent (arrows omitted, no confounding)?", "No direct solar → DOC, no season confounding, no unmeasured common cause of producers and DOC.", "Section 9 A–C: none of the omitted arrows is supported; placebo and implied nulls in C",
   "5. How are the effects identified?", "By the DAG's adjustment sets, with measurement error on every concentration and imputation of missing predictors; the inheritance slope is estimated, not assumed.", "Methods; section 4 (robustness to slope = 1)",
   "6. Is the data adequate for the structure?", "158 streams for the inheritance and the direction; 16 summer streams for the producers, with no water residence time at those streams. The producer paths are the weak point.", "Section 9 B and D: prior-informed estimates",
   "7. How sensitive are the conclusions?", "Inheritance, the null average and the heterogeneity are robust to structure, priors, outcome parameterization and space; the sign of each producer path follows the prior scale.", "Sections 4, 8, 9",
