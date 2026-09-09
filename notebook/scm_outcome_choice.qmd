@@ -366,7 +366,7 @@ edges <- bind_rows(
   ed("pla", "out", "bsp_DOCout_miplankton_abun_z", ly = 0.30), ed("lit", "out", "bsp_DOCout_micover_litter_z", lx = -0.2, ly = 0.32),
   ed("up", "out", "bsp_DOCout_miDOC_input", lx = 0.45, ly = 0),
   ed("up", "mac", "bsp_macrophyabunz_miDOC_input", curv = 0.25, lx = 0.35, ly = 0.35, new = TRUE),
-  ed("up", "pla", "bsp_planktonabunz_miDOC_input", curv = -0.35, lx = 0.55, ly = -0.3, new = TRUE))
+  ed("up", "pla", "bsp_planktonabunz_miDOC_input", curv = -0.35, lx = -0.9, ly = -0.9, new = TRUE))
 edges$label[!edges$solid & edges$class != "new"] <- ""
 a <- merge(edges, nodes, by.x = "from", by.y = "row.names"); a <- merge(a, nodes, by.x = "to", by.y = "row.names", suffixes = c("", "2"))
 dx <- a$x2 - a$x; dy <- a$y2 - a$y; L <- sqrt(dx^2 + dy^2)
