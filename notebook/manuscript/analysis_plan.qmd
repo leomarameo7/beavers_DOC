@@ -144,63 +144,54 @@ sw <- d |> summarise(n = n(), winter_enrich = mean(dw > 0), summer_enrich = mean
 
 # 4. Q2 — Drivers
 
-**Manuscript placement: main text, Figure 1b (redrawn: the outcome is downstream DOC).**
+**Manuscript placement: main text, Figure 1b (redrawn: the outcome is downstream DOC, now with the two added causal links from upstream DOC to the primary producers, and with upstream DOC's own measurement error).**
 
-The chunk below draws the structural causal model as it will appear in the manuscript. The layout is fixed by hand (node positions and edge routing); the numbers are the posterior mean effects of model `b1_downstream`, and each edge's line type encodes the posterior probability of its direction.
+The chunk below draws the structural causal model as it will appear in the manuscript, using the model comparison in `notebook/correspondence/scm_outcome_choice.qmd`. The layout is fixed by hand (node positions and edge routing); the numbers are the posterior mean effects of model `downstream_DOC_me` (`notebook/fitting/me_refits.R`) — the same downstream-DOC SCM as before, refit with a latent (measurement-error-corrected) upstream DOC and two additional links, upstream DOC → macrophytes and upstream DOC → phytoplankton, testing whether the incoming DOC also shapes the local response indirectly through the producers. Each edge's line type encodes the posterior probability of its direction; the two new links are drawn in dark red.
+
+```{r dag-draw-fn}
+#| echo: false
+ME <- readRDS(here("results", "me_refits.rds")); tO <- ME$down$tab
+gme <- function(tb, par) tb[tb$par == par, ]
+draw_dag <- function(tb, outcome, pref, up, up_lab, title) {
+  nodes <- data.frame(name = c("Max dam\nheight", "Number of\ndams", "Channel\ngradient", "Water\nresidence time", "Solar\nradiation", "Macrophytes", "Phytoplankton", "Soil litter\ncover", up_lab, outcome),
+    x = c(0.9, 0.9, 2.9, 3.2, 4.6, 6.6, 6.2, 6.2, 8.8, 8.8), y = c(6.6, 4.6, 2.0, 5.0, 9.3, 7.2, 5.0, 2.9, 8.8, 5.4))
+  rownames(nodes) <- c("dh", "nd", "gr", "wrt", "sol", "mac", "pla", "lit", "up", "out")
+  ed <- function(from, to, par, curv = 0, lx = 0, ly = 0.3, new = FALSE) { g <- gme(tb, par)
+    tibble(from = from, to = to, label = sprintf("%.2f", g$mean), class = if (new) "new" else if (g$p_pos > 0.9) "pos" else if (g$p_pos < 0.1) "neg" else "none",
+           solid = g$p_pos > 0.9 | g$p_pos < 0.1, curv = curv, lx = lx, ly = ly) }
+  edges <- bind_rows(
+    ed("dh", "wrt", "bsp_waterrestimez_midam_height_z"), ed("nd", "wrt", "b_waterrestimez_n_dams_z", lx = -0.1, ly = 0.35),
+    ed("gr", "wrt", "b_waterrestimez_slope_z", lx = 0.45, ly = 0), ed("wrt", "pla", "bsp_planktonabunz_miwater_res_time_z"),
+    ed("wrt", "mac", "bsp_macrophyabunz_miwater_res_time_z"), ed("wrt", "out", paste0("bsp_", pref, "_miwater_res_time_z"), curv = 0.18),
+    ed("sol", "mac", "bsp_macrophyabunz_misolar_z", curv = -0.15, lx = 0.55, ly = 0.55), ed("sol", "pla", "bsp_planktonabunz_misolar_z", curv = 0.30, lx = -0.85, ly = 0.1),
+    ed("sol", "lit", "bsp_coverlitterz_misolar_z", curv = 0.30), ed("mac", "out", paste0("bsp_", pref, "_mimacrophy_abun_z"), ly = 0.32),
+    ed("pla", "out", paste0("bsp_", pref, "_miplankton_abun_z"), ly = 0.30), ed("lit", "out", paste0("bsp_", pref, "_micover_litter_z"), lx = -0.2, ly = 0.32),
+    ed("up", "out", paste0("bsp_", pref, "_mi", up), lx = 0.45, ly = 0),
+    ed("up", "mac", paste0("bsp_macrophyabunz_mi", up), curv = 0.25, lx = 0.35, ly = 0.35, new = TRUE),
+    ed("up", "pla", paste0("bsp_planktonabunz_mi", up), curv = -0.35, lx = -0.9, ly = -0.9, new = TRUE))
+  edges$label[!edges$solid & edges$class != "new"] <- ""
+  a <- merge(edges, nodes, by.x = "from", by.y = "row.names"); a <- merge(a, nodes, by.x = "to", by.y = "row.names", suffixes = c("", "2"))
+  dx <- a$x2 - a$x; dy <- a$y2 - a$y; L <- sqrt(dx^2 + dy^2)
+  a$x0 <- a$x + dx / L * 0.85; a$y0 <- a$y + dy / L * 0.55; a$x1 <- a$x2 - dx / L * 0.90; a$y1 <- a$y2 - dy / L * 0.55
+  a$xm <- (a$x0 + a$x1) / 2 + a$lx; a$ym <- (a$y0 + a$y1) / 2 + a$ly
+  pal <- c(pos = "#3B9AD1", neg = "#E8603C", none = "grey55", new = "#8B0000"); arr <- arrow(length = unit(0.16, "cm"), type = "closed")
+  pd <- ggplot()
+  for (i in seq_len(nrow(a))) { lt <- if (a$class[i] == "new") (if (a$solid[i]) "solid" else "dotted") else if (a$solid[i]) "solid" else "dashed"
+    pd <- pd + if (a$curv[i] == 0) geom_segment(data = a[i, ], aes(x = x0, y = y0, xend = x1, yend = y1), colour = pal[a$class[i]], linetype = lt, linewidth = 0.7, arrow = arr) else
+      geom_curve(data = a[i, ], aes(x = x0, y = y0, xend = x1, yend = y1), curvature = a$curv[i], colour = pal[a$class[i]], linetype = lt, linewidth = 0.7, arrow = arr) }
+  pd + geom_text(data = subset(a, label != ""), aes(x = xm, y = ym, label = label, colour = class), size = 4.2, show.legend = FALSE) +
+    scale_colour_manual(values = c(pos = "black", neg = "black", none = "black", new = "#8B0000")) +
+    geom_label(data = nodes[rownames(nodes) != "out", ], aes(x = x, y = y, label = name), size = 4.1, label.padding = unit(0.3, "lines"), label.r = unit(0.05, "lines")) +
+    geom_label(data = nodes["out", ], aes(x = x, y = y, label = name), size = 4.4, fontface = "bold", label.padding = unit(0.45, "lines"), label.r = unit(0.9, "lines"), linewidth = 0.9, colour = "#C0208E") +
+    annotate("text", x = 0.15, y = 9.8, label = title, size = 6.5, hjust = 0) +
+    xlim(0, 10) + ylim(1.2, 10) + theme_void()
+}
+```
 
 ```{r fig-q2}
 #| fig-height: 5.6
-#| fig-cap: "**Drivers of downstream DOC.** Structural causal model with downstream DOC as the outcome (model `b1_downstream`) and the posterior mean standardized effects; the upstream-DOC path is the inheritance slope (0.95, mg per mg). Skyblue: positive and coral: negative effects with posterior probability above 0.90; dashed grey: no-evidence."
-# ---- node positions (x, y on a 0-10 canvas) --------------------------------
-nodes <- data.frame(
-  name = c("Max dam\nheight", "Number of\ndams", "Channel\ngradient", "Water\nresidence time",
-           "Solar\nradiation", "Macrophytes", "Phytoplankton", "Soil litter\ncover",
-           "Upstream\nDOC", "Downstream\nDOC"),
-  x = c(0.9, 0.9, 2.9, 3.2, 4.6, 6.6, 6.2, 6.2, 8.8, 8.8),
-  y = c(6.6, 4.6, 2.0, 5.0, 9.3, 7.2, 5.0, 2.9, 8.8, 5.4))
-rownames(nodes) <- c("dh", "nd", "gr", "wrt", "sol", "mac", "pla", "lit", "up", "out")
-# ---- edges: posterior mean effect (label), class by P > 0.90, curvature ----
-edges <- read.csv(text = 'from,to,label,class,curv,lx,ly
-dh,wrt,,none,0,0,0
-nd,wrt,0.06,pos,0,-0.1,0.35
-gr,wrt,-0.08,neg,0,0.45,0
-wrt,pla,0.11,pos,0,0,0.30
-wrt,mac,,none,0,0,0
-wrt,out,,none,0.18,0,0
-sol,mac,0.14,pos,-0.15,0.55,0.55
-sol,pla,0.19,pos,0.30,-0.85,0.10
-sol,lit,,none,0.30,0,0
-mac,out,0.08,pos,0,0,0.32
-pla,out,0.14,pos,0,0,0.30
-lit,out,0.07,pos,0,-0.2,0.32
-up,out,0.95,pos,0,0.45,0')
-# shorten each arrow so it starts/ends at the box border, not the centre
-a <- merge(edges, nodes, by.x = "from", by.y = "row.names")
-a <- merge(a, nodes, by.x = "to", by.y = "row.names", suffixes = c("", "2"))
-dx <- a$x2 - a$x; dy <- a$y2 - a$y; L <- sqrt(dx^2 + dy^2)
-a$x0 <- a$x + dx / L * 0.85; a$y0 <- a$y + dy / L * 0.55
-a$x1 <- a$x2 - dx / L * 0.90; a$y1 <- a$y2 - dy / L * 0.55
-a$xm <- (a$x0 + a$x1) / 2 + a$lx; a$ym <- (a$y0 + a$y1) / 2 + a$ly
-pal2 <- c(pos = "#3B9AD1", neg = "#E8603C", none = "grey55")   # skyblue / coral / grey
-lty2 <- c(pos = "solid",   neg = "solid",   none = "dashed")
-arr <- arrow(length = unit(0.16, "cm"), type = "closed")
-pq2 <- ggplot()
-st <- subset(a, curv == 0)   # straight and curved arrows drawn separately
-pq2 <- pq2 + geom_segment(data = st, aes(x = x0, y = y0, xend = x1, yend = y1),
-                          colour = pal2[st$class], linetype = lty2[st$class], linewidth = 0.7, arrow = arr)
-for (i in which(a$curv != 0))
-  pq2 <- pq2 + geom_curve(data = a[i, ], aes(x = x0, y = y0, xend = x1, yend = y1),
-                          curvature = a$curv[i], colour = pal2[a$class[i]],
-                          linetype = lty2[a$class[i]], linewidth = 0.7, arrow = arr)
-pq2 <- pq2 +
-  geom_text(data = subset(a, label != ""), aes(x = xm, y = ym, label = label), size = 4.2) +
-  geom_label(data = nodes[rownames(nodes) != "out", ], aes(x = x, y = y, label = name),
-             size = 4.1, label.padding = unit(0.3, "lines"), label.r = unit(0.05, "lines")) +
-  geom_label(data = nodes["out", ], aes(x = x, y = y, label = name), size = 4.4,
-             fontface = "bold", label.padding = unit(0.45, "lines"),
-             label.r = unit(0.9, "lines"), linewidth = 0.9, colour = "#C0208E") +
-  annotate("text", x = 0.15, y = 9.8, label = "(b)", size = 6.5, hjust = 0) +
-  xlim(0, 10) + ylim(1.2, 10) + theme_void()
+#| fig-cap: "**Drivers of downstream DOC.** Structural causal model with downstream DOC as the outcome (model `downstream_DOC_me`) and the posterior mean standardized effects; the upstream-DOC path is the inheritance slope (0.94, mg per mg). Skyblue: positive and coral: negative effects with posterior probability above 0.90; dashed grey: no-evidence. Dark red: the two added links, upstream DOC → macrophytes and → phytoplankton (per mg L⁻¹ of upstream DOC); solid dark red meets the same 0.90 threshold, dotted does not."
+pq2 <- draw_dag(tO, "Downstream\nDOC", "DOCout", "DOC_input", "Upstream\nDOC", "(b)")
 ggsave(here("images", "Figure_1b_downstream.png"), pq2, width = 9, height = 5.6, dpi = 300, bg = "white")
 pq2
 ```
@@ -208,13 +199,14 @@ pq2
 ::: {.callout-note}
 ## Key message of @fig-q2
 
--   **Inheritance dominates.** Downstream DOC carries 0.95 [0.92, 0.98] mg per mg of upstream DOC — by far the largest path.
--   **Local modification through biology.** Phytoplankton +0.14, macrophytes +0.08, soil litter +0.07 (standardized effects on downstream DOC); solar radiation feeds the producers (+0.19, +0.14).
--   **The dams act only indirectly and weakly.** Number of dams +0.06 and channel gradient −0.08 on water residence time; residence time +0.11 on phytoplankton; no direct residence-time → DOC path.
--   **Implication.** A beaver-engineered stream inherits its DOC and then adds to it; the addition is decided by light and primary producers, not by the size of the engineering. The producer effects are prior-informed (16 summer streams; section 9) and should be presented as such.
+-   **Inheritance dominates.** Downstream DOC carries `r sprintf("%.2f", gme(tO,"bsp_DOCout_miDOC_input")$mean)` mg per mg of upstream DOC (P > 0 ≈ 1) — by far the largest path.
+-   **Local modification through biology.** Phytoplankton +`r sprintf("%.2f", gme(tO,"bsp_DOCout_miplankton_abun_z")$mean)`, macrophytes +`r sprintf("%.2f", gme(tO,"bsp_DOCout_mimacrophy_abun_z")$mean)`, soil litter +`r sprintf("%.2f", gme(tO,"bsp_DOCout_micover_litter_z")$mean)` (standardized effects on downstream DOC); solar radiation feeds the producers (+`r sprintf("%.2f", gme(tO,"bsp_planktonabunz_misolar_z")$mean)` phytoplankton, +`r sprintf("%.2f", gme(tO,"bsp_macrophyabunz_misolar_z")$mean)` macrophytes).
+-   **The dams act only indirectly and weakly.** Number of dams +`r sprintf("%.2f", gme(tO,"b_waterrestimez_n_dams_z")$mean)` and channel gradient `r sprintf("%.2f", gme(tO,"b_waterrestimez_slope_z")$mean)` on water residence time; residence time +`r sprintf("%.2f", gme(tO,"bsp_planktonabunz_miwater_res_time_z")$mean)` on phytoplankton; no direct residence-time → DOC path.
+-   **The incoming DOC also reaches the producers, macrophytes only.** Upstream DOC → macrophytes `r sprintf("%.2f", gme(tO,"bsp_macrophyabunz_miDOC_input")$mean)` per mg L⁻¹ (P > 0 = `r sprintf("%.2f", gme(tO,"bsp_macrophyabunz_miDOC_input")$p_pos)`); upstream DOC → phytoplankton `r sprintf("%.2f", gme(tO,"bsp_planktonabunz_miDOC_input")$mean)` (P > 0 = `r sprintf("%.2f", gme(tO,"bsp_planktonabunz_miDOC_input")$p_pos)`, no-evidence) — a DOC-rich inflow goes with more macrophytes, not more phytoplankton.
+-   **Implication.** A beaver-engineered stream inherits its DOC and then adds to it; the addition is decided by light and primary producers, not by the size of the engineering, and a richer inflow itself feeds the macrophytes a little further. The producer effects are prior-informed (16 summer streams; section 9) and should be presented as such.
 :::
 
-**Parameterization.** The structural causal model is reported with **downstream DOC as the outcome**: upstream DOC enters as the inherited incoming state with a freely estimated inheritance slope, and $\Delta\text{DOC}_s$ is computed from the posterior afterwards as $\text{DOC}_{down,s} - \text{DOC}_{up,s}$, so upstream DOC is never both a predictor and part of the outcome. This reading replaces the older wording of Q2, which described the upstream-DOC path as upstream DOC *causing greater retention*; downstream DOC instead **inherits** the upstream state (slope 0.95 mg per mg), and the hydrological/biological pathways are local modifications around that inherited background, not retention of it. This model (`b1_downstream`, `notebook/scm_rebuild.qmd`) is the $\Delta$DOC model in a different parameterization: every mediator effect agrees to the second decimal, and the upstream-DOC path is re-read as an inheritance slope of **0.95 [0.92, 0.98]** — downstream DOC inherits 95% of the upstream concentration, mg per mg. Figure 1b is redrawn accordingly (@fig-q2); the Methods gain one sentence stating the parameterization and the inheritance slope.
+**Parameterization.** The structural causal model is reported with **downstream DOC as the outcome**: upstream DOC enters as a latent true concentration (its reading carries a 0.2 mg L$^{-1}$ instrument error) with a freely estimated inheritance slope, and $\Delta\text{DOC}_s$ is computed from the posterior afterwards as $\text{DOC}_{down,s} - \text{DOC}_{up,s}$, so upstream DOC is never both a predictor and part of the outcome. This reading replaces the older wording of Q2, which described the upstream-DOC path as upstream DOC *causing greater retention*; downstream DOC instead **inherits** the upstream state (slope `r sprintf("%.2f", gme(tO,"bsp_DOCout_miDOC_input")$mean)` mg per mg), and the hydrological/biological pathways are local modifications around that inherited background, not retention of it. Two causal links complete the picture: upstream DOC also feeds the primary producers directly, tested by adding upstream DOC → macrophytes and upstream DOC → phytoplankton to the DAG (supported for macrophytes, not for phytoplankton, above). This model (`downstream_DOC_me`, fit in `notebook/fitting/me_refits.R`, compared against the ΔDOC parameterization in `notebook/correspondence/scm_outcome_choice.qmd`) is the $\Delta$DOC model in a different parameterization: every mediator effect agrees to the second decimal, and the upstream-DOC path is re-read as an inheritance slope of **`r sprintf("%.2f", gme(tO,"bsp_DOCout_miDOC_input")$mean)` [`r sprintf("%.2f", gme(tO,"bsp_DOCout_miDOC_input")$lo)`, `r sprintf("%.2f", gme(tO,"bsp_DOCout_miDOC_input")$hi)`]** — downstream DOC inherits `r sprintf("%.0f", 100*gme(tO,"bsp_DOCout_miDOC_input")$mean)`% of the upstream concentration, mg per mg. Figure 1b is redrawn accordingly (@fig-q2); the Methods gain one sentence stating the parameterization, the inheritance slope, and the two added producer links.
 
 **Robustness check: does fixing the inheritance slope at 1 change anything else?** `b1_downstream` estimates the slope freely (prior Normal(1, 0.3), posterior 0.95). A second fit, `b1_downstream_fixed` (`notebook/scm_downstream_fixed_fit.R`), pins it at 1 (prior Normal(1, 0.001), the standard way to fix an `mi()` coefficient in brms) and is otherwise identical.
 
