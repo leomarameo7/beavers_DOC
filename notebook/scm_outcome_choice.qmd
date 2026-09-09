@@ -157,7 +157,17 @@ Josh's argument for the reparameterization was not statistical but narrative, an
 
 Under the ΔDOC reading, clause 1 has no natural place: the model's intercept is an average change and the upstream coefficient is a "retention" effect, so the inherited signal that clauses 2 and 3 modify never appears as a quantity. Under the downstream reading, the SCM supplies the inherited state (the slope), Q3 measures the modification relative to it, and the spatial analysis says where each lives. That is the reason to prefer it — provided the reader is told, as above, that it is the same model.
 
-# 6. Does the model predict downstream DOC? {#sec-ppc}
+# 6. Why keep upstream DOC as a separate term? {#sec-upstream}
+
+Because it is the one variable in the system that beaver-engineering cannot cause, and the manuscript's argument needs it as a quantity, not as something folded into the outcome.
+
+-   **It is the exogenous incoming state.** Upstream DOC is measured above the first dam; the placebo test shows the beaver-engineering variables do not predict it (`analysis_plan.qmd`, section 9 C). It is therefore the natural baseline against which the local modification is defined — the "inherited state" of Josh's framing.
+-   **Folding it into ΔDOC assumes the inheritance slope is exactly 1.** $\Delta\text{DOC} = \text{DOC}_{down} - 1 \times \text{DOC}_{up}$ fixes the coefficient of upstream DOC at one by construction. Keeping it separate lets the data estimate it (0.95 [0.92, 0.98]) — and the robustness check that fixes it at 1 shows the mediators do not depend on the choice, so nothing is risked by estimating it.
+-   **Kept separate, it becomes a result.** "Downstream DOC carries 95% of upstream DOC" is a reportable number; the seasonal change of upstream DOC is $S$, the inherited seasonal contrast, on which $R_s$ and $G$ are defined; and in the pathway decomposition the inheritance shortfall $(\beta_{inh} - 1)\,\text{DOC}_{up}$ turns out to be the largest single component separating sinks from sources (streams receiving the most DOC are the ones that deplete). None of this is visible if upstream DOC lives inside the outcome.
+-   **Kept separate, it has one role.** In b1 it is both subtracted inside the outcome and used as a predictor; the coefficient then reads as "retention", which is the misreading the manuscript originally contained (section 4).
+-   **What it costs.** The 0.2 mg L$^{-1}$ error of upstream DOC is then not propagated into the outcome (section 3): about 1% attenuation on the inheritance slope, nothing on the mediators.
+
+# 7. Does the model predict downstream DOC? {#sec-ppc}
 
 Out-of-sample check by Pareto-smoothed importance-sampling leave-one-out cross-validation (PSIS-LOO): for each observed downstream concentration, the prediction is made *as if that observation had been left out of the fit*. Metrics on the `r length(obs)` observed downstream concentrations:
 
@@ -199,7 +209,7 @@ pa + pb + plot_annotation(tag_levels = "a")
 -   **Implication.** The model reproduces downstream DOC at the level a survey model can, and almost all of that skill is inheritance.
 :::
 
-# 7. How ΔDOC is derived a posteriori {#sec-derived}
+# 8. How ΔDOC is derived a posteriori {#sec-derived}
 
 The model never sees ΔDOC. It is computed **after** fitting, once per posterior draw $d$ and sampling $i$, from two numbers the draw already contains — the predicted downstream concentration and the upstream concentration:
 
@@ -246,12 +256,74 @@ dm2 <- P$ddoc_metrics
 ::: {.callout-important}
 ## Key message of @fig-ddoc
 
--   The derived seasonal averages reproduce the Q1 model (+0.14 mg L$^{-1}$ summer, 0.00 winter) — same information, read from the other parameterization.
+-   The derived seasonal averages are `r sprintf("%.2f [%.2f, %.2f]", median(P$avg_season[, "summer"]), quantile(P$avg_season[, "summer"], .025), quantile(P$avg_season[, "summer"], .975))` mg L$^{-1}$ in summer and `r sprintf("%.2f [%.2f, %.2f]", median(P$avg_season[, "winter"]), quantile(P$avg_season[, "winter"], .025), quantile(P$avg_season[, "winter"], .975))` in winter, against +0.14 [0.05, 0.22] and 0.00 [−0.06, 0.07] from the Q1 model that uses the data alone — the same ordering and overlapping intervals, from two different models.
 -   Sampling by sampling, the leave-one-out prediction of ΔDOC has RMSE `r sprintf("%.2f", dm2["RMSE_loo"])` mg L$^{-1}$ against `r sprintf("%.2f", dm2["RMSE_null"])` for predicting the grand mean (LOO R² `r sprintf("%.2f", dm2["R2_loo"])`): the local change is small relative to the inherited state and its sign is stream-specific.
 -   **Implication.** Nothing about ΔDOC is lost by not making it the outcome; and no parameterization of this SCM predicts *which* stream will be a source or a sink — that is a property of the system (Q1), not of the model.
 :::
 
-# 8. The pipeline in one picture
+# 9. Does the derived ΔDOC depend on the model specification? {#sec-spec}
+
+Francesco's concern is right in general and it is worth answering in two parts: which ΔDOC the manuscript makes inference on, and what actually happens to the derived ΔDOC when the SCM changes.
+
+**Part 1 — the manuscript never makes inference on the SCM's ΔDOC.** There are two different quantities called ΔDOC:
+
+| | Where it comes from | Depends on the SCM's variables? | Used for |
+|---|---|---|---|
+| **ΔDOC from the data** | the paired-contrast measurement-error model on the raw upstream and downstream concentrations (Q1, Figure 1a), and the four-concentration model behind $S$, $R_s$, $B$, $G$ (Q3, Figure 2) — no mediators, no drivers | **no** | every inference on direction, magnitude and seasonal gain in the manuscript |
+| **ΔDOC derived from the SCM** | $\mu_i - \text{DOC}_{up,i}$, the SCM's *expected* local modification given the drivers (@eq-derived) | **yes** — as any fitted value does | interpreting Q2: which pathways contribute (the decomposition), and the consistency checks in this document |
+
+So the answer to "would it be better to model ΔDOC directly from the data?" is: **that is what the manuscript does, wherever it draws a conclusion about ΔDOC.** The SCM's derived ΔDOC is a fitted value, and fitted values always depend on the specification — but nothing about the direction, the average, the source/sink shares or $R_s$ rests on it.
+
+**Part 2 — the concern applies identically to both parameterizations.** If the SCM had ΔDOC as its outcome (b1), adding or removing a variable would change its fitted ΔDOC, $\mu^{\Delta}_i$, in exactly the same way — because b1 and b1_downstream are one likelihood (@eq-subtract), $\mu^{\Delta}_i = \mu_i - \text{DOC}_{up,i}$ draw for draw. The choice of outcome does not create or remove the dependence on the specification; only the choice of variables does. That dependence is what section 9 of `analysis_plan.qmd` tests, and here is what it does to the derived ΔDOC itself:
+
+```{r load-dag-ddoc}
+#| echo: false
+dd_path <- here("results", "derived_ddoc_by_dag.rds"); have_dd <- file.exists(dd_path)
+if (have_dd) DD <- readRDS(dd_path)
+```
+
+```{r fig-spec}
+#| fig-height: 4.5
+#| fig-cap: "**The derived ΔDOC under four SCM specifications.** DAG 0 is the manuscript's model; DAG 1 adds upstream DOC → producers; DAG 2 adds a direct solar → DOC path; DAG 3 adds season as a common cause of the producers and DOC (analysis_plan.qmd, section 9). (a) Posterior median of the derived ΔDOC of every sampling under each alternative DAG against DAG 0; dashed line: 1:1. (b) Derived seasonal average ΔDOC under each DAG; point: median, bars: 66% and 95% credible intervals; open diamonds: the Q1 model's averages, which come from the data alone (+0.14 summer, 0.00 winter)."
+if (have_dd) {
+  sc <- bind_rows(lapply(c("dag1","dag2","dag3"), function(nm) tibble(dag = gsub("dag", "DAG ", nm), d0 = DD$dag0$med, d = DD[[nm]]$med)))
+  pa <- ggplot(sc, aes(d0, d, colour = dag)) + geom_abline(slope = 1, intercept = 0, linetype = "dashed", colour = "grey45") +
+    geom_point(size = 1.2, alpha = .7) + scale_colour_brewer(palette = "Dark2", name = NULL) +
+    labs(x = expression("Derived "*Delta*"DOC, DAG 0 (mg "*L^-1*")"), y = expression("Derived "*Delta*"DOC, alternative DAG (mg "*L^-1*")")) +
+    theme_bw(base_size = 12) + theme(panel.grid.minor = element_blank(), legend.position = "top")
+  av <- bind_rows(lapply(names(DD), function(nm) as_tibble(DD[[nm]]$avg) |> mutate(dag = gsub("dag", "DAG ", nm)))) |>
+    pivot_longer(c(summer, winter), names_to = "season", values_to = "v") |> mutate(season = factor(season, levels = c("winter", "summer")))
+  q1 <- tibble(season = factor(c("winter", "summer"), levels = c("winter", "summer")), v = c(0, 0.14))
+  pb <- ggplot(av, aes(x = v, y = season, colour = dag)) + geom_vline(xintercept = 0, linetype = "dashed", colour = "grey45") +
+    stat_pointinterval(.width = c(.66, .95), point_interval = "median_qi", position = position_dodge(width = .5)) +
+    geom_point(data = q1, aes(x = v, y = season), inherit.aes = FALSE, shape = 23, size = 3, fill = "white", colour = "#E8603C", stroke = 1.2) +
+    scale_colour_brewer(palette = "Dark2", name = NULL) +
+    labs(x = expression("Derived seasonal average "*Delta*"DOC (mg "*L^-1*")"), y = NULL) +
+    theme_bw(base_size = 12) + theme(panel.grid.minor = element_blank(), legend.position = "top")
+  pa + pb + plot_annotation(tag_levels = "a")
+} else cat("Not yet computed (notebook/R/derived_ddoc_by_dag.R).")
+```
+
+```{r spec-numbers}
+#| echo: false
+if (have_dd) {
+  cors <- sapply(c("dag1","dag2","dag3"), function(nm) cor(DD$dag0$med, DD[[nm]]$med))
+  mad  <- sapply(c("dag1","dag2","dag3"), function(nm) median(abs(DD$dag0$med - DD[[nm]]$med)))
+  avs  <- sapply(names(DD), function(nm) median(DD[[nm]]$avg[, "summer"]))
+  avw  <- sapply(names(DD), function(nm) median(DD[[nm]]$avg[, "winter"]))
+}
+```
+
+::: {.callout-important}
+## Answer to question 4
+
+-   **Inference on ΔDOC is made from the data, not from the SCM.** Direction (Q1), magnitude and seasonal gain (Q3) come from measurement-error models on the raw concentrations that contain no drivers; changing the SCM cannot touch them.
+-   **The derived ΔDOC is a fitted value and depends on the specification — equally under either parameterization,** because b1 and b1_downstream are the same likelihood; the outcome choice neither adds nor removes that dependence.
+`r if (have_dd) sprintf("- **Empirically the dependence is small.** Across the four DAGs the per-sampling derived ΔDOC correlates at %s with the manuscript's DAG (median absolute difference %s mg L⁻¹), and the derived seasonal averages are %s (summer) and %s (winter) against +0.14 and 0.00 from the data alone.", paste(sprintf("%.2f", cors), collapse = ", "), paste(sprintf("%.2f", mad), collapse = ", "), paste(sprintf("%.2f", avs), collapse = ", "), paste(sprintf("%.2f", avw), collapse = ", ")) else "- pending"`
+-   **Implication.** What the SCM's ΔDOC is *for* — attributing the local modification to pathways — is exactly the use in which specification dependence is the object of study, and section 9 of the plan (alternative DAGs, confounding, priors) is where that dependence is reported. It is not a route by which a mis-specified SCM could bias the manuscript's claims about ΔDOC.
+:::
+
+# 10. The pipeline in one picture
 
 ```{mermaid}
 %%| fig-cap: "From the four measured concentrations to the quantities reported in the manuscript. The SCM (Q2) predicts downstream DOC; ΔDOC is derived from its posterior. Q1 and Q3 use the concentrations directly through their own measurement-error models."
@@ -269,7 +341,7 @@ flowchart LR
   DV --> F2["Figure 2<br/>relative response, seasonal gain"]
 ```
 
-# 9. Reproducibility
+# 11. Reproducibility
 
 ```{r session}
 #| echo: false

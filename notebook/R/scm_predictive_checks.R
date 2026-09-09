@@ -4,6 +4,9 @@
 suppressMessages({library(brms); library(dplyr); library(loo); library(here)})
 fit <- readRDS(here("results", "models_fit", "b1_downstream.rds"))
 dat <- fit$data
+# season is not in the model formula: take it from m6 (same rows, same order)
+m6 <- read.csv(here("data/processed/m6.csv")); stopifnot(nrow(m6) == nrow(dat), all(as.character(m6$site) == as.character(dat$site)))
+dat$season <- m6$season
 n_chain <- 4; n_draw <- ndraws(fit)
 ep <- posterior_epred(fit, resp = "DOCout")      # expected downstream DOC, draws x 360
 pp <- posterior_predict(fit, resp = "DOCout")    # predicted new observation
