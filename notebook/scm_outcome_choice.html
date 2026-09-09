@@ -2651,6 +2651,7 @@ Figure 1: <strong>The two models as DAGs, with their fitted coefficients.</stro
 </div>
 </div>
 </div>
+<p>Q2_delta and Q2_downstream are the same regression written around two different outcomes: ΔDOC is nothing but downstream DOC minus upstream DOC, so subtracting upstream DOC from one equation gives back the other, term for term. What follows makes that subtraction explicit.</p>
 <p><strong>Q2_delta</strong>, with mediators <span class="math inline">\(M_k\)</span> (macrophytes, phytoplankton, litter cover, water residence time) and a stream random intercept <span class="math inline">\(u\)</span>:</p>
 <p><span id="eq-delta"><span class="math display">\[
 \begin{aligned}
@@ -2795,7 +2796,23 @@ Table 1: The same SCM fitted as Q2_delta (ΔDOC outcome) and Q2_downstream (dow
 <li><strong>Q2_delta.</strong> The outcome is built from two readings, so it carries their combined error, <span class="math inline">\(\sqrt{0.2^2 + 0.2^2} = 0.283\)</span> mg L<span class="math inline">\(^{-1}\)</span>. The upstream reading is <em>also</em> the predictor, with its own 0.2 error. The same physical error therefore appears twice — once inside the outcome’s error, once on the predictor — and the two are negatively correlated (a reading that is too high makes ΔDOC too low and the predictor too high). brms models the two errors as independent; the correlation is ignored.</li>
 <li><strong>Q2_downstream.</strong> The outcome is one reading with its own error (0.2); the upstream reading is the predictor with its own error (0.2). Each error appears exactly once, and independence is correct.</li>
 </ul>
-<p>Does it matter? Before the upstream error was added, the inheritance slope was 0.945; with it, 0.940 in Q2_downstream and 0.949 implied by Q2_delta — the predicted ~1% attenuation (reliability of upstream DOC 0.991), and the second-decimal gap between the two is the ignored correlation. The mediator effects do not move. So: a real difference in how the error is handled, correctly handled in one model and approximately in the other, and no practical consequence at this error size.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>Conclusion
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>Q2_downstream propagates the upstream error correctly; Q2_delta propagates it approximately, ignoring the correlation between the outcome’s error and the predictor’s error.</li>
+<li>That approximation has no visible cost here: the inheritance slope moved from 0.945 without the upstream error to 0.940 (Q2_downstream) and 0.949 (Q2_delta), a gap of one part in a thousand, and the mediator effects did not move at all.</li>
+<li><strong>Implication.</strong> At this error size (upstream DOC reliability 0.991) the two models are practically interchangeable on this point; the correct propagation would matter more with a noisier upstream reading.</li>
+</ul>
+</div>
+</div>
 </section>
 <section id="sec-practical" class="level1">
 <h1>5. A practical comparison</h1>

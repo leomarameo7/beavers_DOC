@@ -165,6 +165,8 @@ $$ {#eq-link}
 **Question:** Does the choice of outcome change the inference?
 :::
 
+Q2_delta and Q2_downstream are the same regression written around two different outcomes: ΔDOC is nothing but downstream DOC minus upstream DOC, so subtracting upstream DOC from one equation gives back the other, term for term. What follows makes that subtraction explicit.
+
 **Q2_delta**, with mediators $M_k$ (macrophytes, phytoplankton, litter cover, water residence time) and a stream random intercept $u$:
 
 $$
@@ -232,7 +234,13 @@ Both do now: in each model, the upstream reading is a noisy measurement of a lat
 -   **Q2_delta.** The outcome is built from two readings, so it carries their combined error, $\sqrt{0.2^2 + 0.2^2} = 0.283$ mg L$^{-1}$. The upstream reading is *also* the predictor, with its own 0.2 error. The same physical error therefore appears twice — once inside the outcome's error, once on the predictor — and the two are negatively correlated (a reading that is too high makes ΔDOC too low and the predictor too high). brms models the two errors as independent; the correlation is ignored.
 -   **Q2_downstream.** The outcome is one reading with its own error (0.2); the upstream reading is the predictor with its own error (0.2). Each error appears exactly once, and independence is correct.
 
-Does it matter? Before the upstream error was added, the inheritance slope was 0.945; with it, `r sprintf("%.3f", gme(tO, "bsp_DOCout_miDOC_input")$mean)` in Q2_downstream and `r sprintf("%.3f", 1 + gme(tD, "bsp_deltaDOC_miDOC_input_z")$mean / s_up)` implied by Q2_delta — the predicted ~1% attenuation (reliability of upstream DOC `r sprintf("%.3f", s_up^2 / (s_up^2 + 0.04))`), and the second-decimal gap between the two is the ignored correlation. The mediator effects do not move. So: a real difference in how the error is handled, correctly handled in one model and approximately in the other, and no practical consequence at this error size.
+::: {.callout-important}
+## Conclusion
+
+-   Q2_downstream propagates the upstream error correctly; Q2_delta propagates it approximately, ignoring the correlation between the outcome's error and the predictor's error.
+-   That approximation has no visible cost here: the inheritance slope moved from 0.945 without the upstream error to `r sprintf("%.3f", gme(tO, "bsp_DOCout_miDOC_input")$mean)` (Q2_downstream) and `r sprintf("%.3f", 1 + gme(tD, "bsp_deltaDOC_miDOC_input_z")$mean / s_up)` (Q2_delta), a gap of one part in a thousand, and the mediator effects did not move at all.
+-   **Implication.** At this error size (upstream DOC reliability `r sprintf("%.3f", s_up^2 / (s_up^2 + 0.04))`) the two models are practically interchangeable on this point; the correct propagation would matter more with a noisier upstream reading.
+:::
 
 # 5. A practical comparison {#sec-practical}
 
