@@ -216,7 +216,7 @@ pq2
 
 **Parameterization.** The structural causal model is reported with **downstream DOC as the outcome**: upstream DOC enters as the inherited incoming state with a freely estimated inheritance slope, and $\Delta\text{DOC}_s$ is computed from the posterior afterwards as $\text{DOC}_{down,s} - \text{DOC}_{up,s}$, so upstream DOC is never both a predictor and part of the outcome. This reading replaces the older wording of Q2, which described the upstream-DOC path as upstream DOC *causing greater retention*; downstream DOC instead **inherits** the upstream state (slope 0.95 mg per mg), and the hydrological/biological pathways are local modifications around that inherited background, not retention of it. This model (`b1_downstream`, `notebook/scm_rebuild.qmd`) is the $\Delta$DOC model in a different parameterization: every mediator effect agrees to the second decimal, and the upstream-DOC path is re-read as an inheritance slope of **0.95 [0.92, 0.98]** — downstream DOC inherits 95% of the upstream concentration, mg per mg. Figure 1b is redrawn accordingly (@fig-q2); the Methods gain one sentence stating the parameterization and the inheritance slope.
 
-**Robustness check (Josh's suggestion, adopted): does fixing the inheritance slope at 1 change anything else?** `b1_downstream` estimates the slope freely (prior Normal(1, 0.3), posterior 0.95). A second fit, `b1_downstream_fixed` (`notebook/scm_downstream_fixed_fit.R`), pins it at 1 (prior Normal(1, 0.001), the standard way to fix an `mi()` coefficient in brms) and is otherwise identical.
+**Robustness check: does fixing the inheritance slope at 1 change anything else?** `b1_downstream` estimates the slope freely (prior Normal(1, 0.3), posterior 0.95). A second fit, `b1_downstream_fixed` (`notebook/scm_downstream_fixed_fit.R`), pins it at 1 (prior Normal(1, 0.001), the standard way to fix an `mi()` coefficient in brms) and is otherwise identical.
 
 ```{r robustness-inheritance}
 #| echo: false
@@ -381,7 +381,11 @@ Both questions are legitimate and both answers are correct; they are simply not 
 Methods sentence: state once that Figure 1a reports the posterior *predictive* distribution of a single new sampling (so it includes the instrument error), while $R_s$, $B$ and $G$ are computed from each stream's posterior *parameter* estimate (the model's estimate of the true concentration).
 :::
 
-# 6. Q4 — Intensity: is the response ordered by the number of dams or the water residence time?
+# 6. Q4 — Intensity of beaver-engineering and the response
+
+::: {.callout-note appearance="simple"}
+**Question:** Is the local response ordered by the intensity of beaver-engineering — the number of dams and the water residence time — or by something else?
+:::
 
 Figure 2b ranks the streams by their own response. Here the same per-stream posteriors of $R_{summer}$ and $G$ are placed on the two gradients of beaver-engineering intensity we measured, and the ordering is estimated with a Bayesian model rather than a correlation coefficient: for each response and each gradient, a Student-*t* regression of the response (on the same pseudo-log scale as the figure axis, $t(x) = \operatorname{asinh}(x/0.2)/\ln 10$) on the standardized gradient, in which each stream enters with its posterior median and its posterior standard deviation as a known measurement error (`se()` in brms). The slope $\beta$ is the ordering: $P(\beta > 0)$ is the posterior probability that the response increases along the gradient.
 
@@ -472,9 +476,11 @@ bp <- function(k) sprintf("%.2f", mean(beta[[k]] > 0))
 -   **Implication.** Longer impoundment favours DOC release in summer (the stream-level counterpart of the Q2 path residence time → phytoplankton → DOC), but sources, sinks, reinforcing and dampening streams occur at every level of engineering: the intensity of beaver-engineering sets the stage, it does not decide the sign. Sentence for Appendix S1 (Figure S12) as above.
 :::
 
-# 7. Spatial coherence: is the beaver seasonal modification regional or local?
+# 7. Spatial coherence of the seasonal contrasts
 
-**Question (Discussion support):** *the inherited seasonal contrast is generated over whole floodplains — is the modification that beaver-engineering imposes on it organised at the same regional scale, or is it stream-specific?* The answer decides how the Discussion frames beaver-engineering: if $B$ were regionally coherent, beaver-engineered streams would act together as a landscape-scale control on the seasonal DOC signal; if $B$ is spatially incoherent, each beaver-engineered stream is an independent local control point on a regional signal — the framing the manuscript title claims.
+::: {.callout-note appearance="simple"}
+**Question** (Discussion support)**:** *the inherited seasonal contrast is generated over whole floodplains — is the modification that beaver-engineering imposes on it organised at the same regional scale, or is it stream-specific?* The answer decides how the Discussion frames beaver-engineering: if $B$ were regionally coherent, beaver-engineered streams would act together as a landscape-scale control on the seasonal DOC signal; if $B$ is spatially incoherent, each beaver-engineered stream is an independent local control point on a regional signal — the framing the manuscript title claims.
+:::
 
 For each stream we correlate its value with the mean of its 8 nearest neighbours (Spearman), computed on every posterior draw of the concentrations, so the coherence estimate carries the full uncertainty. $T = \text{DOC}_{down,summer} - \text{DOC}_{down,winter}$ is the **downstream seasonal contrast** ($T = S + B$).
 
@@ -522,7 +528,11 @@ ps
 -   **Implication.** Neighbouring streams inherit the same seasonal signal but do not modify it in the same way: each beaver-engineered stream reinforces, dampens or reverses a regionally organised signal on its own terms. This rules out a regional gradient masquerading as a beaver effect, and it is the empirical basis for calling beaver ponds *local* control points. Sentence for the Discussion as above.
 :::
 
-# 8. Model validation: can the SCM predict downstream DOC at a stream it has not seen?
+# 8. Model validation: out-of-sample prediction
+
+::: {.callout-note appearance="simple"}
+**Question:** Can the SCM predict downstream DOC, and the local change, at a stream it has not seen?
+:::
 
 The manuscript claims that the model can be used to anticipate the effect of beaver-engineering on stream DOC in Switzerland. That claim needs an out-of-sample test. Two are reported: (i) Pareto-smoothed importance-sampling leave-one-out cross-validation (PSIS-LOO) of the downstream-DOC SCM, in which every observed downstream concentration is predicted as if it had been left out of the fit; and (ii) a hold-out test, in which the SCM is refitted on 80% of the streams and predicts downstream DOC at the remaining 20% (`r if (file.exists(here("results","holdout_pred.rds"))) length(readRDS(here("results","holdout_pred.rds"))$test_sites) else "…"` streams), which it has never seen. At an unseen stream the site effect is unknown and the mediators are mostly unmeasured (they enter at their mean), so the hold-out prediction is what a user in Switzerland would actually have: upstream DOC, the dams, the channel gradient and solar radiation. For both tests, the derived $\Delta\text{DOC}$ is scored as well, because that is the quantity the claim is about; it is computed per posterior draw $d$ and sampling $i$ as
 
@@ -625,7 +635,7 @@ med_names <- c(bsp_DOCout_miDOC_input = "inheritance slope", bsp_DOCout_mimacrop
 Four structures, all keeping the mediator core of Figure 1b:
 
 -   **DAG 0** — the manuscript's model.
--   **DAG 1** — upstream DOC also drives the primary producers (upstream DOC → phytoplankton, macrophytes), Leonardo's alternative: a DOC-rich inflow could feed or shade the producers.
+-   **DAG 1** — upstream DOC also drives the primary producers (upstream DOC → phytoplankton, macrophytes): a DOC-rich inflow could feed or shade the producers.
 -   **DAG 2** — solar radiation acts directly on downstream DOC (photodegradation), not only through the producers.
 -   **DAG 3** — season is a common cause of the producers and of downstream DOC, left unblocked in DAG 0.
 
@@ -719,7 +729,7 @@ if (have_sens) {
   e1 <- colnames(SENS$models$dag1$extra); e2 <- colnames(SENS$models$dag2$extra)
   p_pla <- e1[grepl("planktonabunz.*miDOC_input", e1)][1]; p_mac <- e1[grepl("macrophyabunz.*miDOC_input", e1)][1]; p_sol <- e2[grepl("DOCout.*misolar", e2)][1]
   sup <- function(p) if (p > 0.90) "supported (P > 0.90)" else if (p < 0.10) "supported, negative (P < 0.10)" else "no-evidence"
-  dag1_msg <- sprintf("- **DAG 1 (upstream DOC → producers), Leonardo's alternative:** the added paths are %s (phytoplankton) and %s (macrophytes) per mg L⁻¹ of upstream DOC — %s and %s. A DOC-rich inflow goes with more macrophytes (consistent with the failed independence in @fig-dag-tests), not with more phytoplankton. The mediator effects on downstream DOC under DAG 1 are nevertheless indistinguishable from DAG 0 (@fig-dag-compare b): the added arrow changes the picture of what drives the producers, not what the producers do to DOC.",
+  dag1_msg <- sprintf("- **DAG 1 (upstream DOC → producers):** the added paths are %s (phytoplankton) and %s (macrophytes) per mg L⁻¹ of upstream DOC — %s and %s. A DOC-rich inflow goes with more macrophytes (consistent with the failed independence in @fig-dag-tests), not with more phytoplankton. The mediator effects on downstream DOC under DAG 1 are nevertheless indistinguishable from DAG 0 (@fig-dag-compare b): the added arrow changes the picture of what drives the producers, not what the producers do to DOC.",
                       np("dag1", p_pla), np("dag1", p_mac), sup(pp("dag1", p_pla)), sup(pp("dag1", p_mac)))
   dag2_msg <- sprintf("- **DAG 2 (direct solar → DOC):** the direct path is %s — %s; it is the nominally best structure by LOO. Under DAG 2 the producer effects shrink somewhat (part of the solar effect no longer has to travel through them) but keep their sign.",
                       np("dag2", p_sol), sup(pp("dag2", p_sol)))
@@ -888,9 +898,13 @@ kable(tribble(
 -   This is not a weakness to hide: it is the honest statement of what a national survey with a 16-stream mechanistic subset can and cannot identify, and it points to the next study — residence time and producers measured at the same streams, in both seasons.
 :::
 
-# 10. Q5 — Pathway decomposition: why do some streams enrich and others deplete, and why does that change with season?
+# 10. Q5 — Pathway decomposition of the local modification
 
-The regional analysis (section 7) says an inherited DOC signal exists; the SCM (section 4) says which local processes modify it. What neither says is *why* a given stream ends up enriching or depleting, and why the same stream can change role between winter and summer. Josh's proposal is to use the fitted SCM itself: for every sampling, season and posterior draw, split the predicted local modification (predicted downstream DOC minus upstream DOC) into the contribution of each modelled pathway, and compare the balance between enriching and depleting streams and between seasons.
+::: {.callout-note appearance="simple"}
+**Question:** Why do some streams enrich and others deplete DOC, and why does the same stream change role between seasons?
+:::
+
+The regional analysis (section 7) says an inherited DOC signal exists; the SCM (section 4) says which local processes modify it. What neither says is *why* a given stream ends up enriching or depleting, and why the same stream can change role between winter and summer. The approach is to use the fitted SCM itself: for every sampling, season and posterior draw, split the predicted local modification (predicted downstream DOC minus upstream DOC) into the contribution of each modelled pathway, and compare the balance between enriching and depleting streams and between seasons.
 
 From @eq-derived-plan the local modification of sampling $i$ in draw $d$ is a sum of named parts:
 
@@ -906,7 +920,7 @@ L^{(d)}_i \;=\; \mu^{(d)}_i - \text{DOC}_{up,i}
 \end{aligned}
 $$ {#eq-decomp}
 
-The last term is what the model cannot attribute to a measured pathway: the intercept and the stream's own effect. Following Josh's fourth point it is reported as an **unresolved net removal/transformation component**, not assigned to any process. Two limits are stated before the results, because they decide how much this analysis can say:
+The last term is what the model cannot attribute to a measured pathway: the intercept and the stream's own effect. It is reported as an **unresolved net removal/transformation component**, not assigned to any process. Two limits are stated before the results, because they decide how much this analysis can say:
 
 -   **The producers were measured at 16 streams, in summer only, and water residence time at none of them.** At every other sampling the mediator values in @eq-decomp are the draw's *imputed* values, generated by the mediator sub-models from solar radiation and residence time — and, because the model is joint, partly from the outcome itself. The pathway contributions at imputed samplings are therefore model-implied, not measured, and can partly re-label the residual. The decomposition is shown for all samplings and, separately, for the 16 measured streams.
 -   **The decomposition is only as good as the SCM's paths**, and section 9 showed the producer effects to be prior-informed.
@@ -987,7 +1001,7 @@ if (have_dec) {
 `r if (have_dec) sprintf("- **What carries the seasonal change B (share of B):** %s; %d samplings-pairs with both seasons in the SCM data (m6), of which %d have B credibly positive and %d credibly negative.", paste(sh$txt, collapse = "; "), DEC$n_pairs, DEC$n_classB["B > 0 (summer > winter)"], DEC$n_classB["B < 0 (winter > summer)"]) else ""`
 `r if (have_dec) { gd <- function(k) df$med[df$component == k]; gs <- function(k) 100*sh$med[sh$component == k]; sprintf("- **Implication: the sign is set first by what comes in, then by phytoplankton.** The component that separates sources from sinks is the inheritance shortfall (%.2f mg L⁻¹ more negative in sinks): the streams that deplete are the ones receiving the most DOC, where a 5%% shortfall on a large inherited concentration outweighs the biological additions. Phytoplankton is the only measured pathway that also separates them (%.2f mg L⁻¹, credible), and at the 16 measured streams its contribution is clearly positive in sources and negative in sinks (@fig-decomp b). Macrophytes, litter and residence time do not distinguish the two.", gd("inheritance"), gd("phytoplankton")) } else ""`
 `r if (have_dec) sprintf("- **Implication for the seasons.** The summer-minus-winter change B is carried by the producers (phytoplankton %.0f%%, macrophytes %.0f%%) and by the seasonal change of the inherited state itself (%.0f%%): streams whose B is positive gain phytoplankton and macrophyte contributions in summer, streams whose B is negative lose through the inheritance term (their upstream DOC rises more than the producers can add). The unresolved component carries none of the seasonal change **by construction** — the SCM has one stream effect for both seasons — so seasonal switching is forced onto the measured and imputed pathways; a season-specific stream effect would be needed to test whether unmeasured removal also changes with season.", gs("phytoplankton"), gs("macrophytes"), gs("inheritance")) else ""`
-`r if (have_dec) sprintf("- **What can and cannot be claimed.** With the producers imputed at all but 16 streams, the phytoplankton and macrophyte shares (%.0f%% and %.0f%% of the variance) are model-implied outside those 16; the inheritance result rests on all 158 streams and is solid. The decomposition supports Josh's framing — an inherited signal, locally modified, with enrichment where phytoplankton adds to a modest inflow and depletion where a rich inflow is not matched by production — but the removal side (mineralization, photodegradation) is unmeasured and appears here only as the 5%% shortfall, which is why it must be described as unresolved net removal rather than attributed.", 100*vs$med[vs$component == "phytoplankton"], 100*vs$med[vs$component == "macrophytes"]) else ""`
+`r if (have_dec) sprintf("- **What can and cannot be claimed.** With the producers imputed at all but 16 streams, the phytoplankton and macrophyte shares (%.0f%% and %.0f%% of the variance) are model-implied outside those 16; the inheritance result rests on all 158 streams and is solid. The decomposition supports the framing — an inherited signal, locally modified, with enrichment where phytoplankton adds to a modest inflow and depletion where a rich inflow is not matched by production — but the removal side (mineralization, photodegradation) is unmeasured and appears here only as the 5%% shortfall, which is why it must be described as unresolved net removal rather than attributed.", 100*vs$med[vs$component == "phytoplankton"], 100*vs$med[vs$component == "macrophytes"]) else ""`
 :::
 
 # 11. Methods figure
