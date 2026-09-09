@@ -92,7 +92,7 @@ Hypothesis, modification: if the summer response exceeds the winter response ($B
 Because $A_\text{beaver}$ is a very small part of $A_\text{floodplain}$ (footprint contrast $F \gg 1$), both responses arise on a footprint far smaller than the corridor that generates $S$.
 
 **Q4 — Intensity.** *Does the local response scale with the intensity of beaver-engineering — the number of dams and the water residence time — or is it organised by something else?*
-Hypothesis: if the number of dams and the water residence time increase, then $R_{summer}$ and $G$ will become more positive, because longer impoundment retains nutrients and creates habitat for the primary producers that add DOC in summer [@westbrook2006; @majerova2015; @feuchtmayr2009]. Because Q2 found only weak paths from the dams through water residence time, we expect at most a weak ordering of the streams along these gradients. Q4 is descriptive and belongs in Appendix S1; it answers the question a reader asks after Figure 2b: "are the streams on the right the ones with more dams?"
+Hypothesis: if the number of dams and the water residence time increase, then $R_{summer}$ and $G$ will become more positive, because longer impoundment retains nutrients and creates habitat for the primary producers that add DOC in summer [@westbrook2006; @majerova2015; @feuchtmayr2009]. Because Q2 found only weak paths from the dams through water residence time, we expect at most a weak ordering of the streams along these gradients. Q4 is descriptive and belongs in Appendix S1; it answers the question a reader asks after Figure 4: "are the streams on the right the ones with more dams?"
 
 **Q5 — Mechanism of the sign.** *Why do some beaver-engineered streams enrich and others deplete DOC, and why does the same stream change role between seasons?*
 Hypothesis: if enrichment occurs where the biological and organic-matter pathways of the SCM (phytoplankton, macrophytes, litter) contribute most, and depletion where these contributions are weak and removal dominates, then decomposing the SCM's predicted local modification into pathway contributions will separate sources from sinks, and the summer-minus-winter change of the producer contributions will track the beaver seasonal modification $B$ [@mulholland1997; @battin2023]. Removal processes (mineralization, photodegradation) were not measured, so whatever the measured pathways cannot explain is reported as an unresolved component, not attributed.
@@ -102,7 +102,7 @@ The division of labour between the two quantities is fixed: **$R_s$ answers "how
 | Question | Answered by | This document | Manuscript |
 |---|---|---|---|
 | Q1 Direction | $\Delta\text{DOC}_s$ | @fig-q1 | Figure 1a (main text) |
-| Q2 Drivers | structural causal model | @fig-q2 | Figure 1b (main text) |
+| Q2 Drivers | structural causal model | @fig-q2 | Figure 4 (main text) |
 | Q3 Magnitude and seasonal modification | $R_s$ (figure), $G$ (text), $F$ as context | @fig-R | Figure 2 (main text) |
 | Q4 Intensity | $R_{summer}$ and $G$ against the number of dams and the water residence time (Bayesian slope) | @fig-intensity | Figure S12 (Appendix S1) |
 | Spatial coherence (Discussion support) | $S$, $B$, downstream seasonal contrast $T$ | @fig-spatial | Figure S11 (Appendix S1) |
@@ -144,7 +144,7 @@ sw <- d |> summarise(n = n(), winter_enrich = mean(dw > 0), summer_enrich = mean
 
 # 4. Q2 — Drivers
 
-**Manuscript placement: main text, Figure 1b (redrawn: the outcome is downstream DOC, now with the two added causal links from upstream DOC to the primary producers, and with upstream DOC's own measurement error).**
+**Manuscript placement: main text, Figure 4 (new, standalone — promoted from panel (b) of Figure 2, given the added causal links from upstream DOC to the primary producers and upstream DOC's own measurement error; Figure 2 keeps only its direction panel).**
 
 The chunk below draws the structural causal model as it will appear in the manuscript, using the model comparison in `notebook/correspondence/scm_outcome_choice.qmd`. The layout is fixed by hand (node positions and edge routing); the numbers are the posterior mean effects of model `downstream_DOC_me` (`notebook/fitting/me_refits.R`) — the same downstream-DOC SCM as before, refit with a latent (measurement-error-corrected) upstream DOC and two additional links, upstream DOC → macrophytes and upstream DOC → phytoplankton, testing whether the incoming DOC also shapes the local response indirectly through the producers. Each edge's line type encodes the posterior probability of its direction; the two new links are drawn in dark red.
 
@@ -191,7 +191,7 @@ draw_dag <- function(tb, outcome, pref, up, up_lab, title) {
 ```{r fig-q2}
 #| fig-height: 5.6
 #| fig-cap: "**Drivers of downstream DOC.** Structural causal model with downstream DOC as the outcome (model `downstream_DOC_me`) and the posterior mean standardized effects; the upstream-DOC path is the inheritance slope (0.94, mg per mg). Skyblue: positive and coral: negative effects with posterior probability above 0.90; dashed grey: no-evidence. Dark red: the two added links, upstream DOC → macrophytes and → phytoplankton (per mg L⁻¹ of upstream DOC); solid dark red meets the same 0.90 threshold, dotted does not."
-pq2 <- draw_dag(tO, "Downstream\nDOC", "DOCout", "DOC_input", "Upstream\nDOC", "(b)")
+pq2 <- draw_dag(tO, "Downstream\nDOC", "DOCout", "DOC_input", "Upstream\nDOC", "")
 ggsave(here("images", "Figure_1b_downstream.png"), pq2, width = 9, height = 5.6, dpi = 300, bg = "white")
 pq2
 ```
@@ -206,7 +206,7 @@ pq2
 -   **Implication.** A beaver-engineered stream inherits its DOC and then adds to it; the addition is decided by light and primary producers, not by the size of the engineering, and a richer inflow itself feeds the macrophytes a little further. The producer effects are prior-informed (16 summer streams; section 9) and should be presented as such.
 :::
 
-**Parameterization.** The structural causal model is reported with **downstream DOC as the outcome**: upstream DOC enters as a latent true concentration (its reading carries a 0.2 mg L$^{-1}$ instrument error) with a freely estimated inheritance slope, and $\Delta\text{DOC}_s$ is computed from the posterior afterwards as $\text{DOC}_{down,s} - \text{DOC}_{up,s}$, so upstream DOC is never both a predictor and part of the outcome. This reading replaces the older wording of Q2, which described the upstream-DOC path as upstream DOC *causing greater retention*; downstream DOC instead **inherits** the upstream state (slope `r sprintf("%.2f", gme(tO,"bsp_DOCout_miDOC_input")$mean)` mg per mg), and the hydrological/biological pathways are local modifications around that inherited background, not retention of it. Two causal links complete the picture: upstream DOC also feeds the primary producers directly, tested by adding upstream DOC → macrophytes and upstream DOC → phytoplankton to the DAG (supported for macrophytes, not for phytoplankton, above). This model (`downstream_DOC_me`, fit in `notebook/fitting/me_refits.R`, compared against the ΔDOC parameterization in `notebook/correspondence/scm_outcome_choice.qmd`) is the $\Delta$DOC model in a different parameterization: every mediator effect agrees to the second decimal, and the upstream-DOC path is re-read as an inheritance slope of **`r sprintf("%.2f", gme(tO,"bsp_DOCout_miDOC_input")$mean)` [`r sprintf("%.2f", gme(tO,"bsp_DOCout_miDOC_input")$lo)`, `r sprintf("%.2f", gme(tO,"bsp_DOCout_miDOC_input")$hi)`]** — downstream DOC inherits `r sprintf("%.0f", 100*gme(tO,"bsp_DOCout_miDOC_input")$mean)`% of the upstream concentration, mg per mg. Figure 1b is redrawn accordingly (@fig-q2); the Methods gain one sentence stating the parameterization, the inheritance slope, and the two added producer links.
+**Parameterization.** The structural causal model is reported with **downstream DOC as the outcome**: upstream DOC enters as a latent true concentration (its reading carries a 0.2 mg L$^{-1}$ instrument error) with a freely estimated inheritance slope, and $\Delta\text{DOC}_s$ is computed from the posterior afterwards as $\text{DOC}_{down,s} - \text{DOC}_{up,s}$, so upstream DOC is never both a predictor and part of the outcome. This reading replaces the older wording of Q2, which described the upstream-DOC path as upstream DOC *causing greater retention*; downstream DOC instead **inherits** the upstream state (slope `r sprintf("%.2f", gme(tO,"bsp_DOCout_miDOC_input")$mean)` mg per mg), and the hydrological/biological pathways are local modifications around that inherited background, not retention of it. Two causal links complete the picture: upstream DOC also feeds the primary producers directly, tested by adding upstream DOC → macrophytes and upstream DOC → phytoplankton to the DAG (supported for macrophytes, not for phytoplankton, above). This model (`downstream_DOC_me`, fit in `notebook/fitting/me_refits.R`, compared against the ΔDOC parameterization in `notebook/correspondence/scm_outcome_choice.qmd`) is the $\Delta$DOC model in a different parameterization: every mediator effect agrees to the second decimal, and the upstream-DOC path is re-read as an inheritance slope of **`r sprintf("%.2f", gme(tO,"bsp_DOCout_miDOC_input")$mean)` [`r sprintf("%.2f", gme(tO,"bsp_DOCout_miDOC_input")$lo)`, `r sprintf("%.2f", gme(tO,"bsp_DOCout_miDOC_input")$hi)`]** — downstream DOC inherits `r sprintf("%.0f", 100*gme(tO,"bsp_DOCout_miDOC_input")$mean)`% of the upstream concentration, mg per mg. Figure 4 (@fig-q2) replaces the former panel (b) of Figure 2; the Methods gain one sentence stating the parameterization, the inheritance slope, and the two added producer links.
 
 **Robustness check: does fixing the inheritance slope at 1 change anything else?** `downstream_DOC_me` estimates the slope freely (prior Normal(1, 0.3), posterior `r sprintf("%.2f", gme(tO,"bsp_DOCout_miDOC_input")$mean)`). A second fit, `downstream_DOC_me_fixed` (`notebook/fitting/downstream_DOC_me_fixed_fit.R`), pins it at 1 (prior Normal(1, 0.001), the standard way to fix an `mi()` coefficient in brms) and is otherwise identical, including the two upstream → producer links and the upstream measurement error.
 
@@ -245,7 +245,7 @@ if (file.exists(fx_path)) {
 }
 ```
 
-**Result: fixing the slope changes nothing else.** `r rob_msg` The mediator story of Figure 1b does not depend on which value the inheritance slope takes.
+**Result: fixing the slope changes nothing else.** `r rob_msg` The mediator story of Figure 4 does not depend on which value the inheritance slope takes.
 
 # 5. Q3 — Magnitude and seasonal modification: $R_s$ and $G$
 
@@ -636,7 +636,7 @@ med_names <- c(bsp_DOCout_miDOC_input = "inheritance slope", bsp_DOCout_mimacrop
 
 ## A. Alternative DAGs
 
-Four structures, all keeping the mediator core of Figure 1b, which is now DAG 0 itself:
+Four structures, all keeping the mediator core of Figure 4, which is now DAG 0 itself:
 
 -   **DAG 0** — the manuscript's model (@fig-q2): upstream DOC → macrophytes and → phytoplankton are included, alongside the upstream measurement error.
 -   **DAG 1** — the two upstream → producer links **removed**: the structure used before this revision. Does keeping them change the mediator story, or only the picture of what drives the producers?
@@ -848,11 +848,13 @@ D2 <- as.matrix(dist(cbind(kmx2[okc], kmy2[okc]))); diag(D2) <- Inf
 nb2 <- t(apply(D2, 1, function(r) order(r)[1:8]))
 resid <- sweep(-PME$O$ep_sub[, obs2][, okc], 2, -m6$DOC_out[obs2][okc])
 rho_res <- apply(resid, 1, function(r) cor(r, rowMeans(matrix(r[as.vector(nb2)], nrow = length(r))), method = "spearman"))
-ggplot(tibble(rho = rho_res), aes(x = rho, y = 1)) +
+p_spatial_resid <- ggplot(tibble(rho = rho_res), aes(x = rho, y = 1)) +
   geom_vline(xintercept = 0, linetype = "dashed", colour = "grey45") +
   stat_halfeye(.width = c(.66, .95), point_interval = "median_qi", fill = "grey80") +
   labs(x = "Spearman correlation of residuals with the mean of the 8 nearest neighbours", y = NULL) +
   theme_bw(base_size = 12) + theme(panel.grid.minor = element_blank(), axis.text.y = element_blank(), axis.ticks.y = element_blank())
+ggsave(here("results", "figures", "plan", "fig_spatial_resid.png"), p_spatial_resid, width = 8, height = 2.8, dpi = 300, bg = "white")
+p_spatial_resid
 ```
 
 ```{r prior-sens-numbers}
@@ -885,7 +887,7 @@ The qualitative frame the quantitative checks sit in (after Grace's causal-knowl
 kable(tribble(
   ~`Question`, ~`Answer for the beaver–DOC system`, ~`Where addressed`,
   "1. What causal quantity is sought?", "The local modification that beaver-engineering adds to downstream DOC, decomposed into its hydrological and biological pathways; and its size relative to the inherited seasonal contrast.", "Q2 (SCM), Q3 ($R_s$, $G$)",
-  "2. What is the causal system and its boundary?", "The beaver-engineered stream from the first to the last dam; inputs are upstream DOC, solar radiation, channel gradient, dams; the floodplain and the catchment are outside, represented by upstream DOC and $S$.", "Figure 3b, DAG (Figure 1b)",
+  "2. What is the causal system and its boundary?", "The beaver-engineered stream from the first to the last dam; inputs are upstream DOC, solar radiation, channel gradient, dams; the floodplain and the catchment are outside, represented by upstream DOC and $S$.", "Figure 3b, DAG (Figure 4)",
   "3. What is assumed about the structure (arrows present)?", "Dams → residence time → producers → DOC; solar → producers → DOC; litter → DOC; upstream DOC inherited with slope near 1; upstream DOC → macrophytes (and, more weakly, → phytoplankton).", "Table S1 (13 hypotheses), section 2",
   "4. What is assumed absent (arrows omitted, no confounding)?", "No direct solar → DOC, no season confounding, no unmeasured common cause of producers and DOC.", "Section 9 A–C: none of the omitted arrows is supported; placebo and implied nulls in C",
   "5. How are the effects identified?", "By the DAG's adjustment sets, with measurement error on every concentration and imputation of missing predictors; the inheritance slope is estimated, not assumed.", "Methods; section 4 (robustness to slope = 1)",
@@ -898,7 +900,7 @@ kable(tribble(
 ## Conclusions — E. Causal knowledge analysis
 
 -   The structure of Q2 is well supported where the data are dense (inheritance, direction, dams → residence time) and prior-dependent where they are thin (producers).
--   The manuscript should say so in one Methods paragraph: which arrows were tested and how (A, C), how strong a confounder would have to be (B), and that the producer effects follow the prior scale (D) — with Appendix S1 Figures S14–S17 and Table S2.
+-   The manuscript should say so in one Methods paragraph: which arrows were tested and how (A, C), how strong a confounder would have to be (B), and that the producer effects follow the prior scale (D) — with Appendix S1 Figures S10–S15 and Table S2.
 -   This is not a weakness to hide: it is the honest statement of what a national survey with a 16-stream mechanistic subset can and cannot identify, and it points to the next study — residence time and producers measured at the same streams, in both seasons.
 :::
 
@@ -1056,7 +1058,8 @@ fig3
 kable(tribble(
   ~`Manuscript figure`, ~Content, ~Answers, ~`This document`, ~Status,
   "Figure 1a", "Posterior predictive distribution of $\\Delta\\text{DOC}_s$ by season", "Q1", "@fig-q1", "existing",
-  "Figure 1b", "Structural causal model, outcome downstream DOC, with estimated effects", "Q2", "@fig-q2", "**redrawn — outcome is downstream DOC**",
+  "Figure 2", "Direction figure: now single-panel (panel b, the SCM, promoted to its own Figure 4)", "Q1", "@fig-q1", "**panel b removed**",
+  "Figure 4", "Structural causal model, outcome downstream DOC, with estimated effects (new causal links, upstream measurement error)", "Q2", "@fig-q2", "**new — standalone, was Figure 2b**",
   "Figure 2",  "Relative response $R_s$: across streams (a), by stream (b); seasonal gain $G$ by stream (c)", "Q3", "@fig-R", "**new — replaces the amplification-factor figure**",
   "Figure 3",  "Map (158 analysed streams), sampling design and schematic of $S$, $\\Delta\\text{DOC}_s$, $R_s$, $F$", "Methods", "@fig-map", "**both panels redrawn**",
   "Figure S1–S9", "Hypothesised DAG, priors, checks, stream-level classification, total effects, connectivity model", "Q2 support", "—", "existing",
@@ -1065,7 +1068,7 @@ kable(tribble(
   "Figure S12", "$R_{summer}$ and $G$ against the number of dams and the water residence time", "Q4", "@fig-intensity", "**new**",
   "Figure S13", "Hold-out prediction of downstream DOC and $\\Delta\\text{DOC}$", "Methods support", "@fig-holdout", "**new**",
   "Figure S18", "Pathway decomposition of the local modification: sources vs sinks, and the seasonal change", "Q5", "@fig-decomp, @fig-decomp-season", "**new**",
-  "Figures S14–S17, Table S2", "Structural and causal sensitivity: alternative DAGs, unmeasured confounding, falsification tests, prior and spatial checks, causal knowledge analysis", "Q2 support", "@fig-dag-tests, @fig-dag-compare, @fig-sensemakr, @fig-negative-controls, @fig-prior-sens, @fig-spatial-resid, @tbl-cka", "**new**"))
+  "Figures S10–S15, Table S2", "Structural and causal sensitivity: alternative DAGs, unmeasured confounding, falsification tests, prior and spatial checks, causal knowledge analysis", "Q2 support", "@fig-dag-tests, @fig-dag-compare, @fig-sensemakr, @fig-negative-controls, @fig-prior-sens, @fig-spatial-resid, @tbl-cka", "**new**"))
 ```
 
 ::: {.callout-warning}

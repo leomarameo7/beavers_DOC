@@ -19,3 +19,4 @@ overleaf/**/*.out
 overleaf/**/*.bbl
 overleaf/**/*.blg
 overleaf/**/*.synctex.gz
+.DS_Store
