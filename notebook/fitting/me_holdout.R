@@ -99,13 +99,16 @@ dd_test_pred  <- sweep(ep_o_test,  2, nd_test$DOC_input);  dd_test_obs  <- nd_te
 dd_train_pred <- sweep(ep_o_train, 2, nd_train$DOC_input); dd_train_obs <- nd_train$DOC_out - nd_train$DOC_input
 Od_out <- metrics(dd_test_obs,  colMeans(dd_test_pred))
 Od_in  <- metrics(dd_train_obs, colMeans(dd_train_pred))
+# predictive interval for the derived dDOC at held-out streams: unlike LOO, this is a genuine
+# posterior predictive draw for unseen data, so no importance-sampling reweighting is needed.
+dd_q_test <- apply(sweep(pp_o_test, 2, nd_test$DOC_input), 2, quantile, c(.05, .95))
 
 saveRDS(list(test_sites = test_sites, n_test_streams = length(test_sites), n_test_rows = nrow(nd_test), n_train_rows = nrow(nd_train),
              rhat = c(delta = max(rhat(fd), na.rm = TRUE), down = max(rhat(fo), na.rm = TRUE)),
              D_out = D_out, D_in = D_in, O_out = O_out, O_in = O_in, Od_out = Od_out, Od_in = Od_in,
              obs_d_test = nd_test$delta_DOC, mu_d_test = mu_d_test, q_d_test = q_d_test,
              obs_o_test = nd_test$DOC_out, mu_o_test = mu_o_test, q_o_test = q_o_test,
-             up_test = nd_test$DOC_input, dd_test_pred_med = apply(dd_test_pred, 2, median)),
+             up_test = nd_test$DOC_input, dd_test_pred_med = apply(dd_test_pred, 2, median), dd_q_test = dd_q_test),
         here("results", "me_holdout.rds"))
 cat("done. max Rhat:", round(max(max(rhat(fd), na.rm = TRUE), max(rhat(fo), na.rm = TRUE)), 3),
     " test streams:", length(test_sites), " test rows:", nrow(nd_test), "\n")
