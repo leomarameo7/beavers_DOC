@@ -27,7 +27,7 @@ editor: visual
 code-annotations: select
 editor_options: 
   chunk_output_type: console
-bibliography: references.bib
+bibliography: ../references.bib
 ---
 
 ```{r libraries, message=FALSE}
@@ -71,11 +71,11 @@ In this study, we are going to use Berger's methodology to define stream lateral
 - `yes_connected` : presence of wetland and it is connected to the stream (figure 1b).
 :::
 
-![**The three levels of `lateral_connectivity`.** Two streams with contrasting lateral connectivity to an adjacent wetland: on the left a wetland present but not directly connected to the channel (`yes_not_connected`), on the right a wetland hydrologically connected to the channel (`yes_connected`). Sites with no wetland within the 50 m buffer are coded `No_wetland`. Image by Kaspar Berger.](../images/later_connectivty_berger-01.png){#fig-latconn}
+![**The three levels of `lateral_connectivity`.** Two streams with contrasting lateral connectivity to an adjacent wetland: on the left a wetland present but not directly connected to the channel (`yes_not_connected`), on the right a wetland hydrologically connected to the channel (`yes_connected`). Sites with no wetland within the 50 m buffer are coded `No_wetland`. Image by Kaspar Berger.](../../images/later_connectivty_berger-01.png){#fig-latconn}
 
 Please note our main results:
 
-![**The main structural causal model, for reference (manuscript Figure 1b).** Drivers of beaver-mediated DOC change: solid edges (red = negative, blue = positive) carry at least 90% posterior probability of a directional effect, dashed edges are inconclusive. Values are standardized average effects. The path this notebook extends is water residence time (`WRT`), to which `lateral_connectivity` is added as an additional parent.](../images/Capitani_Figure_2b.png){#fig-scm}
+![**The main structural causal model, for reference (manuscript Figure 1b).** Drivers of beaver-mediated DOC change: solid edges (red = negative, blue = positive) carry at least 90% posterior probability of a directional effect, dashed edges are inconclusive. Values are standardized average effects. The path this notebook extends is water residence time (`WRT`), to which `lateral_connectivity` is added as an additional parent.](../../images/Capitani_Figure_2b.png){#fig-scm}
 
 We do already know that the mediating path (WRT → ΔDOC) is weak because an increase in WRT influence 1-2% the `deltaDOC`.
 
@@ -127,7 +127,7 @@ upstream_DOC -> delta_DOC
 #plot(dag)
 ```
 
-![**Extended DAG including `lateral_connectivity` (Appendix S1, Figure S8).** Identical to the main SCM except for one added causal path, from `lateral_connectivity` to water residence time (`WRT`). Because `lateral_connectivity` has no parents, no back-door path to `delta_DOC` exists and its total effect is identified without adjustment; the open front-door paths run through `WRT` and the primary producers.](../images/DAG_lateral_conn.png){#fig-daglateral}
+![**Extended DAG including `lateral_connectivity` (Appendix S1, Figure S8).** Identical to the main SCM except for one added causal path, from `lateral_connectivity` to water residence time (`WRT`). Because `lateral_connectivity` has no parents, no back-door path to `delta_DOC` exists and its total effect is identified without adjustment; the open front-door paths run through `WRT` and the primary producers.](../../images/DAG_lateral_conn.png){#fig-daglateral}
 
 So in this DAG, there are exactly **two open front-door paths**:
 

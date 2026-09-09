@@ -1,6 +1,5 @@
 suppressMessages({library(brms);library(dplyr);library(here)})
-setwd("/Users/leonardocapitani/Documents/Git/beavers_DOC")
-m6 <- read.csv("data/processed/m6.csv") |> mutate(across(c(season, site), as.factor))
+m6 <- read.csv(here("data","processed","m6.csv")) |> mutate(across(c(season, site), as.factor))
 # Robustness check requested by Josh (4 Sep 2026, 18:12): does fixing the
 # upstream-DOC inheritance slope at 1 change any other path in the SCM?
 # Same model and priors as b1_downstream (scm_downstream_fit.R), with one

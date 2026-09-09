@@ -1,6 +1,5 @@
 suppressMessages({library(brms);library(dplyr);library(here)})
-setwd("/Users/leonardocapitani/Documents/Git/beavers_DOC")
-m6 <- read.csv("data/processed/m6.csv") |> mutate(across(c(season, site), as.factor))
+m6 <- read.csv(here("data","processed","m6.csv")) |> mutate(across(c(season, site), as.factor))
 # Same SCM as b1, but the outcome is downstream DOC and upstream DOC enters on its raw
 # mg/L scale with a free inheritance slope (imputation of missing values only, as in b1).
 bform_down <-

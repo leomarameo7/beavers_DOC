@@ -8,8 +8,8 @@ format:
     toc: true
     code-fold: false
     embed-resources: true
-bibliography: references.bib
-csl: ecology-letters.csl
+bibliography: ../references.bib
+csl: ../ecology-letters.csl
 execute:
   echo: true
   message: false

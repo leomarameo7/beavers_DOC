@@ -12,8 +12,8 @@ format:
     embed-resources: true
     fig-width: 9
     fig-align: center
-bibliography: references.bib
-csl: ecology-letters.csl
+bibliography: ../references.bib
+csl: ../ecology-letters.csl
 execute:
   echo: true
   message: false
@@ -76,7 +76,7 @@ kable(tribble(
 
 **Manuscript placement: Appendix S1 (Figure S10).**
 
-![**Derivation of the variables.** Top: the same causal structure operates in winter and summer; downstream DOC inherits upstream DOC and is modified by local hydrological and biological processes. Bottom (dashed): $\Delta\text{DOC}_s$, $S$, $R_s$ and $F$ are calculations from the concentrations, not causal nodes. Solid arrows are causal pathways; the green arrow is the persistence of the hydrologic template between seasons. Variable definitions: @tbl-variables.](../images/DAG_variable_derivation.png){#fig-dag}
+![**Derivation of the variables.** Top: the same causal structure operates in winter and summer; downstream DOC inherits upstream DOC and is modified by local hydrological and biological processes. Bottom (dashed): $\Delta\text{DOC}_s$, $S$, $R_s$ and $F$ are calculations from the concentrations, not causal nodes. Solid arrows are causal pathways; the green arrow is the persistence of the hydrologic template between seasons. Variable definitions: @tbl-variables.](../../images/DAG_variable_derivation.png){#fig-dag}
 
 # 2. Research questions and hypotheses
 
@@ -115,7 +115,7 @@ The division of labour between the two quantities is fixed: **$R_s$ answers "how
 
 **Manuscript placement: main text, Figure 1a (existing, unchanged).**
 
-![**Direction of the local response.** Posterior predictive distribution of $\Delta\text{DOC}_s$ for a single sampling of a beaver-engineered stream, in winter and summer, from the measurement-error model on the raw upstream and downstream concentrations. Coral: posterior predictive probability of a sink response ($\Delta\text{DOC}_s < -0.5$ mg L$^{-1}$); grey: negligible response (ROPE $\pm 0.5$ mg L$^{-1}$); skyblue: source response ($\Delta\text{DOC}_s > 0.5$ mg L$^{-1}$). Point: median; bars: 66% and 95% intervals. $\Delta\text{DOC}_s$ is defined in @tbl-variables.](../overleaf/figures/media/Figure_2a.png){#fig-q1}
+![**Direction of the local response.** Posterior predictive distribution of $\Delta\text{DOC}_s$ for a single sampling of a beaver-engineered stream, in winter and summer, from the measurement-error model on the raw upstream and downstream concentrations. Coral: posterior predictive probability of a sink response ($\Delta\text{DOC}_s < -0.5$ mg L$^{-1}$); grey: negligible response (ROPE $\pm 0.5$ mg L$^{-1}$); skyblue: source response ($\Delta\text{DOC}_s > 0.5$ mg L$^{-1}$). Point: median; bars: 66% and 95% intervals. $\Delta\text{DOC}_s$ is defined in @tbl-variables.](../../overleaf/figures/media/Figure_2a.png){#fig-q1}
 
 ```{r q1-data}
 # raw data: one row per sampling; pair each stream's winter and summer sampling

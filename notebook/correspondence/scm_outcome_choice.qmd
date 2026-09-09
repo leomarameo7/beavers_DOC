@@ -11,8 +11,8 @@ format:
     embed-resources: true
     fig-width: 9
     fig-align: center
-bibliography: references.bib
-csl: ecology-letters.csl
+bibliography: ../references.bib
+csl: ../ecology-letters.csl
 execute:
   echo: true
   message: false
