@@ -1,0 +1,256 @@
+---
+title: "Appendix S1 figures for the extended SCM (delta_SCM_me)"
+subtitle: "Priors, residuals, posterior predictive checks, posterior parameters, stream-level classification and total effects, regenerated for the model with the upstream measurement error and the two upstream -> producer links"
+author: "Leonardo Capitani"
+date: last-modified
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    code-fold: true
+    embed-resources: true
+    fig-width: 10
+execute:
+  echo: true
+  message: false
+  warning: false
+---
+
+::: {.callout-tip appearance="simple"}
+## Purpose
+
+Figures S2–S7 of Appendix S1 were generated from the original SCM (`b1` in `notebook/legacy/notebook.qmd`), which predates the upstream measurement error and the two upstream → producer links now in the manuscript's model. This document regenerates the same six figures from `delta_SCM_me` (the ΔDOC-outcome parameterization of the current model, algebraically equivalent to `downstream_DOC_me`, Figure 4 of the main manuscript), saving each PNG to the exact path `overleaf/supplementary/figures/media/` already used by `appendix_S1.tex`, so the LaTeX document needs no path changes. The two new links add causal paths 14 and 15 to the model (Table S1 in `appendix_S1.tex` is updated separately to add them).
+:::
+
+```{r setup}
+#| include: false
+library(tidyverse); library(brms); library(here); library(ggdist); library(patchwork); library(bayesplot); library(scales)
+invisible(Sys.setlocale("LC_CTYPE", "en_US.UTF-8"))
+fd <- readRDS(here("results", "models_fit", "delta_SCM_me.rds"))
+m6 <- read.csv(here("data", "processed", "m6.csv")) |> mutate(across(c(season, site), as.factor))
+outdir <- here("overleaf", "supplementary", "figures", "media")
+```
+
+# Figure S2: priors
+
+```{r tidy-priors}
+# delta_SCM_me was fit without sample_prior = TRUE (me_refits.R), so prior_draws() is empty.
+# The priors are simulated directly from the declared specification (identical to pr_delta
+# in notebook/fitting/me_refits.R), which is exact and far cheaper than refitting.
+set.seed(7); N <- 4000
+spec <- list(
+  list(label = "b_deltaDOC_Intercept", prior = "normal(0, 2.5)", mean = 0, sd = 2.5, kind = "norm"),
+  list(label = "bsp_deltaDOC_miDOC_input_z", prior = "normal(0, 0.1)", mean = 0, sd = 0.1, kind = "norm"),
+  list(label = "bsp_deltaDOC_mimacrophy_abun_z", prior = "normal(0.2, 0.075)", mean = 0.2, sd = 0.075, kind = "norm"),
+  list(label = "bsp_deltaDOC_miplankton_abun_z", prior = "normal(0.2, 0.075)", mean = 0.2, sd = 0.075, kind = "norm"),
+  list(label = "bsp_deltaDOC_micover_litter_z", prior = "normal(0.2, 0.075)", mean = 0.2, sd = 0.075, kind = "norm"),
+  list(label = "bsp_deltaDOC_miwater_res_time_z", prior = "normal(0, 0.1)", mean = 0, sd = 0.1, kind = "norm"),
+  list(label = "bsp_planktonabunz_misolar_z", prior = "normal(0.1, 0.075)", mean = 0.1, sd = 0.075, kind = "norm"),
+  list(label = "bsp_planktonabunz_miwater_res_time_z", prior = "normal(0.1, 0.075)", mean = 0.1, sd = 0.075, kind = "norm"),
+  list(label = "bsp_planktonabunz_miDOC_input_z", prior = "normal(0, 0.1)", mean = 0, sd = 0.1, kind = "norm"),
+  list(label = "bsp_macrophyabunz_misolar_z", prior = "normal(0.1, 0.075)", mean = 0.1, sd = 0.075, kind = "norm"),
+  list(label = "bsp_macrophyabunz_miwater_res_time_z", prior = "normal(0, 0.075)", mean = 0, sd = 0.075, kind = "norm"),
+  list(label = "bsp_macrophyabunz_miDOC_input_z", prior = "normal(0, 0.1)", mean = 0, sd = 0.1, kind = "norm"),
+  list(label = "bsp_coverlitterz_misolar_z", prior = "normal(-0.1, 0.075)", mean = -0.1, sd = 0.075, kind = "norm"),
+  list(label = "bsp_waterrestimez_midam_height_z", prior = "normal(0.15, 0.075)", mean = 0.15, sd = 0.075, kind = "norm"),
+  list(label = "b_waterrestimez_n_dams_z", prior = "normal(0.15, 0.075)", mean = 0.15, sd = 0.075, kind = "norm"),
+  list(label = "b_waterrestimez_slope_z", prior = "normal(0, 0.075)", mean = 0, sd = 0.075, kind = "norm"),
+  list(label = "sigma_deltaDOC", prior = "student_t(3, 0, 2.5), > 0", mean = 0, sd = 2.5, kind = "halft3"),
+  list(label = "sigma_solarz", prior = "normal(0, 0.5), > 0", mean = 0, sd = 0.5, kind = "halfnorm"),
+  list(label = "sigma_DOCinputz", prior = "normal(0, 0.5), > 0", mean = 0, sd = 0.5, kind = "halfnorm"),
+  list(label = "sigma_planktonabunz", prior = "normal(0, 0.5), > 0", mean = 0, sd = 0.5, kind = "halfnorm"),
+  list(label = "sigma_macrophyabunz", prior = "normal(0, 0.5), > 0", mean = 0, sd = 0.5, kind = "halfnorm"),
+  list(label = "sigma_coverlitterz", prior = "normal(0, 0.5), > 0", mean = 0, sd = 0.5, kind = "halfnorm"),
+  list(label = "sigma_damheightz", prior = "normal(0, 0.5), > 0", mean = 0, sd = 0.5, kind = "halfnorm"),
+  list(label = "sigma_waterrestimez", prior = "normal(0, 0.5), > 0", mean = 0, sd = 0.5, kind = "halfnorm"))
+draw_one <- function(s) { v <- switch(s$kind, norm = rnorm(N, s$mean, s$sd), halfnorm = abs(rnorm(N, 0, s$sd)), halft3 = abs(rt(N, 3) * s$sd))
+  tibble(label = s$label, prior = s$prior, value = v) }
+priors_annotated <- map_dfr(spec, draw_one)
+```
+
+```{r fig-priors-intercept}
+p_delta_intercept <- priors_annotated |> filter(label == "b_deltaDOC_Intercept") |>
+  ggplot(aes(x = value, y = label)) + stat_halfeye(fill = "skyblue", alpha = 0.7) +
+  geom_text(data = ~distinct(., label, prior), aes(x = -Inf, y = label, label = prior), hjust = -0.1, size = 4, inherit.aes = FALSE) +
+  theme_bw(base_size = 15) + labs(x = NULL, y = NULL) +
+  scale_y_discrete(labels = c(b_deltaDOC_Intercept = expression(Delta * "DOC"["Intercept"])))
+```
+
+```{r fig-priors-direct}
+lv_direct <- c("bsp_deltaDOC_miwater_res_time_z", "bsp_deltaDOC_micover_litter_z", "bsp_deltaDOC_miplankton_abun_z",
+               "bsp_deltaDOC_mimacrophy_abun_z", "bsp_deltaDOC_miDOC_input_z")
+lb_direct <- c(bsp_deltaDOC_miDOC_input_z = "beta[1~'[DOC upstream]']", bsp_deltaDOC_miwater_res_time_z = "beta[5~'[water res. time]']",
+               bsp_deltaDOC_micover_litter_z = "beta[4~'[litter cover]']", bsp_deltaDOC_miplankton_abun_z = "beta[3~'[phytoplankton]']",
+               bsp_deltaDOC_mimacrophy_abun_z = "beta[2~'[macrophytes]']")
+p_direct <- priors_annotated |> filter(label %in% lv_direct) |>
+  ggplot(aes(x = value, y = factor(label, levels = lv_direct))) + stat_halfeye(fill = "skyblue", alpha = 0.7) +
+  geom_text(data = ~distinct(., label, prior), aes(x = -Inf, y = label, label = prior), hjust = -0.1, size = 4, inherit.aes = FALSE) +
+  theme_bw(base_size = 15) + labs(x = NULL, y = NULL) + scale_y_discrete(labels = function(x) parse(text = lb_direct[x]))
+```
+
+```{r fig-priors-indirect}
+lv_ind <- c("b_waterrestimez_n_dams_z", "bsp_waterrestimez_midam_height_z", "b_waterrestimez_slope_z",
+            "bsp_planktonabunz_miwater_res_time_z", "bsp_macrophyabunz_miwater_res_time_z",
+            "bsp_coverlitterz_misolar_z", "bsp_macrophyabunz_misolar_z", "bsp_planktonabunz_misolar_z",
+            "bsp_macrophyabunz_miDOC_input_z", "bsp_planktonabunz_miDOC_input_z")
+lb_ind <- c(bsp_planktonabunz_misolar_z = "beta[6~'[solar rad. -> phyto.]']", bsp_macrophyabunz_misolar_z = "beta[7~'[solar rad. -> macro.]']",
+            bsp_coverlitterz_misolar_z = "beta[8~'[solar rad. -> litter]']", bsp_macrophyabunz_miwater_res_time_z = "beta[9~'[WRT -> macro.]']",
+            bsp_planktonabunz_miwater_res_time_z = "beta[10~'[WRT -> phyto.]']", b_waterrestimez_slope_z = "beta[11~'[slope -> WRT]']",
+            bsp_waterrestimez_midam_height_z = "beta[12~'[dam height -> WRT]']", b_waterrestimez_n_dams_z = "beta[13~'[n. dams -> WRT]']",
+            bsp_macrophyabunz_miDOC_input_z = "beta[14~'[DOC upstream -> macro.]']", bsp_planktonabunz_miDOC_input_z = "beta[15~'[DOC upstream -> phyto.]']")
+p_ind <- priors_annotated |> filter(label %in% lv_ind) |>
+  ggplot(aes(x = value, y = factor(label, levels = lv_ind))) + stat_halfeye(fill = "skyblue", alpha = 0.7) +
+  geom_text(data = ~distinct(., label, prior), aes(x = -Inf, y = label, label = prior), hjust = -0.1, size = 4, inherit.aes = FALSE) +
+  theme_bw(base_size = 15) + labs(x = NULL, y = NULL) + scale_y_discrete(labels = function(x) parse(text = lb_ind[x]))
+```
+
+```{r fig-priors-sigma}
+lb_sig <- c(sigma_deltaDOC = "sigma[Delta*'DOC']", sigma_solarz = "sigma['solar radiation']", sigma_DOCinputz = "sigma['upstream DOC']",
+            sigma_planktonabunz = "sigma['phytoplankton']", sigma_macrophyabunz = "sigma['macrophytes']", sigma_coverlitterz = "sigma['litter cover']",
+            sigma_damheightz = "sigma['dam height']", sigma_waterrestimez = "sigma['water res. time']")
+p_sigma <- priors_annotated |> filter(label %in% names(lb_sig)) |>
+  ggplot(aes(x = value, y = label)) + stat_halfeye(fill = "skyblue", alpha = 0.7) +
+  geom_text(data = ~distinct(., label, prior), aes(x = -Inf, y = label, label = prior), hjust = -0.1, size = 4, inherit.aes = FALSE) +
+  theme_bw(base_size = 15) + labs(x = NULL, y = NULL) + scale_y_discrete(labels = function(x) parse(text = lb_sig[x])) + scale_x_continuous(limits = c(-2, 8))
+```
+
+```{r fig-S2-priors}
+#| fig-width: 13
+#| fig-height: 13
+#| fig-cap: "Priors of the extended structural causal model (delta_SCM_me). (a) the ΔDOC intercept, (b) the direct effects on ΔDOC (β1–β5), (c) the indirect-effect paths (β6–β15, now including the two upstream-to-producer links β14, β15), (d) the residual standard deviations. Each panel shows the prior draws as half-eye plots, annotated with the prior distribution used."
+p_S2 <- (p_delta_intercept + p_direct) / p_ind / p_sigma + plot_layout(heights = c(1, 3.5, 1.2)) + plot_annotation(tag_levels = "a")
+ggsave(file.path(outdir, "figS2_priors.png"), p_S2, width = 13, height = 13, dpi = 300, bg = "white")
+p_S2
+```
+
+# Figure S3: residuals
+
+```{r fig-S3-residuals}
+#| fig-cap: "Residuals of the extended structural causal model (delta_SCM_me). Residuals (Y_i - Y_pred) against the predicted ΔDOC. Residuals scattered around zero with no systematic trend indicate that the model describes the data adequately."
+y_hat <- fitted(fd, resp = "deltaDOC"); res <- residuals(fd, resp = "deltaDOC")
+p_S3 <- tibble(y_hat = y_hat[, 1], r = res[, 1]) |> ggplot(aes(x = y_hat, y = r)) +
+  geom_hline(yintercept = 0, colour = "grey60") + geom_point(shape = 1, size = 1.5) +
+  labs(x = expression(Y[pred] * ": Predicted " * Delta * "DOC (mg/L)"), y = expression(Y[i] - Y[pred])) + theme_bw(base_size = 15)
+ggsave(file.path(outdir, "figS3_residuals.png"), p_S3, width = 10, height = 6, dpi = 300, bg = "white")
+p_S3
+```
+
+# Figure S4: posterior predictive check
+
+```{r fig-S4-ppc}
+#| fig-cap: "Posterior predictive check of the extended structural causal model (delta_SCM_me). The dark line is the observed density of ΔDOC and the light lines are 1000 datasets simulated from the posterior."
+p_S4 <- pp_check(fd, resp = "deltaDOC", ndraws = 1000) + theme_bw(base_size = 15) +
+  labs(x = expression(Delta * "DOC (mg/L)")) + scale_x_continuous(breaks = seq(-3.5, 3.5, 0.5), limits = c(-3.5, 3.5))
+ggsave(file.path(outdir, "figS4_ppc.png"), p_S4, width = 10, height = 6, dpi = 300, bg = "white")
+p_S4
+```
+
+# Figure S5: posterior parameter distributions
+
+```{r fig-S5-posteriors}
+#| fig-height: 9
+#| fig-cap: "Posterior parameter distributions of the extended structural causal model (delta_SCM_me). Median shown with point; 66% and 95% credible intervals shown with bars. Parameters with more than 90% probability mass on one side of zero (solid) are considered to have a positive or negative influence; dashed: no-evidence. a) The direct effects on ΔDOC. b) The indirect-effect paths, including the two upstream-to-producer links (14, 15)."
+d <- as_draws_df(fd)
+sumtab <- function(pars, labs) { tibble(par = pars, lab = labs) |> rowwise() |>
+    mutate(med = median(d[[par]]), lo66 = quantile(d[[par]], .17), hi66 = quantile(d[[par]], .83),
+           lo95 = quantile(d[[par]], .025), hi95 = quantile(d[[par]], .975), p_pos = mean(d[[par]] > 0),
+           evid = p_pos > 0.9 | p_pos < 0.1) |> ungroup() }
+direct_pars <- c("bsp_deltaDOC_miDOC_input_z", "bsp_deltaDOC_mimacrophy_abun_z", "bsp_deltaDOC_miplankton_abun_z",
+                 "bsp_deltaDOC_micover_litter_z", "bsp_deltaDOC_miwater_res_time_z")
+direct_labs <- c("1: DOC upstream", "2: Macrophytes", "3: Phytoplankton", "4: Litter cover", "5: Water residence time")
+ind_pars <- c("bsp_planktonabunz_misolar_z", "bsp_macrophyabunz_misolar_z", "bsp_coverlitterz_misolar_z",
+              "bsp_macrophyabunz_miwater_res_time_z", "bsp_planktonabunz_miwater_res_time_z", "b_waterrestimez_slope_z",
+              "bsp_waterrestimez_midam_height_z", "b_waterrestimez_n_dams_z", "bsp_macrophyabunz_miDOC_input_z", "bsp_planktonabunz_miDOC_input_z")
+ind_labs <- c("6: Solar rad. -> phyto.", "7: Solar rad. -> macro.", "8: Solar rad. -> litter", "9: WRT -> macro.", "10: WRT -> phyto.",
+              "11: Slope -> WRT", "12: Dam height -> WRT", "13: N. dams -> WRT", "14: DOC upstream -> macro.", "15: DOC upstream -> phyto.")
+tab_direct <- sumtab(direct_pars, direct_labs); tab_ind <- sumtab(ind_pars, ind_labs)
+plot_post <- function(tab, lv) ggplot(tab, aes(x = med, y = factor(lab, levels = rev(lv)))) +
+  geom_vline(xintercept = 0, linetype = "dashed", colour = "grey45") +
+  geom_linerange(aes(xmin = lo95, xmax = hi95), colour = "grey60") +
+  geom_linerange(aes(xmin = lo66, xmax = hi66, linetype = evid), linewidth = 1.1) +
+  geom_point(size = 2) + scale_linetype_manual(values = c(`TRUE` = "solid", `FALSE` = "dotted"), guide = "none") +
+  theme_bw(base_size = 14) + labs(x = "Standardized effect", y = NULL)
+p_S5 <- plot_post(tab_direct, direct_labs) / plot_post(tab_ind, ind_labs) + plot_layout(heights = c(1, 1.8)) + plot_annotation(tag_levels = "a")
+ggsave(file.path(outdir, "figS5_posteriors.png"), p_S5, width = 10, height = 9, dpi = 300, bg = "white")
+p_S5
+```
+
+# Figure S6: stream-level classification of ΔDOC
+
+```{r fig-S6-site-level}
+#| fig-height: 6
+#| fig-cap: "Stream-level ΔDOC (delta_SCM_me). Blue points and bars: posterior median and 90% credible interval of the model-based expected ΔDOC of each stream (ranked by posterior median). Orange crosses: observed stream-averaged ΔDOC, shown for reference. The grey band is the region of practical equivalence (±0.5 mg/L)."
+obs <- which(!is.na(m6$delta_DOC))
+ep <- posterior_epred(fd, resp = "deltaDOC")[, obs]
+site_obs <- m6$site[obs]
+site_med <- tapply(seq_along(site_obs), site_obs, function(i) rowMeans(ep[, i, drop = FALSE]))
+site_tab <- tibble(site = names(site_med)) |> rowwise() |>
+  mutate(med = median(site_med[[site]]), lo = quantile(site_med[[site]], .05), hi = quantile(site_med[[site]], .95)) |> ungroup()
+obs_mean <- m6 |> filter(!is.na(delta_DOC)) |> group_by(site) |> summarise(obs_mean = mean(delta_DOC))
+site_tab <- site_tab |> left_join(obs_mean, by = "site") |> mutate(obs_clip = pmin(obs_mean, 5), site = fct_reorder(site, med))
+n_clip <- sum(site_tab$obs_mean > 5, na.rm = TRUE)
+p_S6 <- ggplot(site_tab, aes(x = site, y = med)) +
+  annotate("rect", xmin = -Inf, xmax = Inf, ymin = -0.5, ymax = 0.5, fill = "grey85", alpha = .5) +
+  geom_hline(yintercept = 0, colour = "grey50") +
+  geom_linerange(aes(ymin = lo, ymax = hi), colour = "#3B9AD1", alpha = .6) +
+  geom_point(colour = "#3B9AD1", size = 1) +
+  geom_point(aes(y = obs_clip), colour = "darkorange", shape = 4, size = 1.3) +
+  theme_bw(base_size = 13) + theme(axis.text.x = element_blank(), axis.ticks.x = element_blank(), panel.grid.major.x = element_blank()) +
+  labs(x = "Stream (ranked by posterior median)", y = expression("Expected " * Delta * "DOC (mg/L)"))
+ggsave(file.path(outdir, "figS7_site_level.png"), p_S6, width = 10, height = 6, dpi = 300, bg = "white")
+p_S6
+```
+
+```{r s6-numbers}
+#| echo: false
+s6_msg <- sprintf("Median posterior width of the 90%% credible interval: %.2f mg/L. Expected ΔDOC range: %.2f to %.2f mg/L (%d of %d streams outside the ROPE). Intercept %s; between-stream SD %s. %d observed stream means exceed 5 mg/L and are clipped at 5 for display.",
+  median(site_tab$hi - site_tab$lo), min(site_tab$med), max(site_tab$med), sum(site_tab$med < -0.5 | site_tab$med > 0.5), nrow(site_tab),
+  sprintf("%.2f [%.2f, %.2f]", mean(d$b_deltaDOC_Intercept), quantile(d$b_deltaDOC_Intercept, .025), quantile(d$b_deltaDOC_Intercept, .975)),
+  sprintf("%.2f [%.2f, %.2f]", mean(d$sd_site__deltaDOC_Intercept), quantile(d$sd_site__deltaDOC_Intercept, .025), quantile(d$sd_site__deltaDOC_Intercept, .975)), n_clip)
+cat(s6_msg)
+```
+
+# Figure S7: total effects of the exogenous drivers on ΔDOC (path tracing)
+
+```{r fig-S7-total-effects}
+#| fig-height: 4.5
+#| fig-cap: "Posterior distributions of the total (standardized) effect of each exogenous driver on ΔDOC under the extended model (delta_SCM_me), obtained by tracing all open causal paths, including the two new upstream-to-producer paths. Points: posterior means; thick and thin bars: 66% and 95% credible intervals."
+b1 <- d$bsp_deltaDOC_miDOC_input_z; b2 <- d$bsp_deltaDOC_mimacrophy_abun_z; b3 <- d$bsp_deltaDOC_miplankton_abun_z
+b4 <- d$bsp_deltaDOC_micover_litter_z; b5 <- d$bsp_deltaDOC_miwater_res_time_z
+b6 <- d$bsp_planktonabunz_misolar_z; b7 <- d$bsp_macrophyabunz_misolar_z; b8 <- d$bsp_coverlitterz_misolar_z
+b9 <- d$bsp_macrophyabunz_miwater_res_time_z; b10 <- d$bsp_planktonabunz_miwater_res_time_z
+b11 <- d$b_waterrestimez_slope_z; b12 <- d$bsp_waterrestimez_midam_height_z; b13 <- d$b_waterrestimez_n_dams_z
+b14 <- d$bsp_macrophyabunz_miDOC_input_z; b15 <- d$bsp_planktonabunz_miDOC_input_z
+wrt_total <- b5 + b9 * b2 + b10 * b3                      # WRT: direct + via macrophytes + via phytoplankton
+solar_total <- b7 * b2 + b6 * b3 + b8 * b4                 # solar: via macrophytes, phytoplankton, litter
+upstream_total <- b1 + b14 * b2 + b15 * b3                 # upstream DOC: direct + via macrophytes + via phytoplankton (new)
+ndams_total <- b13 * wrt_total; damheight_total <- b12 * wrt_total; slope_total <- b11 * wrt_total
+eff <- bind_rows(tibble(driver = "Upstream DOC", v = upstream_total), tibble(driver = "Solar radiation", v = solar_total),
+                  tibble(driver = "Water residence time", v = wrt_total), tibble(driver = "Number of dams", v = ndams_total),
+                  tibble(driver = "Max dam height", v = damheight_total), tibble(driver = "Channel gradient", v = slope_total))
+lv <- c("Channel gradient", "Max dam height", "Number of dams", "Water residence time", "Solar radiation", "Upstream DOC")
+p_S7 <- ggplot(eff, aes(x = v, y = factor(driver, levels = lv))) + geom_vline(xintercept = 0, linetype = "dashed", colour = "grey45") +
+  stat_pointinterval(.width = c(.66, .95), point_interval = "mean_qi") + theme_bw(base_size = 13) +
+  labs(x = expression("Total standardized effect on " * Delta * "DOC"), y = NULL)
+ggsave(file.path(outdir, "figS8_total_effects.png"), p_S7, width = 8, height = 4.5, dpi = 300, bg = "white")
+p_S7
+```
+
+```{r s7-numbers}
+#| echo: false
+q90 <- function(x) sprintf("%.2f [%.2f, %.2f]", mean(x), quantile(x, .05), quantile(x, .95))
+pdir <- function(x) if (mean(x > 0) > mean(x < 0)) mean(x > 0) else mean(x < 0)
+s7_msg <- sprintf("Upstream DOC %s (P = %.2f); solar radiation %s (P = %.2f); water residence time %s (P = %.2f); number of dams %s (P = %.2f); max dam height %s (P = %.2f); channel gradient %s (P = %.2f).",
+  q90(upstream_total), pdir(upstream_total), q90(solar_total), pdir(solar_total), q90(wrt_total), pdir(wrt_total),
+  q90(ndams_total), pdir(ndams_total), q90(damheight_total), pdir(damheight_total), q90(slope_total), pdir(slope_total))
+cat(s7_msg)
+```
+
+# Reproducibility
+
+```{r session}
+#| echo: false
+cat("Model: delta_SCM_me = results/models_fit/delta_SCM_me.rds (notebook/fitting/me_refits.R)\n",
+    "Figures saved to overleaf/supplementary/figures/media/ (figS2-figS5, figS7, figS8; existing filenames, new content)\n")
+sessionInfo()$R.version$version.string
+```
