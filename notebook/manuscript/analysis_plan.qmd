@@ -573,15 +573,15 @@ if (have_pred && have_hold) {
   n_all_streams <- length(unique(read.csv(here("data", "processed", "m6.csv"))$site))
   n_train_streams <- n_all_streams - H$n_test_streams
   f2 <- function(x) sprintf("%.2f", x); fp <- function(x) sprintf("%.0f%%", 100 * x)
-  val_msg <- sprintf("- **Downstream DOC at an unseen stream is predictable.** Hold-out R² = %.2f, RMSE %.2f mg L⁻¹ (spread of the data %.2f), 90%% predictive intervals containing %.0f%% of the unseen observations — calibrated.\n- **No overfitting.** In-sample R² %.2f, leave-one-out %.2f (full model); %.2f in sample for the hold-out fit. The R² on all streams is capped by a few very high concentrations in the heavy tail (RMSE %.1f against a spread of %.1f), not by unseen streams.\n- **The local change is not predictable.** Derived ΔDOC: hold-out R² = %.2f, RMSE %.2f against %.2f for predicting its mean.",
+  val_msg <- sprintf("- **Downstream DOC at an unseen stream is predictable.** Hold-out R² = %.2f, RMSE %.2f mg L⁻¹ (spread of the data %.2f), 90%% predictive intervals containing %.0f%% of the unseen observations — calibrated.\n- **No overfitting.** In-sample R² %.2f, leave-one-out %.2f (full model); %.2f in sample for the hold-out fit. The R² across all samplings is capped by a few very high concentrations in the heavy tail (RMSE %.1f against a spread of %.1f), not by unseen streams.\n- **The local change is not predictable.** Derived ΔDOC: hold-out R² = %.2f, RMSE %.2f against %.2f for predicting its mean.",
     H$O_out["R2"], H$O_out["RMSE"], H$O_out["RMSE_null"], 100 * H$O_out["cover90"], in_full["R2"], loo_full["R2"], H$O_in["R2"], loo_full["RMSE"], sd(P$y_out), H$Od_out["R2"], H$Od_out["RMSE"], H$Od_out["RMSE_null"])
   kable(tribble(
     ~Quantity, ~Test, ~`In / out of sample`, ~`R²`, ~`RMSE (mg L⁻¹)`, ~`RMSE of predicting the mean`, ~`90% interval coverage`,
-    "Downstream DOC", "Full model, all 158 streams", "in-sample", f2(in_full["R2"]), f2(in_full["RMSE"]), f2(sd(P$y_out)), fp(in_full["cover"]),
+    "Downstream DOC", sprintf("Full model, all %d samplings", length(P$y_out)), "in-sample", f2(in_full["R2"]), f2(in_full["RMSE"]), f2(sd(P$y_out)), fp(in_full["cover"]),
     "Downstream DOC", "Full model, PSIS-LOO", "out-of-sample", f2(loo_full["R2"]), f2(loo_full["RMSE"]), f2(sd(P$y_out)), fp(loo_full["cover"]),
     "Downstream DOC", sprintf("Hold-out fit, %d training streams", n_train_streams), "in-sample", f2(H$O_in["R2"]), f2(H$O_in["RMSE"]), f2(H$O_in["RMSE_null"]), fp(H$O_in["cover90"]),
     "Downstream DOC", sprintf("Hold-out fit, %d unseen streams (%d samplings)", H$n_test_streams, length(y_h)), "out-of-sample", f2(H$O_out["R2"]), f2(H$O_out["RMSE"]), f2(H$O_out["RMSE_null"]), fp(H$O_out["cover90"]),
-    "Derived ΔDOC", "Full model, all 158 streams", "in-sample", f2(d_in_full["R2"]), f2(d_in_full["RMSE"]), f2(sd(P$d_obs)), fp(d_in_full["cover"]),
+    "Derived ΔDOC", sprintf("Full model, all %d samplings", length(P$d_obs)), "in-sample", f2(d_in_full["R2"]), f2(d_in_full["RMSE"]), f2(sd(P$d_obs)), fp(d_in_full["cover"]),
     "Derived ΔDOC", "Full model, PSIS-LOO", "out-of-sample", f2(loo_d["R2"]), f2(loo_d["RMSE"]), f2(sd(P$d_obs)), fp(loo_d["cover"]),
     "Derived ΔDOC", "Hold-out fit, training streams", "in-sample", f2(H$Od_in["R2"]), f2(H$Od_in["RMSE"]), f2(H$Od_in["RMSE_null"]), "—",
     "Derived ΔDOC", "Hold-out fit, unseen streams", "out-of-sample", f2(H$Od_out["R2"]), f2(H$Od_out["RMSE"]), f2(H$Od_out["RMSE_null"]), fp(mean(d_obs_h >= q_dh[1, ] & d_obs_h <= q_dh[2, ]))),
