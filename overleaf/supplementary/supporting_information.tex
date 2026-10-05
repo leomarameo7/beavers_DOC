@@ -1,5 +1,5 @@
-%% Appendix S1 -- Supplementary Information (standalone document)
-%% Compile separately from main.tex (Overleaf: Menu -> Main document -> supplementary/appendix_S1.tex)
+%% Supporting Information (standalone document)
+%% Compile separately from main.tex (Overleaf: Menu -> Main document -> supplementary/supporting_information.tex)
 \documentclass[11pt,a4paper]{article}
 \usepackage[margin=2.5cm]{geometry}
 \usepackage{graphicx,amsmath,amssymb,booktabs,longtable,array,soul,hyperref,placeins,float}
@@ -7,7 +7,7 @@
 \renewcommand{\thefigure}{S\arabic{figure}}
 \renewcommand{\thetable}{S\arabic{table}}
 \renewcommand{\theequation}{S\arabic{equation}}
-\title{Appendix S1 -- Supplementary Information\\[6pt]
+\title{Supporting Information\\[6pt]
 \large Beaver engineering creates intense, context-dependent dissolved organic carbon control points in streams}
 \author{\normalsize Leonardo Capitani\textsuperscript{1,2,*}, Annegret Larsen\textsuperscript{3,4}, Joshua R. Larsen\textsuperscript{5}, Matthew Dennis\textsuperscript{6}, Lukas Hallberg\textsuperscript{4,5},\\
 \normalsize Valentin Moser\textsuperscript{1,2}, Christof Angst\textsuperscript{7}, Silvan Minnig\textsuperscript{8}, Kaspar Berger\textsuperscript{9}, Steffen Boch\textsuperscript{1},\\
@@ -29,12 +29,12 @@
 \textsuperscript{*}Corresponding author: Leonardo Capitani (leocapi07@gmail.com)
 \end{center}
 
-This document contains the material supporting the main findings of the manuscript (the hypothesised causal structure and tested hypotheses of the structural causal model, priors, residuals, posterior predictive checks, posterior parameter distributions, a stream-level classification of $\Delta$DOC, the total effects of the drivers on $\Delta$DOC, an alternative SCM including lateral stream--wetland connectivity, and a structural and causal sensitivity analysis: alternative causal structures, robustness to unmeasured confounding, falsification tests, prior and spatial sensitivity, and a causal knowledge analysis). The full description of data collection, variable derivation and model specification is given in the Methods of the main manuscript.
+This document contains the material supporting the main findings of the manuscript (the hypothesised causal structure and tested hypotheses of the structural causal model, priors, residuals, posterior predictive checks, posterior parameter distributions, a stream-level classification of $\Delta$DOC, the total effects of the drivers on $\Delta$DOC, an alternative SCM including lateral stream--wetland connectivity, and a structural and causal sensitivity analysis: alternative causal structures, robustness to unmeasured confounding, falsification tests, prior and spatial sensitivity, and a causal knowledge analysis). The full description of data collection, variable derivation and model specification is given in the Methods of the main text.
 
 \clearpage
 \section*{Supplementary Methods}
 
-This section gives the methodological detail that is summarised in the Methods of the main manuscript.
+This section gives the methodological detail that is summarised in the Methods of the main text.
 
 \subsection*{Sampling design}
 
@@ -117,7 +117,7 @@ The measurement error was treated as missing data and imputed with \texttt{mi()}
 \end{equation}
 Inference used 20,000 post-warm-up MCMC samples (four chains of 10,000 iterations, first 3000 discarded as warm-up). Fit was assessed with posterior predictive checks and residuals (Figures~\ref{fig:S3}--\ref{fig:S4}); all chains converged ($\hat{R} < 1.05$). Evidence for a positive or negative effect was assumed when more than 90\% of the posterior mass of a coefficient lay on one side of zero.
 
-\subsubsection*{Downstream-DOC parameterisation (Figure~2 of the main text)}
+\subsubsection*{Downstream-DOC parameterisation (Figure~3 of the main text)}
 
 For the main-text figure the same SCM was refitted with downstream DOC (rather than $\Delta$DOC) as the outcome. Upstream DOC enters as a latent true concentration (0.2\,mg\,L$^{-1}$ instrument error) with a freely estimated inheritance slope (prior Normal(1, 0.3)), and $\Delta$DOC is derived afterwards from the posterior as downstream minus upstream, so that upstream DOC is never simultaneously a predictor and part of the response. This reparameterisation is mathematically equivalent to Equation~\ref{eq:S_scm}: every mediator effect agreed with the $\Delta$DOC-outcome model to the second decimal, and the upstream-DOC path is read as an inheritance slope (0.94, 95\% BCI 0.89--0.99\,mg per mg).
 
@@ -137,7 +137,7 @@ Because $S$ can be small for individual streams, forming $R_s$ and $G$ from raw 
 
 \subsection*{Software}
 
-Analyses were run in R 4.6.1 with the tidyverse (2.0.0), \emph{brms} (2.23; CmdStan backend via \emph{cmdstanr} 0.9.0), tidybayes (3.0.7) and bayesplot (1.15.0); figures were made with ggplot2 (4.0.3).
+Analyses were run in R 4.6.1 with the tidyverse (2.0.0), \emph{brms} (2.23.0; CmdStan 2.39.0 backend via \emph{cmdstanr} 0.9.0), \emph{loo} (2.10.0), tidybayes (3.0.7) and bayesplot (1.15.0); figures were made with ggplot2 (4.0.3).
 
 \clearpage
 \section*{SCM: hypothesised causal structure}
@@ -145,7 +145,7 @@ Analyses were run in R 4.6.1 with the tidyverse (2.0.0), \emph{brms} (2.23; CmdS
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{figures/media/figS1_dag_hypotheses.png}
-\caption{Directed acyclic graph (DAG) of the structural causal model (SCM), with the hypothesised causal mechanisms numbered 1--13. Orange boxes: beaver-engineering variables; the blue box: stream hydrology; green boxes: primary producer variables; black boxes: parent drivers not influenced by other variables; the magenta ellipse: the outcome \(\Delta\)DOC. Each numbered edge corresponds to one tested hypothesis in Table~S1. Two further paths, 14 and 15 (upstream DOC $\rightarrow$ macrophytes, upstream DOC $\rightarrow$ phytoplankton, not drawn here), were added and tested as part of the structural sensitivity analysis and are included in the extended model (Figure 4, main document; Structural sensitivity: alternative causal structures). Beaver illustration credits to \textcopyright{} Sarah Edmonds Illustration.}\label{fig:S1}
+\caption{Directed acyclic graph (DAG) of the structural causal model (SCM), with the hypothesised causal mechanisms numbered 1--13. Orange boxes: beaver-engineering variables; the blue box: stream hydrology; green boxes: primary producer variables; black boxes: parent drivers not influenced by other variables; the magenta ellipse: the outcome \(\Delta\)DOC. Each numbered edge corresponds to one tested hypothesis in Table~S1. Two further paths, 14 and 15 (upstream DOC $\rightarrow$ macrophytes, upstream DOC $\rightarrow$ phytoplankton, not drawn here), were added and tested as part of the structural sensitivity analysis and are included in the extended model (Figure 3, main text; Structural sensitivity: alternative causal structures). Beaver illustration credits to \textcopyright{} Sarah Edmonds Illustration.}\label{fig:S1}
 \end{figure}
 
 \FloatBarrier
@@ -156,7 +156,7 @@ Analyses were run in R 4.6.1 with the tidyverse (2.0.0), \emph{brms} (2.23; CmdS
 \setlength{\LTleft}{0pt}\setlength{\LTright}{0pt}\begingroup\small\sloppy\hyphenpenalty=0\emergencystretch=2em
 \renewcommand{\arraystretch}{1.25}
 \begin{longtable}{|>{\centering\arraybackslash}p{0.07\textwidth}|>{\raggedright\arraybackslash}p{0.17\textwidth}|>{\raggedright\arraybackslash}p{0.14\textwidth}|>{\raggedright\arraybackslash}p{0.48\textwidth}|}
-\caption{Tested hypotheses for the structural causal model (SCM). The causal-path numbers correspond to the numbered edges of the DAG in Figure~\ref{fig:S1} (and Figure 4 of the main document).}\label{tab:S1}\\
+\caption{Tested hypotheses for the structural causal model (SCM). The causal-path numbers correspond to the numbered edges of the DAG in Figure~\ref{fig:S1} (and Figure 3 of the main text).}\label{tab:S1}\\
 \hline
 \textbf{Causal path} & \textbf{Predictor} & \textbf{Response} & \textbf{Hypothesis} \\ \hline
 \endfirsthead
@@ -276,9 +276,9 @@ Because a DAG encodes a specific set of causal assumptions, we also tested an al
 \label{eq:altscm}
 \end{equation}
 
-where $\gamma_{c}$ are the three connectivity-level coefficients (\emph{No wetland} as reference for the contrasts) and the shared parameters carry the same informative priors as in the main SCM (Equation~4, main document); the measurement error of $\Delta$DOC (0.283 mg L$^{-1}$) and the imputation of missing WRT and dam-height values (\texttt{mi()}) are handled as in the main SCM. Four chains were run (R-hat $\le 1.005$; 310 observations). The total effect of each connectivity level on $\Delta$DOC was computed on each posterior draw as the product of the connectivity $\rightarrow$ WRT contrast and the WRT $\rightarrow$ $\Delta$DOC coefficient (path tracing; Hayes 2018).
+where $\gamma_{c}$ are the three connectivity-level coefficients (\emph{No wetland} as reference for the contrasts) and the shared parameters carry the same informative priors as in the main SCM (Equation~\ref{eq:S_scm}); the measurement error of $\Delta$DOC (0.283 mg L$^{-1}$) and the imputation of missing WRT and dam-height values (\texttt{mi()}) are handled as in the main SCM. Four chains were run (R-hat $\le 1.005$; 310 observations). The total effect of each connectivity level on $\Delta$DOC was computed on each posterior draw as the product of the connectivity $\rightarrow$ WRT contrast and the WRT $\rightarrow$ $\Delta$DOC coefficient (path tracing; Hayes 2018).
 
-\paragraph{Results.} Relative to sites without wetland, the presence of an unconnected wetland increased WRT by 0.23 standardized units (90\% BCI: $-0.15$; 0.61; $P(\beta>0) = 0.84$) and a connected wetland by 0.00 (90\% BCI: $-0.36$; 0.36). The WRT $\rightarrow$ $\Delta$DOC path was positive but weak (0.07; 90\% BCI: 0.00; 0.14). The resulting total effects of connectivity on $\Delta$DOC were negligible: 0.02 (90\% BCI: $-0.01$; 0.06) for unconnected and 0.00 (90\% BCI: $-0.03$; 0.03) for connected wetlands (Figure~\ref{fig:S8}). We therefore found no evidence that lateral stream--wetland connectivity modifies the beaver-mediated DOC change through the water-residence-time pathway. Given that only 7\% and 6\% of sites fell into the connected and unconnected wetland categories, we regard this result as power-limited rather than as strong evidence of absence of an effect. Importantly, the estimates of the remaining paths were consistent with those of the main SCM (Figure~4, main manuscript), indicating that our main conclusions are robust to this alternative causal structure.
+\paragraph{Results.} Relative to sites without wetland, the presence of an unconnected wetland increased WRT by 0.23 standardized units (90\% BCI: $-0.15$; 0.61; $P(\beta>0) = 0.84$) and a connected wetland by 0.00 (90\% BCI: $-0.36$; 0.36). The WRT $\rightarrow$ $\Delta$DOC path was positive but weak (0.07; 90\% BCI: 0.00; 0.14). The resulting total effects of connectivity on $\Delta$DOC were negligible: 0.02 (90\% BCI: $-0.01$; 0.06) for unconnected and 0.00 (90\% BCI: $-0.03$; 0.03) for connected wetlands (Figure~\ref{fig:S8}). We therefore found no evidence that lateral stream--wetland connectivity modifies the beaver-mediated DOC change through the water-residence-time pathway. Given that only 7\% and 6\% of sites fell into the connected and unconnected wetland categories, we regard this result as power-limited rather than as strong evidence of absence of an effect. Importantly, the estimates of the remaining paths were consistent with those of the main SCM (Figure~3, main text), indicating that our main conclusions are robust to this alternative causal structure.
 
 \begin{figure}[!htb]
 \centering
@@ -316,7 +316,7 @@ The primary-producer effects on downstream DOC rest on the 16 streams where phyt
 \caption{Robustness of each producer $\rightarrow$ downstream DOC path to an unmeasured confounder. Contours: the adjusted effect of the producer on downstream DOC for a confounder with the given partial $R^2$ with the producer (x-axis) and with downstream DOC (y-axis); the triangle is the unadjusted estimate; the red marks are confounders 1$\times$, 2$\times$ and 3$\times$ as strong as solar radiation. Linear outcome equation on the 16 producer streams (summer). This linear fit does not carry the priors, the measurement error or the water-residence-time path of the SCM; it is the sensitivity of the raw 16-stream relationship.}\label{fig:S11}
 \end{figure}
 
-\paragraph{Results.} The raw 16-stream relationship is not the SCM's: the linear-model estimates are $-0.51$ (macrophytes), $-0.02$ (phytoplankton) and 0.26 (litter), against $+0.09$, $+0.14$ and $+0.07$ in the SCM. The SCM's positive producer effects are therefore carried substantially by the informative priors (Normal(0.2, 0.075) on each producer path) and by the hierarchical structure, not by these 16 samplings alone -- the single most important sensitivity result of this appendix section, confirmed independently by the prior-sensitivity check below. The robustness values (the confounder strength needed to erase the raw effect) are 0.45 for macrophytes, 0.21 for litter and 0.01 for phytoplankton; solar radiation, the strongest measured covariate, explains only 3--26\% of the residual variance of any producer, so a confounder several times stronger than solar would be needed to remove the macrophyte or litter relationship, and almost none to remove the phytoplankton one. Water residence time could not be assessed this way, as it was never measured at a producer stream. The producer~$\rightarrow$~DOC paths are therefore consistent with the literature-based priors and not overturned by plausible confounding, but with 16 summer samplings they remain prior-informed estimates rather than data-driven ones.
+\paragraph{Results.} The raw 16-stream relationship is not the SCM's: the linear-model estimates are $-0.51$ (macrophytes), $-0.02$ (phytoplankton) and 0.26 (litter), against $+0.09$, $+0.14$ and $+0.07$ in the SCM. The SCM's positive producer effects are therefore carried substantially by the informative priors (Normal(0.2, 0.075) on each producer path) and by the hierarchical structure, not by these 16 samplings alone -- the single most important sensitivity result of this section, confirmed independently by the prior-sensitivity check below. The robustness values (the confounder strength needed to erase the raw effect) are 0.45 for macrophytes, 0.21 for litter and 0.01 for phytoplankton; solar radiation, the strongest measured covariate, explains only 3--26\% of the residual variance of any producer, so a confounder several times stronger than solar would be needed to remove the macrophyte or litter relationship, and almost none to remove the phytoplankton one. Water residence time could not be assessed this way, as it was never measured at a producer stream. The producer~$\rightarrow$~DOC paths are therefore consistent with the literature-based priors and not overturned by plausible confounding, but with 16 summer samplings they remain prior-informed estimates rather than data-driven ones.
 
 \FloatBarrier
 \section*{Falsification tests and a placebo outcome}
@@ -369,11 +369,11 @@ Table~\ref{tab:S2} summarizes the qualitative frame the quantitative checks abov
 \endlastfoot
 1. What causal quantity is sought? & The local modification that beaver-engineering adds to downstream DOC, decomposed into its hydrological and biological pathways; and its size relative to the inherited seasonal contrast. & Drivers (SCM), magnitude ($R_s$, $G$) \\ \hline
 2. What is the causal system and its boundary? & The beaver-engineered stream from the first to the last dam; inputs are upstream DOC, solar radiation, channel gradient, dams; the floodplain and the catchment are outside, represented by upstream DOC and $S$. & Figure 1b, DAG (Figure 4), main document \\ \hline
-3. What is assumed about the structure (arrows present)? & Dams $\rightarrow$ residence time $\rightarrow$ producers $\rightarrow$ DOC; solar $\rightarrow$ producers $\rightarrow$ DOC; litter $\rightarrow$ DOC; upstream DOC inherited with slope near 1; upstream DOC $\rightarrow$ macrophytes (and, more weakly, $\rightarrow$ phytoplankton). & Table~S1 (13 hypotheses); this appendix \\ \hline
+3. What is assumed about the structure (arrows present)? & Dams $\rightarrow$ residence time $\rightarrow$ producers $\rightarrow$ DOC; solar $\rightarrow$ producers $\rightarrow$ DOC; litter $\rightarrow$ DOC; upstream DOC inherited with slope near 1; upstream DOC $\rightarrow$ macrophytes (and, more weakly, $\rightarrow$ phytoplankton). & Table~S1 (13 hypotheses); this document \\ \hline
 4. What is assumed absent (arrows omitted, no confounding)? & No direct solar $\rightarrow$ DOC, no season confounding, no unmeasured common cause of producers and DOC. & None of the omitted arrows is supported (above); placebo and implied nulls above \\ \hline
 5. How are the effects identified? & By the SCM's adjustment sets, with measurement error on every concentration and imputation of missing predictors; the inheritance slope is estimated, not assumed. & Methods; robustness to slope = 1 (Methods) \\ \hline
 6. Is the data adequate for the structure? & 158 streams for the inheritance and the direction; 16 summer streams for the producers, with no water residence time at those streams. The producer paths are the weak point. & Unmeasured-confounding and prior-sensitivity checks above \\ \hline
-7. How sensitive are the conclusions? & Inheritance, the null average and the heterogeneity are robust to structure, priors, outcome parameterization and space; the sign of each producer path follows the prior scale. & This appendix, in full \\ \hline
+7. How sensitive are the conclusions? & Inheritance, the null average and the heterogeneity are robust to structure, priors, outcome parameterization and space; the sign of each producer path follows the prior scale. & This document, in full \\ \hline
 8. To what does the result transport? & To Swiss low-order single-thread streams with 1--19 dams; downstream DOC at an unseen stream is predictable, the sign of the local change is not. & Model validation (Methods) \\ \hline
 \end{longtable}
 \end{small}
