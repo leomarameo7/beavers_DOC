@@ -32,6 +32,114 @@
 This document contains the material supporting the main findings of the manuscript (the hypothesised causal structure and tested hypotheses of the structural causal model, priors, residuals, posterior predictive checks, posterior parameter distributions, a stream-level classification of $\Delta$DOC, the total effects of the drivers on $\Delta$DOC, an alternative SCM including lateral stream--wetland connectivity, and a structural and causal sensitivity analysis: alternative causal structures, robustness to unmeasured confounding, falsification tests, prior and spatial sensitivity, and a causal knowledge analysis). The full description of data collection, variable derivation and model specification is given in the Methods of the main manuscript.
 
 \clearpage
+\section*{Supplementary Methods}
+
+This section gives the methodological detail that is summarised in the Methods of the main manuscript.
+
+\subsection*{Sampling design}
+
+At 158 streams we collected one sample in winter (December, January or February 2021/2022) and one in summer (June or July 2022); the remaining 22 streams were sampled once, in summer, and 16 of these were additionally characterised for primary-producer abundance. The upstream sample was collected where the water was still flowing before being dammed. Where there was more than one dam and pond, the downstream sample was taken after the last beaver dam, where river flow was no longer impacted by the dam. A few streams comprised more than one separately sampled beaver-dam sequence, each with its own upstream--downstream pair; these 180 pairs are the statistical units of all models. All sites were single-thread, low-order streams with one to several beaver dams and ponds in sequence along the channel; none were extensive beaver meadows with multiple anastomosing channels and ponds at different stages of abandonment, as described in North America. For each site we classified the lateral connectivity between the channel and adjacent wetlands (no wetland within 50 m: 136 sites; wetland present but not connected: 11; wetland connected to the channel: 13; 22 sites unclassified). Vertical (hyporheic) and lateral exchange with the floodplain were not measured directly.
+
+\subsection*{DOC analysis}
+
+Water samples were filtered (0.22\,$\mu$m) and analysed for DOC by high-temperature combustion with infrared detection of the CO$_2$ produced (Shimadzu TOC-L CSH analyser; detection limit 0.5\,mg\,C\,L$^{-1}$; measurement error 0.2\,mg\,C\,L$^{-1}$).
+
+\subsection*{Beaver-engineering and hydrological variables}
+
+The number of dams is the integer number of dams counted upstream of the downstream location; dam height (m) is the maximum dam height observed upstream of the downstream location; site persistence is the number of years that beavers have inhabited the site. Water residence time (WRT, $\tau$, seconds) was defined as
+\begin{equation}
+\tau = \frac{V}{Q}
+\label{eq:S_wrt}
+\end{equation}
+where $Q$ is the stream discharge (m$^3$\,s$^{-1}$), estimated with the semi-distributed hydrological catchment model PREVAH (Precipitation-Runoff-Evapotranspiration HRU model), and $V$ is the water volume stored in the beaver pond (m$^3$). $V$ was estimated by delineating the pond boundary from aerial imagery, clipping the DEM to this polygon and integrating elevation differences across all DEM cells within it (QGIS Volume Calculation tool); the method was validated by field surveys of six ponds. Channel gradient was computed from the upstream and downstream elevations (DEM) and the length $LL$ of the digitised swisTLM3D river line between each upstream--downstream pair (Equation~\ref{eq:S_grad}):
+\begin{equation}
+\text{channel gradient}\,(\%) = \frac{\text{Upstream}_{altitude} - \text{Downstream}_{altitude}}{LL} \cdot 100
+\label{eq:S_grad}
+\end{equation}
+Solar radiation (Wh\,m$^{-2}$) of the stream reaches was computed with the GRASS \texttt{r.sun.insoltime} algorithm via the \emph{qgisprocess} package in R, from a digital surface model (2\,m DEM combined with a 1\,m vegetation-height model resampled to the DEM resolution), and slope and aspect layers computed from the 2\,m DEM with the \emph{terra} package.
+
+\subsection*{Primary producers}
+
+At the 16 characterised sites, phytoplankton abundance was estimated from 50\,L of water collected in the main beaver pond and concentrated to 2\,L with a 10\,$\mu$m mesh; particles between $\sim$10\,$\mu$m and $\sim$1\,cm were counted and identified with a dual-magnification dark-field imaging microscope (5.0$\times$ objective). Macrophyte abundance was estimated by counting each individual plant in the beaver pond. Soil litter cover (all dead plant material, including twigs $<$7\,cm circumference) was estimated in a 1\,$\times$\,5\,m plot at 0.5\,m from the pond edge.
+
+\subsection*{Catchment and floodplain area}
+
+Catchments were delineated by automatically assigning pour points to stream outlets and entering them, with a D8 pointer raster based on a 25\,m DEM, into the Whitebox \emph{Watershed} algorithm (\emph{whitebox} package in R). The floodplain area of each site was calculated with a custom R function based on the elevation differential between the local terrain and the nearest channel, adapted from Clubb et al. (2017).
+
+\subsection*{Direction of the beaver-mediated DOC change (Q1)}
+
+The raw upstream and downstream concentrations were modelled so that the analytical error of each concentration is propagated exactly to $\Delta$DOC. The observed concentration of each sample is a noisy measurement of a latent true concentration (\texttt{mi(0.2)} in \emph{brms}); latent concentrations follow a Student-$t$ distribution (to accommodate heavy tails) whose mean is a season\,$\times$\,location (upstream/downstream) factorial, with random intercepts for stream and for stream\,$\times$\,season (Equation~\ref{eq:S_direction}).
+\begin{equation}
+\begin{aligned}
+\textbf{Measurement model:} \quad
+C_i^{\text{obs}} &\sim \mathcal{N}(C_i, 0.2^2) \\[0.5em]
+\textbf{Latent model:} \quad
+C_i &\sim \text{Student-}t(\nu, \mu_i, \sigma) \\
+\mu_i &= \alpha_{\text{season}(i),\,\text{location}(i)} + u_{\text{stream}(i)} + u_{\text{stream}(i),\,\text{season}(i)} \\[0.5em]
+\textbf{Derived quantities:} \quad
+\Delta DOC_s &= \alpha_{s,\,\text{down}} - \alpha_{s,\,\text{up}} \\
+\Delta DOC_s^{\text{pred}} &= \Delta DOC_s + \epsilon_{\text{down}} - \epsilon_{\text{up}}
+\end{aligned}
+\label{eq:S_direction}
+\end{equation}
+Here $\alpha_{s,l}$ is the season\,$\times$\,location mean, $u$ are the random intercepts pairing the upstream and downstream samples of the same stream and sampling occasion, and $\epsilon_{\text{up}}$, $\epsilon_{\text{down}}$ are independent residual draws from the fitted Student-$t$ distribution. The posterior predictive distribution of $\Delta$DOC for a single sampling is therefore the seasonal mean difference plus the difference of two residual draws. A net change larger than $\pm0.5$\,mg\,L$^{-1}$ was considered ecologically relevant, because changes of this magnitude are near the levels at which DOC begins to affect light penetration, nutrient dynamics and the autotrophy--heterotrophy balance; we applied the Bayesian Region of Practical Equivalence (ROPE) to the interval $-0.5$ to $0.5$\,mg\,L$^{-1}$ (i) to the posterior of the seasonal average $\Delta$DOC and (ii) to the posterior predictive distribution for a single sampling. The shares of the latter below, within and above the ROPE are the posterior predictive probabilities that one sampling shows a sink, a negligible or a source response; they describe the variability of individual responses and are not percentages of streams (stream-specific $\Delta$DOC cannot be resolved with two samplings per stream; Figure~\ref{fig:S6}).
+
+\subsection*{Structural causal model (Q2)}
+
+The structural causal model (SCM) is a directed acyclic graph (DAG) whose nodes are the ecosystem variables and whose edges are direct causal influences (Figure~\ref{fig:S1}; hypotheses in Table~\ref{tab:S1}). It was fitted as a system of linear equations in a Bayesian framework (\emph{brms}, \emph{cmdstanr} backend) to propagate measurement uncertainty and to incorporate literature-based priors. Given an error of 0.2\,mg\,L$^{-1}$ in both the downstream and upstream DOC measurements, the error of $\Delta$DOC follows by error propagation (Equation~\ref{eq:S_err}):
+\begin{equation}
+E = \sqrt{0.2^{2} + 0.2^{2}} \approx 0.283\ \text{mg}\ \text{L}^{-1}
+\label{eq:S_err}
+\end{equation}
+The measurement error was treated as missing data and imputed with \texttt{mi()} (missing values are additional parameters estimated jointly with the model, so no observation is excluded). The full model is given in Equation~\ref{eq:S_scm} (a subset of the paths and priors is shown; all numbered paths are listed in Table~\ref{tab:S1}).
+\begin{equation}
+\begin{aligned}
+\textbf{Measurement model:} \quad
+\Delta \text{DOC}_i^{\text{obs}} &\sim \mathcal{N}(\Delta \text{DOC}_i, 0.283^2) \\
+\text{DOC}_{\text{upstream},i}^{\text{obs}} &\sim \mathcal{N}(\text{DOC}_{\text{upstream},i}, 0.2^2) \\[0.5em]
+\textbf{Outcome model:} \quad
+\Delta \text{DOC}_i &\sim \text{Student-}t(\nu, \mu_i, \sigma_{\Delta \text{DOC}}) \\
+\mu_i &= \beta_1 \text{DOC}_{\text{upstream}, i} + \beta_2 \text{Macrophytes}_i + \beta_3 \text{Phytoplankton}_i \\
+&\quad + \beta_4 \text{Litter Cover}_i + \beta_5 \text{WRT}_i \\[0.5em]
+\textbf{Predictor models:} \quad
+\text{Macrophytes}_i &\sim f(\text{solar radiation}_i, \text{WRT}_i, \dots) \\
+\text{Phytoplankton}_i &\sim f(\text{Macrophytes}_i, \text{solar radiation}_i, \text{WRT}_i) \\
+\text{Litter Cover}_i &\sim f(\text{solar radiation}_i) \\
+\text{WRT}_i &\sim f(\text{DamHeight}_i, \text{NDams}_i, \text{gradient}_i, \dots) \\[0.5em]
+\textbf{Priors:} \quad
+\alpha_{\text{summer}} &\sim \mathcal{N}(0, 10), \quad \alpha_{\text{winter}} \sim \mathcal{N}(0, 7.5) \\
+\beta_2, \beta_3, \beta_4, \beta_5 &\sim \mathcal{N}(0.05, 0.1), \quad \beta_6 \sim \mathcal{N}(0, 0.2), \dots \\
+\sigma_{\Delta \text{DOC}} &\sim \text{Student-}t(3, 0, 2.5), \quad
+\sigma_{\text{upstream}} \sim \mathcal{N}(0, 0.5), \quad
+\nu \sim \text{Gamma}(2, 0.1)
+\end{aligned}
+\label{eq:S_scm}
+\end{equation}
+Inference used 20,000 post-warm-up MCMC samples (four chains of 10,000 iterations, first 3000 discarded as warm-up). Fit was assessed with posterior predictive checks and residuals (Figures~\ref{fig:S3}--\ref{fig:S4}); all chains converged ($\hat{R} < 1.05$). Evidence for a positive or negative effect was assumed when more than 90\% of the posterior mass of a coefficient lay on one side of zero.
+
+\subsubsection*{Downstream-DOC parameterisation (Figure~2 of the main text)}
+
+For the main-text figure the same SCM was refitted with downstream DOC (rather than $\Delta$DOC) as the outcome. Upstream DOC enters as a latent true concentration (0.2\,mg\,L$^{-1}$ instrument error) with a freely estimated inheritance slope (prior Normal(1, 0.3)), and $\Delta$DOC is derived afterwards from the posterior as downstream minus upstream, so that upstream DOC is never simultaneously a predictor and part of the response. This reparameterisation is mathematically equivalent to Equation~\ref{eq:S_scm}: every mediator effect agreed with the $\Delta$DOC-outcome model to the second decimal, and the upstream-DOC path is read as an inheritance slope (0.94, 95\% BCI 0.89--0.99\,mg per mg).
+
+\subsubsection*{Sensitivity analyses}
+
+\begin{itemize}
+\item \emph{Inheritance slope fixed at 1} (prior Normal(1, 0.001)): every mediator effect, and both upstream-to-producer links below, remained within its credible interval.
+\item \emph{Upstream DOC $\rightarrow$ producers.} Both parameterisations were extended with two causal links from upstream DOC to macrophytes and phytoplankton. A DOC-richer inflow was associated with more macrophytes ($+0.14$ per mg\,L$^{-1}$, 95\% BCI 0.00--0.28) but not with more phytoplankton ($-0.03$, 95\% BCI $-0.15$--0.10); the indirect route this opens is an order of magnitude smaller than the direct inheritance and leaves the mediator effects unchanged.
+\item \emph{Alternative causal structures}: omitting the two upstream-DOC-to-producer links, adding a direct solar-radiation path to downstream DOC, and treating season as an unblocked confounder of the producers all fitted no better than the reported model by leave-one-out cross-validation and left every mediator effect unchanged (Figures~\ref{fig:S9}--\ref{fig:S10}).
+\item \emph{Unmeasured confounding and priors}: the producer effects, based on 16 streams, are informed by the literature-based priors as well as the samplings (Figures~\ref{fig:S11} and~\ref{fig:S13}); no spatial autocorrelation remained in the residuals (Figure~\ref{fig:S14}).
+\item \emph{Lateral connectivity}: an alternative SCM in which stream--wetland connectivity influences water residence time yielded path estimates consistent with the main model and no evidence of a connectivity effect on downstream DOC (Figures~\ref{fig:S7}--\ref{fig:S8}).
+\end{itemize}
+
+\subsection*{Relative response, seasonal gain and footprint (Q3)}
+
+Because $S$ can be small for individual streams, forming $R_s$ and $G$ from raw concentrations would let small denominators dominate the ratio. All derived quantities were therefore computed from the posterior of a Bayesian hierarchical measurement-error model fitted to each of the four measured concentrations (upstream/downstream $\times$ winter/summer): each concentration was modelled on the log scale with its known 0.2\,mg\,L$^{-1}$ instrument error and a random intercept per stream, so that each stream's estimated true concentration, not the raw reading, was used to compute $S$, $\Delta DOC_s$, $R_s$, $B$ and $G$, with the full posterior uncertainty carried through from 4000 draws per stream. Streams were classified (source/sink for $R_s$; reinforce/dampen/reverse for $G$) when the posterior probability of the class exceeded 90\%. Population-level shares were obtained by classifying every stream on every posterior draw and taking the proportion of streams in each class per draw, so that each reported share carries its own posterior distribution.
+
+\subsection*{Software}
+
+Analyses were run in R 4.6.1 with the tidyverse (2.0.0), \emph{brms} (2.23; CmdStan backend via \emph{cmdstanr} 0.9.0), tidybayes (3.0.7) and bayesplot (1.15.0); figures were made with ggplot2 (4.0.3).
+
+\clearpage
 \section*{SCM: hypothesised causal structure}
 
 \begin{figure}[H]

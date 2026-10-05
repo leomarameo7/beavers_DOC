@@ -5,7 +5,8 @@ Everything in the repo appears in the Overleaf file tree; only this folder is La
 
 | File | What it is |
 |---|---|
-| `main.tex` | Main manuscript — Springer Nature / *Scientific Reports* template (`sn-jnl.cls`, `sn-nature` bibliography style). **Set as Main document in Overleaf.** |
+| `main.tex` | Main manuscript for *Environmental Science & Technology* (ES&T): Introduction, Methods, Results and Discussion (no separate Conclusion). Drafted in the Springer Nature template (`sn-jnl.cls`); reformat to the ACS template at submission. **Set as Main document in Overleaf.** |
+| `cover_letter.tex` | Cover letter to the ES&T editors (standalone; items marked `[TO ADD]` need author input). |
 | `references.bib` | Bibliography for the manuscript (`\cite{}` keys = first author + year, e.g. `larsen2021`) |
 | `figures/media/` | Figures 1–3 (image2 = Fig. 1, image1 = Fig. 2, image3 = Fig. 3) |
 | `supplementary/appendix_S1.tex` | Appendix S1 (Table S1, Figures S1–S4) — a standalone document. To compile it in Overleaf: Menu → *Main document* → choose this file; or compile locally. Its PDF (`appendix_S1.pdf`) is uploaded to the journal as a separate file. |
