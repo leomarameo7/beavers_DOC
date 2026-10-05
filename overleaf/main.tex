@@ -81,9 +81,11 @@ All models are Bayesian and propagate the 0.2~mg~C~L\(^{-1}\) measurement error 
 
 \emph{Direction (Q1).} We modelled upstream and downstream concentrations, season and their interaction, with random intercepts for stream and stream-by-season, and a heavy-tailed Student-\(t\) error to accommodate the long tails of DOC data (Equation~\ref{eq:direction}).
 \begin{equation}
-\mathrm{DOC}_i \sim \text{Student-}t(\nu,\ \mu_i,\ \sigma), \quad
-\mu_i = \alpha_{\text{season},\text{location}} + u_{\text{stream}} + u_{\text{stream}\times\text{season}}, \quad
-\Delta DOC_s = \alpha_{s,\text{down}} - \alpha_{s,\text{up}}
+\begin{aligned}
+\mathrm{DOC}_i &\sim \text{Student-}t(\nu,\ \mu_i,\ \sigma) \\
+\mu_i &= \alpha_{\text{season},\text{location}} + u_{\text{stream}} + u_{\text{stream}\times\text{season}} \\
+\Delta DOC_s &= \alpha_{s,\text{down}} - \alpha_{s,\text{up}}
+\end{aligned}
 \label{eq:direction}
 \end{equation}
 We treated a change larger than \(\pm0.5\)~mg~L\(^{-1}\) as ecologically relevant, because changes of this size begin to affect light, nutrients and the balance between autotrophic and heterotrophic processes \cite{thrane2014,seekell2015}. Values within \(\pm0.5\)~mg~L\(^{-1}\) form the region of practical equivalence (ROPE) \cite{pan2025}, which we applied to the seasonal mean \(\Delta DOC\) and to the predicted \(\Delta DOC\) of a single sampling (sink, negligible or source response).
@@ -94,9 +96,9 @@ We treated a change larger than \(\pm0.5\)~mg~L\(^{-1}\) as ecologically relevan
 \begin{equation}
 \begin{aligned}
 S &= DOC_{up}^{summer} - DOC_{up}^{winter}, &
-\Delta DOC_s &= DOC_{down,s} - DOC_{up,s}, &
-R_s &= \Delta DOC_s / |S|, \\
-B &= \Delta DOC_{summer} - \Delta DOC_{winter}, &
+\Delta DOC_s &= DOC_{down,s} - DOC_{up,s} \\
+R_s &= \Delta DOC_s / |S|, &
+B &= \Delta DOC_{summer} - \Delta DOC_{winter} \\
 G &= B / S, &
 F &= A_{floodplain} / A_{beaver}
 \end{aligned}
