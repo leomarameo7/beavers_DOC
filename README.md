@@ -49,10 +49,13 @@ overleaf/               LaTeX sources: main.tex, supplementary/supporting_inform
 
 All files are in `data/processed/`. DOC is in mg C L⁻¹.
 
-### `m6.csv` — analysis dataset of the structural causal model (360 rows)
+### `m6.csv` — analysis dataset (360 rows)
 
-One row per sampling (stream × season): 179 streams, upstream and downstream of the beaver complex
-(rows are paired by `site` and `beaver_territory`). 16 summer rows also carry the primary-producer
+The single analysis table, used by every notebook. One row per sampling (stream × season): 179
+streams, upstream and downstream of the beaver complex (rows are paired by `site` and
+`beaver_territory`). 158 streams have both seasons complete and a floodplain area; these are the
+streams of the seasonal and magnitude analyses (those with `A_floodplain_km2`), while the
+structural causal model and the direction model use all rows. 16 summer rows also carry the primary-producer
 measurements; all other producer values are `NA` and are imputed in the models.
 
 | Column(s) | Meaning (unit) |
@@ -66,21 +69,17 @@ measurements; all other producer values are `NA` and are imputed in the models.
 | `discharge` | Stream discharge at sampling from the PREVAH hydrological model (**L s⁻¹**) |
 | `water_res_time` | Water residence time = `water_volume` / (3.6 × `discharge`) (**hours**) |
 | `solar` | Solar radiation of the reach (Wh m⁻²) |
-| `catchment_area_km`, `area_m6_revier`, `area_m2_revier` | Catchment area (km²) and pond-related areas |
+| `catchment_area_km` | Catchment area of the stream (km²), from the raw floodplain/catchment extraction (`catchArea`, m², divided by 10⁶). Not used by any model |
+| `area_m6_revier`, `area_m2_revier` | Ponded (beaver-engineered) area in m². `area_m6_revier` / 10⁶ is `A_beaver_km2`; `area_m2_revier` is an alternative pond area that is mostly `NA` (328 of 360 rows) and is not used |
 | `plankton_abun` | Phytoplankton abundance (count of particles ≈10 µm–1 cm, from 50 L of pond water concentrated to 2 L through a 10 µm mesh and counted with a dark-field imaging microscope); 16 summer ponds, `NA` elsewhere |
 | `macrophy_abun` | Macrophyte abundance (count of individual plants in the beaver pond); 16 summer ponds, `NA` elsewhere |
 | `Cover_litter` | Soil litter cover (all dead plant material, including twigs < 7 cm circumference), estimated in a 1 × 5 m plot 0.5 m from the pond edge (% cover, 0–100 %); 16 summer ponds, `NA` elsewhere |
+| `A_floodplain_km2` | Contributing floodplain area of the stream (km²): the area over which the inherited seasonal DOC contrast `S` is generated. Raw extraction (`fpArea`, m², divided by 10⁶) from the data provider; the same value in both seasons; `NA` for 22 streams that have no extraction (42 rows), which are left out of the direction and magnitude analyses |
+| `A_beaver_km2` | Ponded (beaver-engineered) area (km²) = `area_m6_revier` / 10⁶. The footprint contrast `F` = `A_floodplain_km2` / `A_beaver_km2` is computed in `analysis_plan.qmd` |
 | `*_z` | The same variable standardised (mean 0, SD 1 over the analysed rows): `DOC_input_z`, `dam_height_z`, `slope_z`, `discharge_z`, `water_volume_z`, `water_res_time_z`, `solar_z`, `dam_persistence_z`, `n_dams_z`, `plankton_abun_z`, `cover_litter_z`, `macrophy_abun_z`. The models use the `_z` columns |
 
 > **Units note.** Discharge is in L s⁻¹ and volume in m³, so the residence time is
 > volume / (3.6 × discharge) in hours.
-
-### `m12.csv` — concentration dataset (318 rows)
-
-Site × season data for the direction and magnitude analyses (158 streams with both seasons):
-`site`, `beaver_territory`, `date`, `time`, `season`, `DOC_input`, `DOC_out`, `delta_DOC`,
-`A_floodplain_km2` and `A_beaver_km2` (floodplain and ponded areas, km²), and the derived
-area contrasts `D_beaver_km2`, `D_catchment_km2`.
 
 ### Other files
 
@@ -139,7 +138,7 @@ controls, the connectivity model) are cached the same way.
 
 | Figure | File in `overleaf/figures/media/` | Notebook (section) | Needs |
 |---|---|---|---|
-| 1. Map of sites and schematic of the derived variables | `figure1_v2.png` | `analysis_plan.qmd` (11, Methods figure) | `m6.csv`, `m12.csv`, `producer_sites_coordinates.csv`, `data/elevation/`, `images/schematic_S_R_F.png` |
+| 1. Map of sites and schematic of the derived variables | `figure1_v2.png` | `analysis_plan.qmd` (11, Methods figure) | `m6.csv`, `producer_sites_coordinates.csv`, `data/elevation/`, `images/schematic_S_R_F.png` |
 | 2. Direction of ΔDOC (posterior predictive, by season) | `Figure_2a.png` | `analysis_plan.qmd` (3, Q1) | `m6.csv` (the model is fitted in the chunk) |
 | 3. Structural causal model of downstream DOC | `figure4_v1.png` | `analysis_plan.qmd` (4, Q2) | `results/me_refits.rds` (`me_refits.R`) |
 | 4. Relative response *R<sub>s</sub>* and seasonal gain *G* | `figure3_v2.png` | `analysis_plan.qmd` (5, Q3) | `results/concentrations_thin.rds` (`concentrations_fit.qmd`) |

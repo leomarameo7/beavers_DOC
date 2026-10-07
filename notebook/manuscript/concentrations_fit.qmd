@@ -29,7 +29,7 @@ suppressMessages({library(brms); library(tidyverse); library(here)})
 Each stream was sampled once in winter and once in summer, upstream and downstream of the beaver-engineered stream. We pair the two seasons and keep the streams where all four concentrations exist: **158 streams**.
 
 ```{r data}
-m <- read.csv(here("data", "processed", "m12.csv"))
+m <- read.csv(here("data", "processed", "m6.csv")) |> filter(!is.na(A_floodplain_km2))   # streams with a floodplain area
 w <- m |> filter(season == "winter") |>
   select(site, beaver_territory, up_w = DOC_input, dn_w = DOC_out,
          Afp = A_floodplain_km2, Abv = A_beaver_km2)          # winter sampling

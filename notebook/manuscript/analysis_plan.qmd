@@ -167,7 +167,7 @@ p_q1
 
 ```{r q1-data}
 # raw data: one row per sampling; pair each stream's winter and summer sampling
-m <- read.csv(here("data", "processed", "m12.csv"))
+m <- read.csv(here("data", "processed", "m6.csv")) |> filter(!is.na(A_floodplain_km2))   # streams with a floodplain area
 w <- m |> filter(season == "winter") |> select(site, beaver_territory, up_w = DOC_input, dn_w = DOC_out,
                                                  Afp = A_floodplain_km2, Abv = A_beaver_km2)
 s <- m |> filter(season == "summer") |> select(site, beaver_territory, up_s = DOC_input, dn_s = DOC_out)
@@ -1132,7 +1132,7 @@ kable(tribble(
 
 ```{r session}
 #| echo: false
-cat("Data: data/processed/m12.csv | concentration posteriors: notebook/manuscript/concentrations_fit.qmd -> results/concentrations.rds (thinned copy concentrations_thin.rds is tracked)\n")
+cat("Data: data/processed/m6.csv | concentration posteriors: notebook/manuscript/concentrations_fit.qmd -> results/concentrations.rds (thinned copy concentrations_thin.rds is tracked)\n")
 sessionInfo()$R.version$version.string
 ```
 

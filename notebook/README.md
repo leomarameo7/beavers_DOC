@@ -19,7 +19,7 @@ citation style used by the notebooks, referenced from their YAML header).
 | `analysis_plan.qmd` | Figures 1–4; SI Figures S7, S8, S11–S14; Table S2. Also the numbers for the hold-out, intensity and pathway-decomposition analyses | `data/processed/*`, `data/elevation/`, `results/me_refits.rds`, `results/dag_sensitivity_me.rds`, `results/me_predictions.rds`, `results/me_holdout.rds`, `results/pathway_decomposition.rds`, `results/concentrations_thin.rds` |
 | `appendix_s1_figures.qmd` | SI Figures S1, S3–S6 (priors, residuals, posterior predictive check, posterior parameters, stream-level ΔDOC) | `results/models_fit/delta_SCM_me.rds` |
 | `connectivity.qmd` | SI Figure S10 (lateral stream–wetland connectivity) | `m6.csv`, `later_connectivity_berger.csv` |
-| `concentrations_fit.qmd` | The per-stream concentration posteriors (`results/concentrations*.rds`) used by Figure 4 | `m12.csv` |
+| `concentrations_fit.qmd` | The per-stream concentration posteriors (`results/concentrations*.rds`) used by Figure 4 | `m6.csv` |
 
 ## `fitting/`
 
