@@ -29,7 +29,6 @@ set.seed(7)
 # One colour per meaning, used in every figure: DOC added (source) = skyblue, DOC removed (sink) = coral,
 # negligible / no-evidence = lightgrey. Never used for anything else.
 PAL <- c(add = "skyblue", remove = "coral", none = "lightgrey")
-dir.create(here("results", "figures", "plan"), recursive = TRUE, showWarnings = FALSE)
 ```
 
 ::: {.callout-tip appearance="simple"}
@@ -115,7 +114,56 @@ The division of labour between the two quantities is fixed: **$R_s$ answers "how
 
 **Manuscript placement: main text, Figure 1a (existing, unchanged).**
 
-![**Direction of the local response.** Posterior predictive distribution of $\Delta\text{DOC}_s$ for a single sampling of a beaver-engineered stream, in winter and summer, from the measurement-error model on the raw upstream and downstream concentrations. Coral: posterior predictive probability of a sink response ($\Delta\text{DOC}_s < -0.5$ mg L$^{-1}$); grey: negligible response (ROPE $\pm 0.5$ mg L$^{-1}$); skyblue: source response ($\Delta\text{DOC}_s > 0.5$ mg L$^{-1}$). Point: median; bars: 66% and 95% intervals. $\Delta\text{DOC}_s$ is defined in @tbl-variables.](../../overleaf/figures/media/Figure_2a.png){#fig-q1}
+Model: the raw upstream and downstream concentrations (instrument error 0.2 mg L$^{-1}$, `mi(0.2)`) of all samplings, with a Student-$t$ likelihood and stream and stream-by-season random intercepts. The average local response per season is the difference between the downstream and upstream coefficients; the single-sampling response adds the residual variation of both measurements.
+
+```{r q1-model}
+library(brms)
+m6_q1 <- read.csv(here("data", "processed", "m6.csv")) |> mutate(across(c(season, site), as.factor))
+long <- m6_q1 |> select(site, season, DOC_input, DOC_out) |>
+  pivot_longer(c(DOC_input, DOC_out), names_to = "location", values_to = "DOC") |>
+  mutate(location = factor(ifelse(location == "DOC_input", "up", "down"), levels = c("up", "down")),
+         season = factor(season), site = factor(site)) |>
+  filter(!is.na(DOC))
+fit_q1 <- brm(bf(DOC | mi(0.2) ~ 0 + season:location + (1 | site) + (1 | site:season)),
+              family = student(), data = long,
+              prior = c(prior(normal(3, 3), class = "b"),
+                        prior(student_t(3, 0, 2.5), class = "sd"),
+                        prior(student_t(3, 0, 2.5), class = "sigma"),
+                        prior(gamma(2, 0.1), class = "nu")),
+              chains = 4, cores = 4, iter = 3000, warmup = 1000, seed = 7,
+              backend = "cmdstanr", file = here("results", "models_fit", "doc_raw_student"), refresh = 0)
+dq <- posterior::as_draws_df(fit_q1); set.seed(7); nq <- nrow(dq)
+eps <- dq$sigma * (rt(nq, dq$nu) - rt(nq, dq$nu))
+df_q1 <- bind_rows(lapply(c("summer", "winter"), function(s) {
+  fd <- dq[[paste0("b_season", s, ":locationdown")]] - dq[[paste0("b_season", s, ":locationup")]]
+  tibble(season = s, .draw = 1:nq, avg = fd, pred = fd + eps) }))
+df_q1 |> group_by(season) |>
+  summarise(avg_mean = mean(avg), avg_lo = quantile(avg, .025), avg_hi = quantile(avg, .975), p_avg_pos = mean(avg > 0),
+            pred_med = median(pred), pred_lo = quantile(pred, .025), pred_hi = quantile(pred, .975),
+            sink = 100 * mean(pred < -0.5), rope = 100 * mean(abs(pred) <= 0.5), source = 100 * mean(pred > 0.5))
+```
+
+```{r}
+#| label: fig-q1
+#| fig-width: 10
+#| fig-height: 6
+#| fig-cap: "**Direction of the local response.** Posterior predictive distribution of $\\Delta\\text{DOC}_s$ for a single sampling of a beaver-engineered stream, in winter and summer, from the measurement-error model on the raw upstream and downstream concentrations. Coral: posterior predictive probability of a sink response ($\\Delta\\text{DOC}_s < -0.5$ mg L$^{-1}$); grey: negligible response (ROPE $\\pm 0.5$ mg L$^{-1}$); skyblue: source response ($\\Delta\\text{DOC}_s > 0.5$ mg L$^{-1}$). Point: median; bars: 66% and 95% intervals. $\\Delta\\text{DOC}_s$ is defined in @tbl-variables."
+lab <- df_q1 |> group_by(season) |> summarise(l_sink = paste0(round(100*mean(pred < -0.5),1), " %: sink"),
+  l_rope = paste0(round(100*mean(abs(pred) <= 0.5),1), " %: ROPE"), l_src = paste0(round(100*mean(pred > 0.5),1), " %: source"))
+fill_colors <- c(sink = "coral", ROPE = "lightgrey", source = "skyblue")
+df_q1$season <- factor(df_q1$season, levels = c("winter", "summer")); lab$season <- factor(lab$season, levels = levels(df_q1$season))
+p_q1 <- ggplot(df_q1, aes(x = pred, y = season)) +
+  stat_halfeye(aes(fill = after_stat(case_when(x < -0.5 ~ "sink", x > 0.5 ~ "source", TRUE ~ "ROPE"))),
+               adjust = 0.8, slab_alpha = 0.8, .width = c(.66, .95), show.legend = FALSE) +
+  geom_vline(xintercept = c(-0.5, 0.5), linetype = "dashed") + scale_fill_manual(values = fill_colors) +
+  scale_x_continuous(limits = c(-3, 3), breaks = seq(-3, 3, 0.5)) +
+  geom_text(data = lab, aes(x = -1.6, y = season, label = l_sink), vjust = -1.2, hjust = 0, size = 4.2, inherit.aes = FALSE) +
+  geom_text(data = lab, aes(x = 0, y = season, label = l_rope), vjust = -1.2, hjust = 0.5, size = 4.2, inherit.aes = FALSE) +
+  geom_text(data = lab, aes(x = 1.0, y = season, label = l_src), vjust = -1.2, hjust = 0, size = 4.2, inherit.aes = FALSE) +
+  theme_bw(base_size = 14) + theme(panel.grid = element_blank()) + labs(x = expression(Delta*"DOC (mg/L)"), y = NULL)
+ggsave(here("overleaf", "figures", "media", "Figure_2a.png"), p_q1, width = 10, height = 6, dpi = 300)
+p_q1
+```
 
 ```{r q1-data}
 # raw data: one row per sampling; pair each stream's winter and summer sampling
@@ -192,7 +240,7 @@ draw_dag <- function(tb, outcome, pref, up, up_lab, title) {
 #| fig-height: 5.6
 #| fig-cap: "**Drivers of downstream DOC.** Structural causal model with downstream DOC as the outcome (model `downstream_DOC_me`) and the posterior mean standardized effects; the upstream-DOC path is the inheritance slope (0.94, mg per mg). Skyblue: positive and coral: negative effects with posterior probability above 0.90; dashed grey: no-evidence. Dark red: the two added links, upstream DOC → macrophytes and → phytoplankton (per mg L⁻¹ of upstream DOC); solid dark red meets the same 0.90 threshold, dotted does not."
 pq2 <- draw_dag(tO, "Downstream\nDOC", "DOCout", "DOC_input", "Upstream\nDOC", "")
-ggsave(here("images", "Figure_1b_downstream.png"), pq2, width = 9, height = 5.6, dpi = 300, bg = "white")
+ggsave(here("overleaf", "figures", "media", "figure4_v1.png"), pq2, width = 9, height = 5.6, dpi = 300, bg = "white")
 pq2
 ```
 
@@ -348,7 +396,7 @@ pc <- ggplot(gprop, aes(x = p, y = zone, fill = zone)) +
   labs(x = "Percentage of the 158 streams", y = expression("Seasonal gain,  "*G*" = "*B*" / "*S)) +
   theme_bw(base_size = 12) + theme(panel.grid.minor = element_blank())
 fig2 <- pa / pb / pc + plot_layout(heights = c(1, 1.3, 1)) + plot_annotation(tag_levels = "a")
-ggsave(here("results", "figures", "plan", "fig_R.png"), fig2, width = 9, height = 11, dpi = 300)
+ggsave(here("overleaf", "figures", "media", "figure3_v2.png"), fig2, width = 9, height = 11, dpi = 300)
 fig2
 # summary of panel (c) for the key message, one row per zone
 gsum <- gprop |> group_by(zone) |> summarise(med = median(p), lo = quantile(p, .025), hi = quantile(p, .975))
@@ -461,12 +509,11 @@ panel <- function(M, x, xlab, class, pal, labs_, ylab, sub, fit, logx = FALSE) {
 ylab_R <- expression(R[summer] == frac(DOC[list(down, summer)] - DOC[list(up, summer)], "|" * DOC[list(up, summer)] - DOC[list(up, winter)] * "|"))
 ylab_G <- expression(G == frac(Delta * DOC[summer] - Delta * DOC[winter], DOC[list(up, summer)] - DOC[list(up, winter)]))
 p1 <- panel(R_s, cv$n_dams, "Number of dams", r_class, rpal, rlab, ylab_R, b_lab(beta$R_dams), fits$R_dams)
-p2 <- panel(R_s, cv$wrt, "Water residence time in summer (s)", r_class, rpal, rlab, ylab_R, b_lab(beta$R_wrt), fits$R_wrt, logx = TRUE)
+p2 <- panel(R_s, cv$wrt, "Water residence time in summer (h)", r_class, rpal, rlab, ylab_R, b_lab(beta$R_wrt), fits$R_wrt, logx = TRUE)
 p3 <- panel(G_m, cv$n_dams, "Number of dams", g_class, gpal2, names(gpal2), ylab_G, b_lab(beta$G_dams), fits$G_dams)
-p4 <- panel(G_m, cv$wrt, "Water residence time in summer (s)", g_class, gpal2, names(gpal2), ylab_G, b_lab(beta$G_wrt), fits$G_wrt, logx = TRUE)
+p4 <- panel(G_m, cv$wrt, "Water residence time in summer (h)", g_class, gpal2, names(gpal2), ylab_G, b_lab(beta$G_wrt), fits$G_wrt, logx = TRUE)
 figI <- (p1 + p2) / (p3 + p4) + plot_layout(guides = "collect") + plot_annotation(tag_levels = "a") &
   theme(legend.position = "top")
-ggsave(here("results", "figures", "plan", "fig_intensity.png"), figI, width = 10, height = 8, dpi = 300)
 figI
 bt <- function(k) sprintf("%.2f [%.2f, %.2f]", median(beta[[k]]), quantile(beta[[k]], .025), quantile(beta[[k]], .975))
 bp <- function(k) sprintf("%.2f", mean(beta[[k]] > 0))
@@ -520,7 +567,6 @@ ps <- ggplot(sp, aes(x = rho, y = q)) +
   stat_halfeye(.width = c(.66, .95), point_interval = "median_qi", fill = "grey80") +
   labs(x = "Spearman correlation with the mean of the 8 nearest neighbours", y = NULL) +
   theme_bw(base_size = 12) + theme(panel.grid.minor = element_blank())
-ggsave(here("results", "figures", "plan", "fig_spatial.png"), ps, width = 8, height = 3.5, dpi = 300)
 ps
 ```
 
@@ -605,7 +651,6 @@ if (have_hold) {
     labs(x = expression("Observed "*Delta*"DOC (mg "*L^-1*")"), y = expression("Predicted "*Delta*"DOC (mg "*L^-1*")")) +
     theme_bw(base_size = 12) + theme(panel.grid.minor = element_blank())
   figH <- pa + pb + plot_annotation(tag_levels = "a")
-  ggsave(here("results", "figures", "plan", "fig_holdout.png"), figH, width = 9, height = 4.5, dpi = 300)
   figH
 }
 ```
@@ -688,7 +733,7 @@ ggplot(tests, aes(x = r, y = test)) +
   coord_cartesian(xlim = c(-1, 1.6), clip = "off") +
   labs(x = "Partial correlation implied to be zero (95% interval)", y = NULL) +
   theme_bw(base_size = 11) + theme(panel.grid.minor = element_blank(), legend.position = "top") -> p_tests
-ggsave(here("results", "figures", "plan", "fig_dag_tests.png"), p_tests, width = 9, height = 6, dpi = 300, bg = "white"); p_tests
+ggsave(here("overleaf", "supplementary", "figures", "media", "figS10_dag_tests.png"), p_tests, width = 9, height = 6, dpi = 300, bg = "white"); p_tests
 ```
 
 ```{r fig-dag-compare}
@@ -710,7 +755,7 @@ if (have_sens) {
     facet_wrap(~ par, ncol = 2, scales = "free_x") + scale_colour_brewer(palette = "Dark2", guide = "none") +
     labs(x = "Standardized effect on downstream DOC", y = NULL) + theme_bw(base_size = 12) + theme(panel.grid.minor = element_blank())
   p_cmp <- pa + pb + plot_layout(widths = c(1, 1.6)) + plot_annotation(tag_levels = "a")
-  ggsave(here("results", "figures", "plan", "fig_dag_compare.png"), p_cmp, width = 9, height = 5, dpi = 300, bg = "white"); p_cmp
+  ggsave(here("overleaf", "supplementary", "figures", "media", "figS11_dag_compare.png"), p_cmp, width = 9, height = 5, dpi = 300, bg = "white"); p_cmp
 } else cat("DAG fits not yet available (notebook/R/dag_sensitivity.R).")
 ```
 
@@ -770,7 +815,7 @@ rv <- sapply(names(paths), function(tr) { s <- sensemakr(lmo, treatment = tr, be
 draw_sm <- function() { par(mfrow = c(1, 3), mar = c(4, 4, 3, 1))
   for (tr in names(paths)) { s <- sensemakr(lmo, treatment = tr, benchmark_covariates = "solar_z", kd = 1:3)
     ovb_contour_plot(s, sensitivity.of = "estimate", main = paths[tr]) } }
-png(here("results", "figures", "plan", "fig_sensemakr.png"), width = 9, height = 4, units = "in", res = 300); draw_sm(); invisible(dev.off())
+png(here("overleaf", "supplementary", "figures", "media", "figS12_sensemakr.png"), width = 9, height = 4, units = "in", res = 300); draw_sm(); invisible(dev.off())
 draw_sm()
 ```
 
@@ -806,7 +851,7 @@ ggplot(nc_draws, aes(x = v, y = fct_rev(factor(label, levels = unique(label)))))
   geom_vline(xintercept = 0, linetype = "dashed", colour = "grey45") +
   stat_halfeye(.width = c(.66, .95), point_interval = "median_qi", fill = "grey80") +
   labs(x = "Standardized coefficient", y = NULL) + theme_bw(base_size = 12) + theme(panel.grid.minor = element_blank()) -> p_nc
-ggsave(here("results", "figures", "plan", "fig_negative_controls.png"), p_nc, width = 9, height = 3.8, dpi = 300, bg = "white"); p_nc
+ggsave(here("overleaf", "supplementary", "figures", "media", "figS13_negative_controls.png"), p_nc, width = 9, height = 3.8, dpi = 300, bg = "white"); p_nc
 ```
 
 ::: {.callout-important}
@@ -834,7 +879,7 @@ if (have_sens) {
     stat_pointinterval(.width = c(.66, .95), point_interval = "median_qi") +
     facet_wrap(~ par, scales = "free_x", ncol = 5) + scale_colour_manual(values = c("#E8603C", "black", "#3B9AD1"), guide = "none") +
     labs(x = "Effect on downstream DOC", y = NULL) + theme_bw(base_size = 11) + theme(panel.grid.minor = element_blank()) -> p_ps
-  ggsave(here("results", "figures", "plan", "fig_prior_sens.png"), p_ps, width = 10, height = 4, dpi = 300, bg = "white"); p_ps
+  ggsave(here("overleaf", "supplementary", "figures", "media", "figS14_prior_sens.png"), p_ps, width = 10, height = 4, dpi = 300, bg = "white"); p_ps
 } else cat("Prior-sensitivity fits not yet available.")
 ```
 
@@ -853,7 +898,7 @@ p_spatial_resid <- ggplot(tibble(rho = rho_res), aes(x = rho, y = 1)) +
   stat_halfeye(.width = c(.66, .95), point_interval = "median_qi", fill = "grey80") +
   labs(x = "Spearman correlation of residuals with the mean of the 8 nearest neighbours", y = NULL) +
   theme_bw(base_size = 12) + theme(panel.grid.minor = element_blank(), axis.text.y = element_blank(), axis.ticks.y = element_blank())
-ggsave(here("results", "figures", "plan", "fig_spatial_resid.png"), p_spatial_resid, width = 8, height = 2.8, dpi = 300, bg = "white")
+ggsave(here("overleaf", "supplementary", "figures", "media", "figS15_spatial_resid.png"), p_spatial_resid, width = 8, height = 2.8, dpi = 300, bg = "white")
 p_spatial_resid
 ```
 
@@ -963,7 +1008,7 @@ if (have_dec) {
     labs(x = expression("Source minus sink (mg "*L^-1*")"), y = NULL, subtitle = "What distinguishes enriching from depleting samplings") +
     theme_bw(base_size = 11) + theme(panel.grid.minor = element_blank())
   fig_dec <- (pa + pb) / pc + plot_layout(heights = c(1.2, 1)) + plot_annotation(tag_levels = "a")
-  ggsave(here("results", "figures", "plan", "fig_decomp.png"), fig_dec, width = 11, height = 7, dpi = 300, bg = "white"); fig_dec
+  fig_dec
 } else cat("Decomposition not yet computed (notebook/R/pathway_decomposition.R).")
 ```
 
@@ -985,7 +1030,7 @@ if (have_dec) {
     geom_pointrange(aes(xmin = lo, xmax = hi), size = .4) + scale_y_discrete(labels = comp_lab) +
     labs(x = "Share of B carried by the component", y = NULL) + theme_bw(base_size = 11) + theme(panel.grid.minor = element_blank())
   fig_ds <- pa + pb + plot_layout(widths = c(1.4, 1)) + plot_annotation(tag_levels = "a")
-  ggsave(here("results", "figures", "plan", "fig_decomp_season.png"), fig_ds, width = 11, height = 4.5, dpi = 300, bg = "white"); fig_ds
+  fig_ds
 }
 ```
 
@@ -1042,12 +1087,12 @@ pmap <- ggplot() +
   annotate("text", x = 5.99, y = 47.75, label = "(a)", size = 6.5, hjust = 0) +
   theme_void() + theme(legend.position = "right")
 # panel (b): the schematic, included as an image below the map
-schem <- png::readPNG(here("results", "figures", "plan", "schematic_S_R_F.png"))
+schem <- png::readPNG(here("images", "schematic_S_R_F.png"))
 psch  <- ggplot() + annotation_custom(grid::rasterGrob(schem)) +
   annotate("text", x = 0.02, y = 0.97, label = "(b)", size = 6.5, hjust = 0) +
   xlim(0, 1) + ylim(0, 1) + theme_void()
 fig3 <- pmap / psch + plot_layout(heights = c(1, 1.15))
-ggsave(here("results", "figures", "plan", "fig_map_schematic.png"), fig3, width = 9, height = 11, dpi = 300, bg = "white")
+ggsave(here("overleaf", "figures", "media", "figure1_v2.png"), fig3, width = 9, height = 11, dpi = 300, bg = "white")
 fig3
 ```
 

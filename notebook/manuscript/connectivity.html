@@ -2682,164 +2682,65 @@ $open
 <span id="cb14-40"><a href="#cb14-40" aria-label="40"></a>                        <span class="at">backend =</span> <span class="st">&quot;cmdstanr&quot;</span>,</span>
 <span id="cb14-41"><a href="#cb14-41" aria-label="41"></a>                        <span class="at">file =</span> <span class="fu">here</span>(<span class="st">&quot;results&quot;</span>,<span class="st">&quot;models_fit&quot;</span>,<span class="st">&quot;fitconnectivity_informative&quot;</span>),</span>
 <span id="cb14-42"><a href="#cb14-42" aria-label="42"></a>                        <span class="at">sample_prior =</span> <span class="cn">FALSE</span></span>
-<span id="cb14-43"><a href="#cb14-43" aria-label="43"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details><div class="cell-output cell-output-stdout">
-<pre><code>Running MCMC with 4 chains, at most 10 in parallel...
-
-Chain 1 Iteration:    1 / 2000 [  0%]  (Warmup) 
-Chain 2 Iteration:    1 / 2000 [  0%]  (Warmup) 
-Chain 3 Iteration:    1 / 2000 [  0%]  (Warmup) 
-Chain 4 Iteration:    1 / 2000 [  0%]  (Warmup) 
-Chain 2 Iteration:  100 / 2000 [  5%]  (Warmup) 
-Chain 1 Iteration:  100 / 2000 [  5%]  (Warmup) 
-Chain 3 Iteration:  100 / 2000 [  5%]  (Warmup) 
-Chain 1 Iteration:  200 / 2000 [ 10%]  (Warmup) 
-Chain 4 Iteration:  100 / 2000 [  5%]  (Warmup) 
-Chain 1 Iteration:  300 / 2000 [ 15%]  (Warmup) 
-Chain 3 Iteration:  200 / 2000 [ 10%]  (Warmup) 
-Chain 4 Iteration:  200 / 2000 [ 10%]  (Warmup) 
-Chain 1 Iteration:  400 / 2000 [ 20%]  (Warmup) 
-Chain 2 Iteration:  200 / 2000 [ 10%]  (Warmup) 
-Chain 4 Iteration:  300 / 2000 [ 15%]  (Warmup) 
-Chain 1 Iteration:  500 / 2000 [ 25%]  (Warmup) 
-Chain 1 Iteration:  600 / 2000 [ 30%]  (Warmup) 
-Chain 2 Iteration:  300 / 2000 [ 15%]  (Warmup) 
-Chain 3 Iteration:  300 / 2000 [ 15%]  (Warmup) 
-Chain 3 Iteration:  400 / 2000 [ 20%]  (Warmup) 
-Chain 4 Iteration:  400 / 2000 [ 20%]  (Warmup) 
-Chain 4 Iteration:  500 / 2000 [ 25%]  (Warmup) 
-Chain 1 Iteration:  700 / 2000 [ 35%]  (Warmup) 
-Chain 2 Iteration:  400 / 2000 [ 20%]  (Warmup) 
-Chain 3 Iteration:  500 / 2000 [ 25%]  (Warmup) 
-Chain 4 Iteration:  600 / 2000 [ 30%]  (Warmup) 
-Chain 1 Iteration:  800 / 2000 [ 40%]  (Warmup) 
-Chain 2 Iteration:  500 / 2000 [ 25%]  (Warmup) 
-Chain 3 Iteration:  600 / 2000 [ 30%]  (Warmup) 
-Chain 4 Iteration:  700 / 2000 [ 35%]  (Warmup) 
-Chain 4 Iteration:  800 / 2000 [ 40%]  (Warmup) 
-Chain 1 Iteration:  900 / 2000 [ 45%]  (Warmup) 
-Chain 3 Iteration:  700 / 2000 [ 35%]  (Warmup) 
-Chain 3 Iteration:  800 / 2000 [ 40%]  (Warmup) 
-Chain 4 Iteration:  900 / 2000 [ 45%]  (Warmup) 
-Chain 1 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
-Chain 1 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
-Chain 2 Iteration:  600 / 2000 [ 30%]  (Warmup) 
-Chain 3 Iteration:  900 / 2000 [ 45%]  (Warmup) 
-Chain 4 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
-Chain 4 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
-Chain 1 Iteration: 1100 / 2000 [ 55%]  (Sampling) 
-Chain 2 Iteration:  700 / 2000 [ 35%]  (Warmup) 
-Chain 3 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
-Chain 3 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
-Chain 4 Iteration: 1100 / 2000 [ 55%]  (Sampling) 
-Chain 1 Iteration: 1200 / 2000 [ 60%]  (Sampling) 
-Chain 3 Iteration: 1100 / 2000 [ 55%]  (Sampling) 
-Chain 4 Iteration: 1200 / 2000 [ 60%]  (Sampling) 
-Chain 1 Iteration: 1300 / 2000 [ 65%]  (Sampling) 
-Chain 2 Iteration:  800 / 2000 [ 40%]  (Warmup) 
-Chain 3 Iteration: 1200 / 2000 [ 60%]  (Sampling) 
-Chain 4 Iteration: 1300 / 2000 [ 65%]  (Sampling) 
-Chain 1 Iteration: 1400 / 2000 [ 70%]  (Sampling) 
-Chain 2 Iteration:  900 / 2000 [ 45%]  (Warmup) 
-Chain 3 Iteration: 1300 / 2000 [ 65%]  (Sampling) 
-Chain 4 Iteration: 1400 / 2000 [ 70%]  (Sampling) 
-Chain 1 Iteration: 1500 / 2000 [ 75%]  (Sampling) 
-Chain 3 Iteration: 1400 / 2000 [ 70%]  (Sampling) 
-Chain 4 Iteration: 1500 / 2000 [ 75%]  (Sampling) 
-Chain 1 Iteration: 1600 / 2000 [ 80%]  (Sampling) 
-Chain 3 Iteration: 1500 / 2000 [ 75%]  (Sampling) 
-Chain 4 Iteration: 1600 / 2000 [ 80%]  (Sampling) 
-Chain 1 Iteration: 1700 / 2000 [ 85%]  (Sampling) 
-Chain 2 Iteration: 1000 / 2000 [ 50%]  (Warmup) 
-Chain 2 Iteration: 1001 / 2000 [ 50%]  (Sampling) 
-Chain 3 Iteration: 1600 / 2000 [ 80%]  (Sampling) 
-Chain 4 Iteration: 1700 / 2000 [ 85%]  (Sampling) 
-Chain 1 Iteration: 1800 / 2000 [ 90%]  (Sampling) 
-Chain 3 Iteration: 1700 / 2000 [ 85%]  (Sampling) 
-Chain 2 Iteration: 1100 / 2000 [ 55%]  (Sampling) 
-Chain 4 Iteration: 1800 / 2000 [ 90%]  (Sampling) 
-Chain 1 Iteration: 1900 / 2000 [ 95%]  (Sampling) 
-Chain 3 Iteration: 1800 / 2000 [ 90%]  (Sampling) 
-Chain 4 Iteration: 1900 / 2000 [ 95%]  (Sampling) 
-Chain 1 Iteration: 2000 / 2000 [100%]  (Sampling) 
-Chain 2 Iteration: 1200 / 2000 [ 60%]  (Sampling) 
-Chain 3 Iteration: 1900 / 2000 [ 95%]  (Sampling) 
-Chain 4 Iteration: 2000 / 2000 [100%]  (Sampling) 
-Chain 1 finished in 3.2 seconds.
-Chain 4 finished in 3.2 seconds.
-Chain 3 Iteration: 2000 / 2000 [100%]  (Sampling) 
-Chain 3 finished in 3.3 seconds.
-Chain 2 Iteration: 1300 / 2000 [ 65%]  (Sampling) 
-Chain 2 Iteration: 1400 / 2000 [ 70%]  (Sampling) 
-Chain 2 Iteration: 1500 / 2000 [ 75%]  (Sampling) 
-Chain 2 Iteration: 1600 / 2000 [ 80%]  (Sampling) 
-Chain 2 Iteration: 1700 / 2000 [ 85%]  (Sampling) 
-Chain 2 Iteration: 1800 / 2000 [ 90%]  (Sampling) 
-Chain 2 Iteration: 1900 / 2000 [ 95%]  (Sampling) 
-Chain 2 Iteration: 2000 / 2000 [100%]  (Sampling) 
-Chain 2 finished in 4.9 seconds.
-
-All 4 chains finished successfully.
-Mean chain execution time: 3.6 seconds.
-Total execution time: 5.0 seconds.</code></pre>
-</div>
-<details class="code-fold"><summary>Code</summary><div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-label="1"></a><span class="co">#summary(fit_connectivity)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb14-43"><a href="#cb14-43" aria-label="43"></a>)</span>
+<span id="cb14-44"><a href="#cb14-44" aria-label="44"></a></span>
+<span id="cb14-45"><a href="#cb14-45" aria-label="45"></a><span class="co">#summary(fit_connectivity)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <p>Now we are going to extract the posterior draws from the model we fitted:</p>
 <div class="cell">
-<details class="code-fold"><summary>Code</summary><div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-label="1"></a>draws <span class="ot">&lt;-</span> <span class="fu">as_draws_df</span>(fit_connectivity)</span>
-<span id="cb17-2"><a href="#cb17-2" aria-label="2"></a></span>
-<span id="cb17-3"><a href="#cb17-3" aria-label="3"></a>mean_no_wetland    <span class="ot">&lt;-</span> draws<span class="sc">$</span>b_waterrestimez_lateral_connectivityNo_wetland</span>
-<span id="cb17-4"><a href="#cb17-4" aria-label="4"></a>mean_not_connected <span class="ot">&lt;-</span> draws<span class="sc">$</span>b_waterrestimez_lateral_connectivityyes_not_connected</span>
-<span id="cb17-5"><a href="#cb17-5" aria-label="5"></a>mean_connected     <span class="ot">&lt;-</span> draws<span class="sc">$</span>b_waterrestimez_lateral_connectivityyes_connected</span>
-<span id="cb17-6"><a href="#cb17-6" aria-label="6"></a></span>
-<span id="cb17-7"><a href="#cb17-7" aria-label="7"></a>effect_wrt_not_connected <span class="ot">&lt;-</span> mean_not_connected <span class="sc">-</span> mean_no_wetland</span>
-<span id="cb17-8"><a href="#cb17-8" aria-label="8"></a>effect_wrt_connected     <span class="ot">&lt;-</span> mean_connected <span class="sc">-</span> mean_no_wetland</span>
-<span id="cb17-9"><a href="#cb17-9" aria-label="9"></a></span>
-<span id="cb17-10"><a href="#cb17-10" aria-label="10"></a>s1 <span class="ot">&lt;-</span> <span class="fu">summarise_draws</span>(<span class="fu">data.frame</span>(</span>
-<span id="cb17-11"><a href="#cb17-11" aria-label="11"></a>  <span class="at">effect_wrt_not_connected =</span> effect_wrt_not_connected,</span>
-<span id="cb17-12"><a href="#cb17-12" aria-label="12"></a>  <span class="at">effect_wrt_connected     =</span> effect_wrt_connected</span>
-<span id="cb17-13"><a href="#cb17-13" aria-label="13"></a>))</span>
-<span id="cb17-14"><a href="#cb17-14" aria-label="14"></a></span>
-<span id="cb17-15"><a href="#cb17-15" aria-label="15"></a>wrt_to_doc <span class="ot">&lt;-</span> draws<span class="sc">$</span>bsp_deltaDOC_miwater_res_time_z</span>
-<span id="cb17-16"><a href="#cb17-16" aria-label="16"></a></span>
-<span id="cb17-17"><a href="#cb17-17" aria-label="17"></a>total_effect_not_connected <span class="ot">&lt;-</span> effect_wrt_not_connected <span class="sc">*</span> wrt_to_doc</span>
-<span id="cb17-18"><a href="#cb17-18" aria-label="18"></a>total_effect_connected     <span class="ot">&lt;-</span> effect_wrt_connected <span class="sc">*</span> wrt_to_doc</span>
-<span id="cb17-19"><a href="#cb17-19" aria-label="19"></a></span>
-<span id="cb17-20"><a href="#cb17-20" aria-label="20"></a>s2 <span class="ot">&lt;-</span> <span class="fu">summarise_draws</span>(<span class="fu">data.frame</span>(</span>
-<span id="cb17-21"><a href="#cb17-21" aria-label="21"></a>  <span class="at">total_effect_not_connected =</span> total_effect_not_connected,</span>
-<span id="cb17-22"><a href="#cb17-22" aria-label="22"></a>  <span class="at">total_effect_connected     =</span> total_effect_connected</span>
-<span id="cb17-23"><a href="#cb17-23" aria-label="23"></a>))</span>
-<span id="cb17-24"><a href="#cb17-24" aria-label="24"></a></span>
-<span id="cb17-25"><a href="#cb17-25" aria-label="25"></a>effects_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb17-26"><a href="#cb17-26" aria-label="26"></a>  <span class="at">not_connected =</span> total_effect_not_connected,</span>
-<span id="cb17-27"><a href="#cb17-27" aria-label="27"></a>  <span class="at">connected     =</span> total_effect_connected</span>
-<span id="cb17-28"><a href="#cb17-28" aria-label="28"></a>) <span class="sc">%&gt;%</span></span>
-<span id="cb17-29"><a href="#cb17-29" aria-label="29"></a>  <span class="fu">pivot_longer</span>(<span class="fu">everything</span>(), <span class="at">names_to =</span> <span class="st">&quot;contrast&quot;</span>, <span class="at">values_to =</span> <span class="st">&quot;effect&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb17-30"><a href="#cb17-30" aria-label="30"></a>  <span class="fu">mutate</span>(<span class="at">contrast =</span> <span class="fu">recode</span>(contrast,</span>
-<span id="cb17-31"><a href="#cb17-31" aria-label="31"></a>                           <span class="st">&quot;not_connected&quot;</span> <span class="ot">=</span> <span class="st">&quot;Yes, not connected</span><span class="sc">\n</span><span class="st">vs No wetland&quot;</span>,</span>
-<span id="cb17-32"><a href="#cb17-32" aria-label="32"></a>                           <span class="st">&quot;connected&quot;</span>      <span class="ot">=</span> <span class="st">&quot;Yes, connected</span><span class="sc">\n</span><span class="st">vs No wetland&quot;</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<details class="code-fold"><summary>Code</summary><div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-label="1"></a>draws <span class="ot">&lt;-</span> <span class="fu">as_draws_df</span>(fit_connectivity)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-label="2"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-label="3"></a>mean_no_wetland    <span class="ot">&lt;-</span> draws<span class="sc">$</span>b_waterrestimez_lateral_connectivityNo_wetland</span>
+<span id="cb15-4"><a href="#cb15-4" aria-label="4"></a>mean_not_connected <span class="ot">&lt;-</span> draws<span class="sc">$</span>b_waterrestimez_lateral_connectivityyes_not_connected</span>
+<span id="cb15-5"><a href="#cb15-5" aria-label="5"></a>mean_connected     <span class="ot">&lt;-</span> draws<span class="sc">$</span>b_waterrestimez_lateral_connectivityyes_connected</span>
+<span id="cb15-6"><a href="#cb15-6" aria-label="6"></a></span>
+<span id="cb15-7"><a href="#cb15-7" aria-label="7"></a>effect_wrt_not_connected <span class="ot">&lt;-</span> mean_not_connected <span class="sc">-</span> mean_no_wetland</span>
+<span id="cb15-8"><a href="#cb15-8" aria-label="8"></a>effect_wrt_connected     <span class="ot">&lt;-</span> mean_connected <span class="sc">-</span> mean_no_wetland</span>
+<span id="cb15-9"><a href="#cb15-9" aria-label="9"></a></span>
+<span id="cb15-10"><a href="#cb15-10" aria-label="10"></a>s1 <span class="ot">&lt;-</span> <span class="fu">summarise_draws</span>(<span class="fu">data.frame</span>(</span>
+<span id="cb15-11"><a href="#cb15-11" aria-label="11"></a>  <span class="at">effect_wrt_not_connected =</span> effect_wrt_not_connected,</span>
+<span id="cb15-12"><a href="#cb15-12" aria-label="12"></a>  <span class="at">effect_wrt_connected     =</span> effect_wrt_connected</span>
+<span id="cb15-13"><a href="#cb15-13" aria-label="13"></a>))</span>
+<span id="cb15-14"><a href="#cb15-14" aria-label="14"></a></span>
+<span id="cb15-15"><a href="#cb15-15" aria-label="15"></a>wrt_to_doc <span class="ot">&lt;-</span> draws<span class="sc">$</span>bsp_deltaDOC_miwater_res_time_z</span>
+<span id="cb15-16"><a href="#cb15-16" aria-label="16"></a></span>
+<span id="cb15-17"><a href="#cb15-17" aria-label="17"></a>total_effect_not_connected <span class="ot">&lt;-</span> effect_wrt_not_connected <span class="sc">*</span> wrt_to_doc</span>
+<span id="cb15-18"><a href="#cb15-18" aria-label="18"></a>total_effect_connected     <span class="ot">&lt;-</span> effect_wrt_connected <span class="sc">*</span> wrt_to_doc</span>
+<span id="cb15-19"><a href="#cb15-19" aria-label="19"></a></span>
+<span id="cb15-20"><a href="#cb15-20" aria-label="20"></a>s2 <span class="ot">&lt;-</span> <span class="fu">summarise_draws</span>(<span class="fu">data.frame</span>(</span>
+<span id="cb15-21"><a href="#cb15-21" aria-label="21"></a>  <span class="at">total_effect_not_connected =</span> total_effect_not_connected,</span>
+<span id="cb15-22"><a href="#cb15-22" aria-label="22"></a>  <span class="at">total_effect_connected     =</span> total_effect_connected</span>
+<span id="cb15-23"><a href="#cb15-23" aria-label="23"></a>))</span>
+<span id="cb15-24"><a href="#cb15-24" aria-label="24"></a></span>
+<span id="cb15-25"><a href="#cb15-25" aria-label="25"></a>effects_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb15-26"><a href="#cb15-26" aria-label="26"></a>  <span class="at">not_connected =</span> total_effect_not_connected,</span>
+<span id="cb15-27"><a href="#cb15-27" aria-label="27"></a>  <span class="at">connected     =</span> total_effect_connected</span>
+<span id="cb15-28"><a href="#cb15-28" aria-label="28"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb15-29"><a href="#cb15-29" aria-label="29"></a>  <span class="fu">pivot_longer</span>(<span class="fu">everything</span>(), <span class="at">names_to =</span> <span class="st">&quot;contrast&quot;</span>, <span class="at">values_to =</span> <span class="st">&quot;effect&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb15-30"><a href="#cb15-30" aria-label="30"></a>  <span class="fu">mutate</span>(<span class="at">contrast =</span> <span class="fu">recode</span>(contrast,</span>
+<span id="cb15-31"><a href="#cb15-31" aria-label="31"></a>                           <span class="st">&quot;not_connected&quot;</span> <span class="ot">=</span> <span class="st">&quot;Yes, not connected</span><span class="sc">\n</span><span class="st">vs No wetland&quot;</span>,</span>
+<span id="cb15-32"><a href="#cb15-32" aria-label="32"></a>                           <span class="st">&quot;connected&quot;</span>      <span class="ot">=</span> <span class="st">&quot;Yes, connected</span><span class="sc">\n</span><span class="st">vs No wetland&quot;</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <p>Then plot the results as contrasts (Appendix S1: Figure S9):</p>
 <div class="cell">
-<details class="code-fold"><summary>Code</summary><div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-label="1"></a>df_s9 <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
-<span id="cb18-2"><a href="#cb18-2" aria-label="2"></a>  <span class="fu">tibble</span>(<span class="at">stage =</span> <span class="st">&quot;A&quot;</span>, <span class="at">contrast =</span> <span class="st">&quot;Wetland, not connected vs no wetland&quot;</span>, <span class="at">draw =</span> effect_wrt_not_connected),</span>
-<span id="cb18-3"><a href="#cb18-3" aria-label="3"></a>  <span class="fu">tibble</span>(<span class="at">stage =</span> <span class="st">&quot;A&quot;</span>, <span class="at">contrast =</span> <span class="st">&quot;Wetland, connected vs no wetland&quot;</span>,     <span class="at">draw =</span> effect_wrt_connected),</span>
-<span id="cb18-4"><a href="#cb18-4" aria-label="4"></a>  <span class="fu">tibble</span>(<span class="at">stage =</span> <span class="st">&quot;B&quot;</span>, <span class="at">contrast =</span> <span class="st">&quot;Wetland, not connected vs no wetland&quot;</span>, <span class="at">draw =</span> total_effect_not_connected),</span>
-<span id="cb18-5"><a href="#cb18-5" aria-label="5"></a>  <span class="fu">tibble</span>(<span class="at">stage =</span> <span class="st">&quot;B&quot;</span>, <span class="at">contrast =</span> <span class="st">&quot;Wetland, connected vs no wetland&quot;</span>,     <span class="at">draw =</span> total_effect_connected)) <span class="sc">|&gt;</span></span>
-<span id="cb18-6"><a href="#cb18-6" aria-label="6"></a>  <span class="fu">mutate</span>(<span class="at">contrast =</span> <span class="fu">factor</span>(contrast, <span class="at">levels =</span> <span class="fu">rev</span>(<span class="fu">c</span>(<span class="st">&quot;Wetland, not connected vs no wetland&quot;</span>, <span class="st">&quot;Wetland, connected vs no wetland&quot;</span>))))</span>
-<span id="cb18-7"><a href="#cb18-7" aria-label="7"></a>lab_s9 <span class="ot">&lt;-</span> <span class="fu">as_labeller</span>(<span class="fu">c</span>(<span class="at">A =</span> <span class="st">&quot;Connectivity%-&gt;%&#39;water residence time&#39;&quot;</span>, <span class="at">B =</span> <span class="st">&quot;&#39;Total effect on&#39;~Delta*&#39;DOC&#39;&quot;</span>), label_parsed)</span>
-<span id="cb18-8"><a href="#cb18-8" aria-label="8"></a>(p_s9 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(df_s9, <span class="fu">aes</span>(<span class="at">x =</span> draw, <span class="at">y =</span> contrast)) <span class="sc">+</span></span>
-<span id="cb18-9"><a href="#cb18-9" aria-label="9"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="dv">2</span>, <span class="at">colour =</span> <span class="st">&quot;grey40&quot;</span>) <span class="sc">+</span></span>
-<span id="cb18-10"><a href="#cb18-10" aria-label="10"></a>  <span class="fu">stat_halfeye</span>(<span class="at">.width =</span> <span class="fu">c</span>(.<span class="dv">66</span>, .<span class="dv">95</span>), <span class="at">fill =</span> <span class="st">&quot;steelblue&quot;</span>, <span class="at">alpha =</span> .<span class="dv">8</span>) <span class="sc">+</span></span>
-<span id="cb18-11"><a href="#cb18-11" aria-label="11"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>stage, <span class="at">scales =</span> <span class="st">&quot;free_x&quot;</span>, <span class="at">labeller =</span> lab_s9) <span class="sc">+</span></span>
-<span id="cb18-12"><a href="#cb18-12" aria-label="12"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Standardized effect&quot;</span>, <span class="at">y =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
-<span id="cb18-13"><a href="#cb18-13" aria-label="13"></a>  <span class="fu">theme_bw</span>(<span class="at">base_size =</span> <span class="dv">15</span>) <span class="sc">+</span></span>
-<span id="cb18-14"><a href="#cb18-14" aria-label="14"></a>  <span class="fu">theme</span>(<span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">&quot;black&quot;</span>), <span class="at">panel.grid.minor =</span> <span class="fu">element_blank</span>(),</span>
-<span id="cb18-15"><a href="#cb18-15" aria-label="15"></a>        <span class="at">strip.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">&quot;grey92&quot;</span>)))</span>
-<span id="cb18-16"><a href="#cb18-16" aria-label="16"></a><span class="fu">ggsave</span>(<span class="fu">here</span>(<span class="st">&quot;results&quot;</span>, <span class="st">&quot;figures&quot;</span>, <span class="st">&quot;figS9_connectivity.png&quot;</span>), p_s9, <span class="at">width =</span> <span class="dv">11</span>, <span class="at">height =</span> <span class="fl">4.5</span>, <span class="at">dpi =</span> <span class="dv">300</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<details class="code-fold"><summary>Code</summary><div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-label="1"></a>df_s9 <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
+<span id="cb16-2"><a href="#cb16-2" aria-label="2"></a>  <span class="fu">tibble</span>(<span class="at">stage =</span> <span class="st">&quot;A&quot;</span>, <span class="at">contrast =</span> <span class="st">&quot;Wetland, not connected vs no wetland&quot;</span>, <span class="at">draw =</span> effect_wrt_not_connected),</span>
+<span id="cb16-3"><a href="#cb16-3" aria-label="3"></a>  <span class="fu">tibble</span>(<span class="at">stage =</span> <span class="st">&quot;A&quot;</span>, <span class="at">contrast =</span> <span class="st">&quot;Wetland, connected vs no wetland&quot;</span>,     <span class="at">draw =</span> effect_wrt_connected),</span>
+<span id="cb16-4"><a href="#cb16-4" aria-label="4"></a>  <span class="fu">tibble</span>(<span class="at">stage =</span> <span class="st">&quot;B&quot;</span>, <span class="at">contrast =</span> <span class="st">&quot;Wetland, not connected vs no wetland&quot;</span>, <span class="at">draw =</span> total_effect_not_connected),</span>
+<span id="cb16-5"><a href="#cb16-5" aria-label="5"></a>  <span class="fu">tibble</span>(<span class="at">stage =</span> <span class="st">&quot;B&quot;</span>, <span class="at">contrast =</span> <span class="st">&quot;Wetland, connected vs no wetland&quot;</span>,     <span class="at">draw =</span> total_effect_connected)) <span class="sc">|&gt;</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-label="6"></a>  <span class="fu">mutate</span>(<span class="at">contrast =</span> <span class="fu">factor</span>(contrast, <span class="at">levels =</span> <span class="fu">rev</span>(<span class="fu">c</span>(<span class="st">&quot;Wetland, not connected vs no wetland&quot;</span>, <span class="st">&quot;Wetland, connected vs no wetland&quot;</span>))))</span>
+<span id="cb16-7"><a href="#cb16-7" aria-label="7"></a>lab_s9 <span class="ot">&lt;-</span> <span class="fu">as_labeller</span>(<span class="fu">c</span>(<span class="at">A =</span> <span class="st">&quot;Connectivity%-&gt;%&#39;water residence time&#39;&quot;</span>, <span class="at">B =</span> <span class="st">&quot;&#39;Total effect on&#39;~Delta*&#39;DOC&#39;&quot;</span>), label_parsed)</span>
+<span id="cb16-8"><a href="#cb16-8" aria-label="8"></a>(p_s9 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(df_s9, <span class="fu">aes</span>(<span class="at">x =</span> draw, <span class="at">y =</span> contrast)) <span class="sc">+</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-label="9"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="dv">2</span>, <span class="at">colour =</span> <span class="st">&quot;grey40&quot;</span>) <span class="sc">+</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-label="10"></a>  <span class="fu">stat_halfeye</span>(<span class="at">.width =</span> <span class="fu">c</span>(.<span class="dv">66</span>, .<span class="dv">95</span>), <span class="at">fill =</span> <span class="st">&quot;steelblue&quot;</span>, <span class="at">alpha =</span> .<span class="dv">8</span>) <span class="sc">+</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-label="11"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>stage, <span class="at">scales =</span> <span class="st">&quot;free_x&quot;</span>, <span class="at">labeller =</span> lab_s9) <span class="sc">+</span></span>
+<span id="cb16-12"><a href="#cb16-12" aria-label="12"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Standardized effect&quot;</span>, <span class="at">y =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb16-13"><a href="#cb16-13" aria-label="13"></a>  <span class="fu">theme_bw</span>(<span class="at">base_size =</span> <span class="dv">15</span>) <span class="sc">+</span></span>
+<span id="cb16-14"><a href="#cb16-14" aria-label="14"></a>  <span class="fu">theme</span>(<span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">&quot;black&quot;</span>), <span class="at">panel.grid.minor =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb16-15"><a href="#cb16-15" aria-label="15"></a>        <span class="at">strip.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">&quot;grey92&quot;</span>)))</span>
+<span id="cb16-16"><a href="#cb16-16" aria-label="16"></a><span class="fu">ggsave</span>(<span class="fu">here</span>(<span class="st">&quot;overleaf&quot;</span>, <span class="st">&quot;supplementary&quot;</span>, <span class="st">&quot;figures&quot;</span>, <span class="st">&quot;media&quot;</span>, <span class="st">&quot;figS9_connectivity.png&quot;</span>), p_s9, <span class="at">width =</span> <span class="dv">11</span>, <span class="at">height =</span> <span class="fl">4.5</span>, <span class="at">dpi =</span> <span class="dv">300</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details><div class="cell-output-display">
 <div id="fig-contrasts" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-contrasts-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -3387,387 +3288,387 @@ Important
     }
   });
   </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19" data-shortcodes="false"><pre class="sourceCode numberSource markdown number-lines code-with-copy"><code class="sourceCode markdown"><span id="cb19-1"><a href="#cb19-1" aria-label="1"></a><span class="co">---</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-label="2"></a><span class="an">title:</span><span class="co"> &quot;Lateral connectivity analysis&quot;</span></span>
-<span id="cb19-3"><a href="#cb19-3" aria-label="3"></a><span class="an">author:</span><span class="co"> &quot;Leonardo Capitani&quot;</span></span>
-<span id="cb19-4"><a href="#cb19-4" aria-label="4"></a><span class="an">date:</span><span class="co"> &quot;Last compiled on `r format(Sys.time(), &#39;%d %B, %Y&#39;)`&quot;</span></span>
-<span id="cb19-5"><a href="#cb19-5" aria-label="5"></a><span class="an">knitr:</span></span>
-<span id="cb19-6"><a href="#cb19-6" aria-label="6"></a><span class="co">     opts_chunk:</span></span>
-<span id="cb19-7"><a href="#cb19-7" aria-label="7"></a><span class="co">        R.options:</span></span>
-<span id="cb19-8"><a href="#cb19-8" aria-label="8"></a><span class="co">         width: 120</span></span>
-<span id="cb19-9"><a href="#cb19-9" aria-label="9"></a><span class="an">format:</span><span class="co"> </span></span>
-<span id="cb19-10"><a href="#cb19-10" aria-label="10"></a><span class="co">      html:</span></span>
-<span id="cb19-11"><a href="#cb19-11" aria-label="11"></a><span class="co">          toc: true</span></span>
-<span id="cb19-12"><a href="#cb19-12" aria-label="12"></a><span class="co">          code-fold: true</span></span>
-<span id="cb19-13"><a href="#cb19-13" aria-label="13"></a><span class="co">          code-tools: true</span></span>
-<span id="cb19-14"><a href="#cb19-14" aria-label="14"></a><span class="co">          code-link: true</span></span>
-<span id="cb19-15"><a href="#cb19-15" aria-label="15"></a><span class="co">          embed-resources: true</span></span>
-<span id="cb19-16"><a href="#cb19-16" aria-label="16"></a><span class="co">          code-line-numbers: true</span></span>
-<span id="cb19-17"><a href="#cb19-17" aria-label="17"></a><span class="an">html-math-method:</span><span class="co"> </span></span>
-<span id="cb19-18"><a href="#cb19-18" aria-label="18"></a><span class="co">  method: mathjax</span></span>
-<span id="cb19-19"><a href="#cb19-19" aria-label="19"></a><span class="co">  url: https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML</span></span>
-<span id="cb19-20"><a href="#cb19-20" aria-label="20"></a><span class="an">execute:</span></span>
-<span id="cb19-21"><a href="#cb19-21" aria-label="21"></a><span class="co">  echo: true</span></span>
-<span id="cb19-22"><a href="#cb19-22" aria-label="22"></a><span class="co">  message: false</span></span>
-<span id="cb19-23"><a href="#cb19-23" aria-label="23"></a><span class="co">  warning: false </span></span>
-<span id="cb19-24"><a href="#cb19-24" aria-label="24"></a><span class="co">  cache: false</span></span>
-<span id="cb19-25"><a href="#cb19-25" aria-label="25"></a><span class="co">  freeze: true  # never re-render during project render</span></span>
-<span id="cb19-26"><a href="#cb19-26" aria-label="26"></a><span class="an">editor:</span><span class="co"> visual</span></span>
-<span id="cb19-27"><a href="#cb19-27" aria-label="27"></a><span class="an">code-annotations:</span><span class="co"> select</span></span>
-<span id="cb19-28"><a href="#cb19-28" aria-label="28"></a><span class="an">editor_options:</span><span class="co"> </span></span>
-<span id="cb19-29"><a href="#cb19-29" aria-label="29"></a><span class="co">  chunk_output_type: console</span></span>
-<span id="cb19-30"><a href="#cb19-30" aria-label="30"></a><span class="an">bibliography:</span><span class="co"> ../references.bib</span></span>
-<span id="cb19-31"><a href="#cb19-31" aria-label="31"></a><span class="co">---</span></span>
-<span id="cb19-32"><a href="#cb19-32" aria-label="32"></a></span>
-<span id="cb19-33"><a href="#cb19-33" aria-label="33"></a><span class="in">```{r libraries, message=FALSE}</span></span>
-<span id="cb19-34"><a href="#cb19-34" aria-label="34"></a><span class="fu">invisible</span>(<span class="fu">Sys.setlocale</span>(<span class="st">&quot;LC_CTYPE&quot;</span>, <span class="st">&quot;en_US.UTF-8&quot;</span>))  <span class="co"># print non-ASCII (Delta, arrows) correctly</span></span>
-<span id="cb19-35"><a href="#cb19-35" aria-label="35"></a></span>
-<span id="cb19-36"><a href="#cb19-36" aria-label="36"></a><span class="co"># Load libraries</span></span>
-<span id="cb19-37"><a href="#cb19-37" aria-label="37"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb19-38"><a href="#cb19-38" aria-label="38"></a><span class="fu">library</span>(here)</span>
-<span id="cb19-39"><a href="#cb19-39" aria-label="39"></a><span class="fu">library</span>(DT)</span>
-<span id="cb19-40"><a href="#cb19-40" aria-label="40"></a><span class="fu">library</span>(ggdist)</span>
-<span id="cb19-41"><a href="#cb19-41" aria-label="41"></a><span class="fu">library</span>(scales)</span>
-<span id="cb19-42"><a href="#cb19-42" aria-label="42"></a><span class="fu">library</span>(readxl)</span>
-<span id="cb19-43"><a href="#cb19-43" aria-label="43"></a><span class="fu">library</span>(chron)<span class="co"># for time formatting</span></span>
-<span id="cb19-44"><a href="#cb19-44" aria-label="44"></a><span class="fu">library</span>(brms)</span>
-<span id="cb19-45"><a href="#cb19-45" aria-label="45"></a><span class="fu">library</span>(tidybayes)</span>
-<span id="cb19-46"><a href="#cb19-46" aria-label="46"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb19-47"><a href="#cb19-47" aria-label="47"></a><span class="fu">library</span>(stringr) </span>
-<span id="cb19-48"><a href="#cb19-48" aria-label="48"></a><span class="fu">library</span>(bayesplot)</span>
-<span id="cb19-49"><a href="#cb19-49" aria-label="49"></a><span class="fu">library</span>(dagitty)</span>
-<span id="cb19-50"><a href="#cb19-50" aria-label="50"></a><span class="in">```</span></span>
-<span id="cb19-51"><a href="#cb19-51" aria-label="51"></a></span>
-<span id="cb19-52"><a href="#cb19-52" aria-label="52"></a><span class="fu">## Introduction</span></span>
-<span id="cb19-53"><a href="#cb19-53" aria-label="53"></a></span>
-<span id="cb19-54"><a href="#cb19-54" aria-label="54"></a>This notebook will present additional analysis in regard to the following research question:</span>
-<span id="cb19-55"><a href="#cb19-55" aria-label="55"></a></span>
-<span id="cb19-56"><a href="#cb19-56" aria-label="56"></a>::: callout-tip</span>
-<span id="cb19-57"><a href="#cb19-57" aria-label="57"></a><span class="fu">## Research question:</span></span>
-<span id="cb19-58"><a href="#cb19-58" aria-label="58"></a></span>
-<span id="cb19-59"><a href="#cb19-59" aria-label="59"></a>Controlling for beaver engineering effects, to what extent does lateral stream connectivity influence dissolved organic carbon (DOC) concentration ?</span>
-<span id="cb19-60"><a href="#cb19-60" aria-label="60"></a>:::</span>
-<span id="cb19-61"><a href="#cb19-61" aria-label="61"></a></span>
-<span id="cb19-62"><a href="#cb19-62" aria-label="62"></a>::: callout-important</span>
-<span id="cb19-63"><a href="#cb19-63" aria-label="63"></a>Please refer to Kaspar Berger&#39;s Master thesis, chapter 4.12.4 and chapter 5.5 to get details about the definition of stream later connectivity.</span>
-<span id="cb19-64"><a href="#cb19-64" aria-label="64"></a></span>
-<span id="cb19-65"><a href="#cb19-65" aria-label="65"></a>In this study, we are going to use Berger&#39;s methodology to define stream lateral connectivity: <span class="in">`lateral_connectivity`</span> is a categorical vcariable with three levels.</span>
-<span id="cb19-66"><a href="#cb19-66" aria-label="66"></a></span>
-<span id="cb19-67"><a href="#cb19-67" aria-label="67"></a><span class="ss">- </span><span class="in">`No_wetland`</span>: no presence of wetland around the stream course,</span>
-<span id="cb19-68"><a href="#cb19-68" aria-label="68"></a></span>
-<span id="cb19-69"><a href="#cb19-69" aria-label="69"></a><span class="ss">- </span><span class="in">`yes_not connected`</span>: presence of wetland not directly connected to the stream (figure 1a),</span>
-<span id="cb19-70"><a href="#cb19-70" aria-label="70"></a></span>
-<span id="cb19-71"><a href="#cb19-71" aria-label="71"></a><span class="ss">- </span><span class="in">`yes_connected`</span> : presence of wetland and it is connected to the stream (figure 1b).</span>
-<span id="cb19-72"><a href="#cb19-72" aria-label="72"></a>:::</span>
-<span id="cb19-73"><a href="#cb19-73" aria-label="73"></a></span>
-<span id="cb19-74"><a href="#cb19-74" aria-label="74"></a><span class="al">![**The three levels of `lateral_connectivity`.** Two streams with contrasting lateral connectivity to an adjacent wetland: on the left a wetland present but not directly connected to the channel (`yes_not_connected`), on the right a wetland hydrologically connected to the channel (`yes_connected`). Sites with no wetland within the 50 m buffer are coded `No_wetland`. Image by Kaspar Berger.](../../images/later_connectivty_berger-01.png)</span>{#fig-latconn}</span>
-<span id="cb19-75"><a href="#cb19-75" aria-label="75"></a></span>
-<span id="cb19-76"><a href="#cb19-76" aria-label="76"></a>Please note our main results:</span>
-<span id="cb19-77"><a href="#cb19-77" aria-label="77"></a></span>
-<span id="cb19-78"><a href="#cb19-78" aria-label="78"></a><span class="al">![**The main structural causal model, for reference (manuscript Figure 1b).** Drivers of beaver-mediated DOC change: solid edges (red = negative, blue = positive) carry at least 90% posterior probability of a directional effect, dashed edges are inconclusive. Values are standardized average effects. The path this notebook extends is water residence time (`WRT`), to which `lateral_connectivity` is added as an additional parent.](../../images/Capitani_Figure_2b.png)</span>{#fig-scm}</span>
-<span id="cb19-79"><a href="#cb19-79" aria-label="79"></a></span>
-<span id="cb19-80"><a href="#cb19-80" aria-label="80"></a>We do already know that the mediating path (WRT → ΔDOC) is weak because an increase in WRT influence 1-2% the <span class="in">`deltaDOC`</span>.</span>
-<span id="cb19-81"><a href="#cb19-81" aria-label="81"></a></span>
-<span id="cb19-82"><a href="#cb19-82" aria-label="82"></a><span class="fu">## DAG</span></span>
-<span id="cb19-83"><a href="#cb19-83" aria-label="83"></a></span>
-<span id="cb19-84"><a href="#cb19-84" aria-label="84"></a>Let&#39;s define our causal diagram where predictors (<span class="in">`lateral_connectivity`</span>) and response variable (<span class="in">`deltaDOC`</span>) are connected by causal influences. Recall that WRT is the water residence time.</span>
-<span id="cb19-85"><a href="#cb19-85" aria-label="85"></a></span>
-<span id="cb19-86"><a href="#cb19-86" aria-label="86"></a>We do know that stream lateral connectivity to a wetland creates an additional storage and exchange compartment for stream water — when a wetland is hydrologically connected, water can move laterally into and out of that storage zone, increasing the time it spends in the system before continuing downstream. This mechanism is well established in the hydrology literature on stream-floodplain/wetland exchange, where connected off-channel storage areas are consistently shown to extend residence time relative to channels lacking such lateral exchange (transient storage zone theory; Bencala &amp; Walters 1983; Wohl 2021, *Rev. Geophys.*).</span>
-<span id="cb19-87"><a href="#cb19-87" aria-label="87"></a></span>
-<span id="cb19-88"><a href="#cb19-88" aria-label="88"></a>::: {.callout-note appearance=&quot;simple&quot;}</span>
-<span id="cb19-89"><a href="#cb19-89" aria-label="89"></a>**Hypothesis:**</span>
-<span id="cb19-90"><a href="#cb19-90" aria-label="90"></a></span>
-<span id="cb19-91"><a href="#cb19-91" aria-label="91"></a>We hypothesize that if a stream is connected to the adjacent wetland then the beaver pond water residence time varies with the degree of lateral connectivity between the stream and adjacent wetlands.</span>
-<span id="cb19-92"><a href="#cb19-92" aria-label="92"></a>:::</span>
-<span id="cb19-93"><a href="#cb19-93" aria-label="93"></a></span>
-<span id="cb19-94"><a href="#cb19-94" aria-label="94"></a><span class="in">```{r dag}</span></span>
-<span id="cb19-95"><a href="#cb19-95" aria-label="95"></a></span>
-<span id="cb19-96"><a href="#cb19-96" aria-label="96"></a>dag <span class="ot">&lt;-</span> <span class="fu">dagitty</span>(<span class="st">&#39;dag {</span></span>
-<span id="cb19-97"><a href="#cb19-97" aria-label="97"></a><span class="st">Max_dam_height [pos=&quot;-0.991,0.879&quot;]</span></span>
-<span id="cb19-98"><a href="#cb19-98" aria-label="98"></a><span class="st">WRT [pos=&quot;-0.510,0.684&quot;]</span></span>
-<span id="cb19-99"><a href="#cb19-99" aria-label="99"></a><span class="st">channel_gradient [pos=&quot;-0.518,0.295&quot;]</span></span>
-<span id="cb19-100"><a href="#cb19-100" aria-label="100"></a><span class="st">delta_DOC [outcome,pos=&quot;0.990,0.636&quot;]</span></span>
-<span id="cb19-101"><a href="#cb19-101" aria-label="101"></a><span class="st">lateral_connectivity [exposure,pos=&quot;-0.503,1.098&quot;]</span></span>
-<span id="cb19-102"><a href="#cb19-102" aria-label="102"></a><span class="st">macrophytes [pos=&quot;0.373,0.249&quot;]</span></span>
-<span id="cb19-103"><a href="#cb19-103" aria-label="103"></a><span class="st">number_dams [pos=&quot;-0.977,0.506&quot;]</span></span>
-<span id="cb19-104"><a href="#cb19-104" aria-label="104"></a><span class="st">phytoplankton [pos=&quot;0.323,0.736&quot;]</span></span>
-<span id="cb19-105"><a href="#cb19-105" aria-label="105"></a><span class="st">soil_litter [pos=&quot;0.288,1.289&quot;]</span></span>
-<span id="cb19-106"><a href="#cb19-106" aria-label="106"></a><span class="st">solar_radiation [pos=&quot;-0.159,-0.285&quot;]</span></span>
-<span id="cb19-107"><a href="#cb19-107" aria-label="107"></a><span class="st">upstream_DOC [pos=&quot;0.878,0.164&quot;]</span></span>
-<span id="cb19-108"><a href="#cb19-108" aria-label="108"></a><span class="st">Max_dam_height -&gt; WRT</span></span>
-<span id="cb19-109"><a href="#cb19-109" aria-label="109"></a><span class="st">WRT -&gt; macrophytes</span></span>
-<span id="cb19-110"><a href="#cb19-110" aria-label="110"></a><span class="st">WRT -&gt; phytoplankton</span></span>
-<span id="cb19-111"><a href="#cb19-111" aria-label="111"></a><span class="st">channel_gradient -&gt; WRT</span></span>
-<span id="cb19-112"><a href="#cb19-112" aria-label="112"></a><span class="st">lateral_connectivity -&gt; WRT</span></span>
-<span id="cb19-113"><a href="#cb19-113" aria-label="113"></a><span class="st">macrophytes -&gt; delta_DOC</span></span>
-<span id="cb19-114"><a href="#cb19-114" aria-label="114"></a><span class="st">number_dams -&gt; WRT</span></span>
-<span id="cb19-115"><a href="#cb19-115" aria-label="115"></a><span class="st">phytoplankton -&gt; delta_DOC</span></span>
-<span id="cb19-116"><a href="#cb19-116" aria-label="116"></a><span class="st">soil_litter -&gt; delta_DOC</span></span>
-<span id="cb19-117"><a href="#cb19-117" aria-label="117"></a><span class="st">solar_radiation -&gt; WRT</span></span>
-<span id="cb19-118"><a href="#cb19-118" aria-label="118"></a><span class="st">solar_radiation -&gt; macrophytes</span></span>
-<span id="cb19-119"><a href="#cb19-119" aria-label="119"></a><span class="st">solar_radiation -&gt; phytoplankton</span></span>
-<span id="cb19-120"><a href="#cb19-120" aria-label="120"></a><span class="st">solar_radiation -&gt; soil_litter</span></span>
-<span id="cb19-121"><a href="#cb19-121" aria-label="121"></a><span class="st">upstream_DOC -&gt; delta_DOC</span></span>
-<span id="cb19-122"><a href="#cb19-122" aria-label="122"></a><span class="st">}</span></span>
-<span id="cb19-123"><a href="#cb19-123" aria-label="123"></a></span>
-<span id="cb19-124"><a href="#cb19-124" aria-label="124"></a><span class="st">&#39;</span></span>
-<span id="cb19-125"><a href="#cb19-125" aria-label="125"></a>)</span>
-<span id="cb19-126"><a href="#cb19-126" aria-label="126"></a></span>
-<span id="cb19-127"><a href="#cb19-127" aria-label="127"></a><span class="co">#plot(dag)</span></span>
-<span id="cb19-128"><a href="#cb19-128" aria-label="128"></a><span class="in">```</span></span>
-<span id="cb19-129"><a href="#cb19-129" aria-label="129"></a></span>
-<span id="cb19-130"><a href="#cb19-130" aria-label="130"></a><span class="al">![**Extended DAG including `lateral_connectivity` (Appendix S1, Figure S8).** Identical to the main SCM except for one added causal path, from `lateral_connectivity` to water residence time (`WRT`). Because `lateral_connectivity` has no parents, no back-door path to `delta_DOC` exists and its total effect is identified without adjustment; the open front-door paths run through `WRT` and the primary producers.](../../images/DAG_lateral_conn.png)</span>{#fig-daglateral}</span>
-<span id="cb19-131"><a href="#cb19-131" aria-label="131"></a></span>
-<span id="cb19-132"><a href="#cb19-132" aria-label="132"></a>So in this DAG, there are exactly **two open front-door paths**:</span>
-<span id="cb19-133"><a href="#cb19-133" aria-label="133"></a></span>
-<span id="cb19-134"><a href="#cb19-134" aria-label="134"></a><span class="ss">1.  </span>lateral_connectivity → WRT → macrophytes → delta_DOC</span>
-<span id="cb19-135"><a href="#cb19-135" aria-label="135"></a></span>
-<span id="cb19-136"><a href="#cb19-136" aria-label="136"></a><span class="ss">2.  </span>lateral_connectivity → WRT → phytoplankton → delta_DOC</span>
-<span id="cb19-137"><a href="#cb19-137" aria-label="137"></a></span>
-<span id="cb19-138"><a href="#cb19-138" aria-label="138"></a>If our question question is: how much does connectivity influence DOC overall, then:</span>
-<span id="cb19-139"><a href="#cb19-139" aria-label="139"></a></span>
-<span id="cb19-140"><a href="#cb19-140" aria-label="140"></a>The total effect of <span class="in">`lateral_connectivity`</span> on <span class="in">`delta_DOC`</span> is the *sum of all causal influence* flowing through every open path — direct arrow (if any) plus every mediated pathway (through <span class="in">`WRT`</span>, <span class="in">`macrophytes`</span>, <span class="in">`phytoplankton`</span>, <span class="in">`soil_litter`</span>, etc.).</span>
-<span id="cb19-141"><a href="#cb19-141" aria-label="141"></a></span>
-<span id="cb19-142"><a href="#cb19-142" aria-label="142"></a><span class="in">```{r adjset_total}</span></span>
-<span id="cb19-143"><a href="#cb19-143" aria-label="143"></a><span class="co"># Step 3-4: backdoor paths and adjustment sets, for TOTAL effect</span></span>
-<span id="cb19-144"><a href="#cb19-144" aria-label="144"></a><span class="fu">adjustmentSets</span>(dag, <span class="at">exposure =</span> <span class="st">&quot;lateral_connectivity&quot;</span>, <span class="at">outcome =</span> <span class="st">&quot;delta_DOC&quot;</span>, <span class="at">effect =</span> <span class="st">&quot;total&quot;</span>)</span>
-<span id="cb19-145"><a href="#cb19-145" aria-label="145"></a><span class="co"># list the open paths (the orange front-door paths in Appendix S1: Figure S8)</span></span>
-<span id="cb19-146"><a href="#cb19-146" aria-label="146"></a><span class="fu">paths</span>(dag, <span class="st">&quot;lateral_connectivity&quot;</span>, <span class="st">&quot;delta_DOC&quot;</span>)</span>
-<span id="cb19-147"><a href="#cb19-147" aria-label="147"></a><span class="in">```</span></span>
-<span id="cb19-148"><a href="#cb19-148" aria-label="148"></a></span>
-<span id="cb19-149"><a href="#cb19-149" aria-label="149"></a>Since there&#39;s no backdoor path (nothing causes <span class="in">`lateral_connectivity`</span>), there&#39;s nothing to adjust for — you want all those mediator paths to stay open so their contribution is captured in the estimate. That&#39;s why the answer is <span class="in">`{}`</span>.</span>
-<span id="cb19-150"><a href="#cb19-150" aria-label="150"></a></span>
-<span id="cb19-151"><a href="#cb19-151" aria-label="151"></a>::: {.callout-important appearance=&quot;simple&quot;}</span>
-<span id="cb19-152"><a href="#cb19-152" aria-label="152"></a>We conclude that:</span>
-<span id="cb19-153"><a href="#cb19-153" aria-label="153"></a></span>
-<span id="cb19-154"><a href="#cb19-154" aria-label="154"></a>**No open biasing paths.**</span>
-<span id="cb19-155"><a href="#cb19-155" aria-label="155"></a></span>
-<span id="cb19-156"><a href="#cb19-156" aria-label="156"></a>No adjustment is necessary to estimate the total effect of lateral_connectivity on delta_DOC.</span>
-<span id="cb19-157"><a href="#cb19-157" aria-label="157"></a>:::</span>
-<span id="cb19-158"><a href="#cb19-158" aria-label="158"></a></span>
-<span id="cb19-159"><a href="#cb19-159" aria-label="159"></a>That means the *total* effect of <span class="in">`WRT`</span> on <span class="in">`delta_DOC`</span> is also identified with an empty adjustment set — we can regress <span class="in">`delta_DOC`</span> directly on <span class="in">`WRT`</span> alone, skipping <span class="in">`macrophytes`</span> and <span class="in">`phytoplankton`</span> entirely, and still get an unbiased estimate of WRT&#39;s total downstream effect.</span>
-<span id="cb19-160"><a href="#cb19-160" aria-label="160"></a></span>
-<span id="cb19-161"><a href="#cb19-161" aria-label="161"></a><span class="fu">## Load data</span></span>
-<span id="cb19-162"><a href="#cb19-162" aria-label="162"></a></span>
-<span id="cb19-163"><a href="#cb19-163" aria-label="163"></a>We are going to load the data sent by Kaspar Berger (<span class="co">[</span><span class="ot">bergersumis\@gmail.com</span><span class="co">](mailto:bergersumis@gmail.com)</span>).</span>
-<span id="cb19-164"><a href="#cb19-164" aria-label="164"></a></span>
-<span id="cb19-165"><a href="#cb19-165" aria-label="165"></a><span class="in">```{r load_processed_data_frame}</span></span>
-<span id="cb19-166"><a href="#cb19-166" aria-label="166"></a>l <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">here</span>(<span class="st">&quot;data&quot;</span>,<span class="st">&quot;processed&quot;</span>,<span class="st">&quot;later_connectivity_berger.csv&quot;</span>))</span>
-<span id="cb19-167"><a href="#cb19-167" aria-label="167"></a></span>
-<span id="cb19-168"><a href="#cb19-168" aria-label="168"></a><span class="co"># Standardize category labels to match your established naming scheme</span></span>
-<span id="cb19-169"><a href="#cb19-169" aria-label="169"></a>l<span class="sc">$</span>lateral_connectivity <span class="ot">&lt;-</span> <span class="fu">recode</span>(l<span class="sc">$</span>lateral_connectivity,</span>
-<span id="cb19-170"><a href="#cb19-170" aria-label="170"></a>                                 <span class="st">&quot;No&quot;</span> <span class="ot">=</span> <span class="st">&quot;No_wetland&quot;</span>,</span>
-<span id="cb19-171"><a href="#cb19-171" aria-label="171"></a>                                 <span class="st">&quot;Yes_not_connected&quot;</span> <span class="ot">=</span> <span class="st">&quot;yes_not_connected&quot;</span>,</span>
-<span id="cb19-172"><a href="#cb19-172" aria-label="172"></a>                                 <span class="st">&quot;Yes_connected&quot;</span> <span class="ot">=</span> <span class="st">&quot;yes_connected&quot;</span>)</span>
-<span id="cb19-173"><a href="#cb19-173" aria-label="173"></a></span>
-<span id="cb19-174"><a href="#cb19-174" aria-label="174"></a><span class="co"># Resolve the two real conflicts: both AEG01_1 and AEG01_2 are confirmed</span></span>
-<span id="cb19-175"><a href="#cb19-175" aria-label="175"></a><span class="co"># &quot;yes_not_connected&quot; — overwrite all instances, then dedup</span></span>
-<span id="cb19-176"><a href="#cb19-176" aria-label="176"></a>l<span class="sc">$</span>lateral_connectivity[l<span class="sc">$</span>site <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;AEG01_1&quot;</span>, <span class="st">&quot;AEG01_2&quot;</span>)] <span class="ot">&lt;-</span> <span class="st">&quot;yes_not_connected&quot;</span></span>
-<span id="cb19-177"><a href="#cb19-177" aria-label="177"></a></span>
-<span id="cb19-178"><a href="#cb19-178" aria-label="178"></a><span class="co"># Now every duplicate (the 2 conflicts + the 3 exact dupes: TG02, MUE03, TG02_17)</span></span>
-<span id="cb19-179"><a href="#cb19-179" aria-label="179"></a><span class="co"># collapses to identical rows, so unique() removes all of them cleanly</span></span>
-<span id="cb19-180"><a href="#cb19-180" aria-label="180"></a>l_clean <span class="ot">&lt;-</span> <span class="fu">unique</span>(l)</span>
-<span id="cb19-181"><a href="#cb19-181" aria-label="181"></a></span>
-<span id="cb19-182"><a href="#cb19-182" aria-label="182"></a><span class="co"># dataframe that we do not remove NAs observations </span></span>
-<span id="cb19-183"><a href="#cb19-183" aria-label="183"></a>m6 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">here</span>(<span class="st">&quot;data&quot;</span>,<span class="st">&quot;processed&quot;</span>,<span class="st">&quot;m6.csv&quot;</span>)) <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">season =</span> <span class="fu">as.factor</span>(season)) </span>
-<span id="cb19-184"><a href="#cb19-184" aria-label="184"></a></span>
-<span id="cb19-185"><a href="#cb19-185" aria-label="185"></a><span class="in">```</span></span>
-<span id="cb19-186"><a href="#cb19-186" aria-label="186"></a></span>
-<span id="cb19-187"><a href="#cb19-187" aria-label="187"></a>Add the <span class="in">`later connectivity`</span> variable to the original data frame:</span>
-<span id="cb19-188"><a href="#cb19-188" aria-label="188"></a></span>
-<span id="cb19-189"><a href="#cb19-189" aria-label="189"></a><span class="in">```{r merge_later_conn}</span></span>
-<span id="cb19-190"><a href="#cb19-190" aria-label="190"></a><span class="co"># lateral_connectivity lives in a separate table `l`, keyed by site —</span></span>
-<span id="cb19-191"><a href="#cb19-191" aria-label="191"></a><span class="co"># merge it into your main data before fitting</span></span>
-<span id="cb19-192"><a href="#cb19-192" aria-label="192"></a><span class="co"># Re-merge and confirm the row count is now exactly right</span></span>
-<span id="cb19-193"><a href="#cb19-193" aria-label="193"></a>m6_merged <span class="ot">&lt;-</span> <span class="fu">merge</span>(m6, l_clean, <span class="at">by =</span> <span class="st">&quot;site&quot;</span>, <span class="at">all.x =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb19-194"><a href="#cb19-194" aria-label="194"></a></span>
-<span id="cb19-195"><a href="#cb19-195" aria-label="195"></a>na_sites <span class="ot">&lt;-</span> <span class="fu">sort</span>(<span class="fu">unique</span>(m6_merged<span class="sc">$</span>site[<span class="fu">is.na</span>(m6_merged<span class="sc">$</span>lateral_connectivity)]))</span>
-<span id="cb19-196"><a href="#cb19-196" aria-label="196"></a></span>
-<span id="cb19-197"><a href="#cb19-197" aria-label="197"></a><span class="co"># Filter to summer observations only (one row per site), then build the same table</span></span>
-<span id="cb19-198"><a href="#cb19-198" aria-label="198"></a>m6_summer <span class="ot">&lt;-</span> m6_merged[m6_merged<span class="sc">$</span>season <span class="sc">==</span> <span class="st">&quot;summer&quot;</span>, ]   <span class="co"># adjust value if your coding differs (e.g. &quot;Summer&quot;, &quot;S&quot;)</span></span>
-<span id="cb19-199"><a href="#cb19-199" aria-label="199"></a></span>
-<span id="cb19-200"><a href="#cb19-200" aria-label="200"></a>tab_summer <span class="ot">&lt;-</span> <span class="fu">table</span>(m6_summer<span class="sc">$</span>lateral_connectivity, <span class="at">useNA =</span> <span class="st">&quot;always&quot;</span>)</span>
-<span id="cb19-201"><a href="#cb19-201" aria-label="201"></a>pct_summer <span class="ot">&lt;-</span> <span class="fu">round</span>(<span class="fu">prop.table</span>(tab_summer) <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>)</span>
-<span id="cb19-202"><a href="#cb19-202" aria-label="202"></a></span>
-<span id="cb19-203"><a href="#cb19-203" aria-label="203"></a>result_summer <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb19-204"><a href="#cb19-204" aria-label="204"></a>  <span class="at">category =</span> <span class="fu">names</span>(tab_summer),</span>
-<span id="cb19-205"><a href="#cb19-205" aria-label="205"></a>  <span class="at">n        =</span> <span class="fu">as.vector</span>(tab_summer),</span>
-<span id="cb19-206"><a href="#cb19-206" aria-label="206"></a>  <span class="at">pct      =</span> <span class="fu">paste0</span>(<span class="fu">as.vector</span>(pct_summer), <span class="st">&quot;%&quot;</span>)</span>
-<span id="cb19-207"><a href="#cb19-207" aria-label="207"></a>)</span>
-<span id="cb19-208"><a href="#cb19-208" aria-label="208"></a></span>
-<span id="cb19-209"><a href="#cb19-209" aria-label="209"></a>result_summer</span>
-<span id="cb19-210"><a href="#cb19-210" aria-label="210"></a><span class="in">```</span></span>
-<span id="cb19-211"><a href="#cb19-211" aria-label="211"></a></span>
-<span id="cb19-214"><a href="#cb19-214" aria-label="212"></a><span class="in">```{r}</span></span>
-<span id="cb19-215"><a href="#cb19-215" aria-label="213"></a><span class="co">#| label: na-sites-list</span></span>
-<span id="cb19-216"><a href="#cb19-216" aria-label="214"></a><span class="co">#| echo: false</span></span>
-<span id="cb19-217"><a href="#cb19-217" aria-label="215"></a><span class="co">#| output: asis</span></span>
-<span id="cb19-218"><a href="#cb19-218" aria-label="216"></a></span>
-<span id="cb19-219"><a href="#cb19-219" aria-label="217"></a>na_sites <span class="ot">&lt;-</span> <span class="fu">sort</span>(<span class="fu">unique</span>(m6_merged<span class="sc">$</span>site[<span class="fu">is.na</span>(m6_merged<span class="sc">$</span>lateral_connectivity)]))</span>
-<span id="cb19-220"><a href="#cb19-220" aria-label="218"></a></span>
-<span id="cb19-221"><a href="#cb19-221" aria-label="219"></a><span class="fu">cat</span>(<span class="st">&quot;::: {.callout-warning title=</span><span class="sc">\&quot;</span><span class="st">Sites missing `lateral_connectivity` classification</span><span class="sc">\&quot;</span><span class="st">}</span><span class="sc">\n\n</span><span class="st">&quot;</span>)</span>
-<span id="cb19-222"><a href="#cb19-222" aria-label="220"></a><span class="fu">cat</span>(<span class="st">&quot;**&quot;</span>, <span class="fu">length</span>(na_sites), <span class="st">&quot; sites** (&quot;</span>, <span class="fu">length</span>(na_sites) <span class="sc">*</span> <span class="dv">2</span>,</span>
-<span id="cb19-223"><a href="#cb19-223" aria-label="221"></a>    <span class="st">&quot; rows across both seasons) lack a connectivity category:</span><span class="sc">\n\n</span><span class="st">&quot;</span>, <span class="at">sep =</span> <span class="st">&quot;&quot;</span>)</span>
-<span id="cb19-224"><a href="#cb19-224" aria-label="222"></a><span class="fu">cat</span>(<span class="fu">paste0</span>(<span class="st">&quot;`&quot;</span>, na_sites, <span class="st">&quot;`&quot;</span>, <span class="at">collapse =</span> <span class="st">&quot;, &quot;</span>))</span>
-<span id="cb19-225"><a href="#cb19-225" aria-label="223"></a><span class="fu">cat</span>(<span class="st">&quot;</span><span class="sc">\n\n</span><span class="st">:::</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
-<span id="cb19-226"><a href="#cb19-226" aria-label="224"></a><span class="in">```</span></span>
-<span id="cb19-227"><a href="#cb19-227" aria-label="225"></a></span>
-<span id="cb19-228"><a href="#cb19-228" aria-label="226"></a><span class="fu">### Drop NA rows:</span></span>
-<span id="cb19-229"><a href="#cb19-229" aria-label="227"></a></span>
-<span id="cb19-230"><a href="#cb19-230" aria-label="228"></a><span class="in">```{r drop_nas}</span></span>
-<span id="cb19-231"><a href="#cb19-231" aria-label="229"></a></span>
-<span id="cb19-232"><a href="#cb19-232" aria-label="230"></a>m6_fit <span class="ot">&lt;-</span> m6_merged[<span class="sc">!</span><span class="fu">is.na</span>(m6_merged<span class="sc">$</span>lateral_connectivity), ]</span>
-<span id="cb19-233"><a href="#cb19-233" aria-label="231"></a></span>
-<span id="cb19-234"><a href="#cb19-234" aria-label="232"></a><span class="fu">nrow</span>(m6_fit)   <span class="co"># should be 362 - 44 = 318</span></span>
-<span id="cb19-235"><a href="#cb19-235" aria-label="233"></a></span>
-<span id="cb19-236"><a href="#cb19-236" aria-label="234"></a><span class="co"># set factor levels with No_wetland as reference</span></span>
-<span id="cb19-237"><a href="#cb19-237" aria-label="235"></a>m6_fit<span class="sc">$</span>lateral_connectivity <span class="ot">&lt;-</span> <span class="fu">factor</span>(</span>
-<span id="cb19-238"><a href="#cb19-238" aria-label="236"></a>  m6_fit<span class="sc">$</span>lateral_connectivity,</span>
-<span id="cb19-239"><a href="#cb19-239" aria-label="237"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;No_wetland&quot;</span>, <span class="st">&quot;yes_not_connected&quot;</span>, <span class="st">&quot;yes_connected&quot;</span>)</span>
-<span id="cb19-240"><a href="#cb19-240" aria-label="238"></a>)</span>
-<span id="cb19-241"><a href="#cb19-241" aria-label="239"></a></span>
-<span id="cb19-242"><a href="#cb19-242" aria-label="240"></a><span class="fu">table</span>(m6_fit<span class="sc">$</span>lateral_connectivity)  <span class="co"># confirm no NAs remain, counts look right</span></span>
-<span id="cb19-243"><a href="#cb19-243" aria-label="241"></a><span class="in">```</span></span>
-<span id="cb19-244"><a href="#cb19-244" aria-label="242"></a></span>
-<span id="cb19-245"><a href="#cb19-245" aria-label="243"></a><span class="fu">### Model formula</span></span>
-<span id="cb19-246"><a href="#cb19-246" aria-label="244"></a></span>
-<span id="cb19-247"><a href="#cb19-247" aria-label="245"></a>This is the 2-equation parsimonious version we settled on — <span class="in">`lateral_connectivity`</span> enters only the <span class="in">`water_res_time_z`</span> equation (its sole causal pathway per the DAG), and <span class="in">`delta_DOC`</span> regresses on the mediator <span class="in">`WRT`</span> alone (no backdoor adjustment needed, since the total effect is unconfounded):</span>
-<span id="cb19-248"><a href="#cb19-248" aria-label="246"></a></span>
-<span id="cb19-249"><a href="#cb19-249" aria-label="247"></a><span class="in">```{r fit_model , message=FALSE, }</span></span>
-<span id="cb19-250"><a href="#cb19-250" aria-label="248"></a></span>
-<span id="cb19-251"><a href="#cb19-251" aria-label="249"></a>bform <span class="ot">&lt;-</span> </span>
-<span id="cb19-252"><a href="#cb19-252" aria-label="250"></a>  <span class="fu">bf</span>(delta_DOC <span class="sc">|</span> <span class="fu">mi</span>(<span class="fl">0.283</span>) <span class="sc">~</span> <span class="dv">0</span> <span class="sc">+</span> Intercept <span class="sc">+</span> </span>
-<span id="cb19-253"><a href="#cb19-253" aria-label="251"></a>       <span class="fu">mi</span>(water_res_time_z) <span class="sc">+</span></span>
-<span id="cb19-254"><a href="#cb19-254" aria-label="252"></a>       (<span class="dv">0</span> <span class="sc">+</span> Intercept <span class="sc">|</span> site),</span>
-<span id="cb19-255"><a href="#cb19-255" aria-label="253"></a>     <span class="at">family =</span> <span class="fu">student</span>()) <span class="sc">+</span> </span>
-<span id="cb19-256"><a href="#cb19-256" aria-label="254"></a>  </span>
-<span id="cb19-257"><a href="#cb19-257" aria-label="255"></a>  <span class="fu">bf</span>(water_res_time_z <span class="sc">|</span> <span class="fu">mi</span>()  <span class="sc">~</span> <span class="dv">0</span> <span class="sc">+</span> n_dams_z <span class="sc">+</span> <span class="fu">mi</span>(dam_height_z) <span class="sc">+</span> slope_z <span class="sc">+</span> </span>
-<span id="cb19-258"><a href="#cb19-258" aria-label="256"></a>       lateral_connectivity <span class="sc">+</span> solar_z,</span>
-<span id="cb19-259"><a href="#cb19-259" aria-label="257"></a>     <span class="at">family =</span> <span class="fu">gaussian</span>()) <span class="sc">+</span></span>
-<span id="cb19-260"><a href="#cb19-260" aria-label="258"></a>  </span>
-<span id="cb19-261"><a href="#cb19-261" aria-label="259"></a>  <span class="fu">bf</span>(dam_height_z <span class="sc">|</span> <span class="fu">mi</span>()  <span class="sc">~</span> <span class="dv">0</span> <span class="sc">+</span> Intercept, <span class="at">family =</span> <span class="fu">gaussian</span>()) <span class="sc">+</span></span>
-<span id="cb19-262"><a href="#cb19-262" aria-label="260"></a>  </span>
-<span id="cb19-263"><a href="#cb19-263" aria-label="261"></a>  <span class="fu">set_rescor</span>(<span class="cn">FALSE</span>)</span>
-<span id="cb19-264"><a href="#cb19-264" aria-label="262"></a></span>
-<span id="cb19-265"><a href="#cb19-265" aria-label="263"></a><span class="co">#detach(&quot;package:rethinking&quot;, unload = TRUE)</span></span>
-<span id="cb19-266"><a href="#cb19-266" aria-label="264"></a></span>
-<span id="cb19-267"><a href="#cb19-267" aria-label="265"></a><span class="co"># Informative priors: shared parameters carry the same priors as in the main SCM (notebook.qmd);</span></span>
-<span id="cb19-268"><a href="#cb19-268" aria-label="266"></a><span class="co"># the three connectivity-level coefficients get weakly-informative normal(0, 1) priors (WRT is z-scored).</span></span>
-<span id="cb19-269"><a href="#cb19-269" aria-label="267"></a>prio_conn <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
-<span id="cb19-270"><a href="#cb19-270" aria-label="268"></a>  <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">0</span>, <span class="fl">2.5</span>),       <span class="at">class =</span> <span class="st">&quot;b&quot;</span>, <span class="at">coef =</span> <span class="st">&quot;Intercept&quot;</span>,          <span class="at">resp =</span> <span class="st">&quot;deltaDOC&quot;</span>),</span>
-<span id="cb19-271"><a href="#cb19-271" aria-label="269"></a>  <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">0</span>, <span class="fl">0.1</span>),       <span class="at">class =</span> <span class="st">&quot;b&quot;</span>, <span class="at">coef =</span> <span class="st">&quot;miwater_res_time_z&quot;</span>, <span class="at">resp =</span> <span class="st">&quot;deltaDOC&quot;</span>),</span>
-<span id="cb19-272"><a href="#cb19-272" aria-label="270"></a>  <span class="fu">prior</span>(<span class="fu">student_t</span>(<span class="dv">3</span>, <span class="dv">0</span>, <span class="fl">2.5</span>), <span class="at">class =</span> <span class="st">&quot;sigma&quot;</span>,                          <span class="at">resp =</span> <span class="st">&quot;deltaDOC&quot;</span>),</span>
-<span id="cb19-273"><a href="#cb19-273" aria-label="271"></a>  <span class="fu">prior</span>(<span class="fu">gamma</span>(<span class="dv">2</span>, <span class="fl">0.1</span>),        <span class="at">class =</span> <span class="st">&quot;nu&quot;</span>,                             <span class="at">resp =</span> <span class="st">&quot;deltaDOC&quot;</span>),</span>
-<span id="cb19-274"><a href="#cb19-274" aria-label="272"></a>  <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">0</span>, <span class="dv">2</span>),         <span class="at">class =</span> <span class="st">&quot;sd&quot;</span>, <span class="at">coef =</span> <span class="st">&quot;Intercept&quot;</span>, <span class="at">group =</span> <span class="st">&quot;site&quot;</span>, <span class="at">resp =</span> <span class="st">&quot;deltaDOC&quot;</span>),</span>
-<span id="cb19-275"><a href="#cb19-275" aria-label="273"></a>  <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="fl">0.15</span>, <span class="fl">0.075</span>),  <span class="at">class =</span> <span class="st">&quot;b&quot;</span>, <span class="at">coef =</span> <span class="st">&quot;n_dams_z&quot;</span>,           <span class="at">resp =</span> <span class="st">&quot;waterrestimez&quot;</span>),</span>
-<span id="cb19-276"><a href="#cb19-276" aria-label="274"></a>  <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="fl">0.15</span>, <span class="fl">0.075</span>),  <span class="at">class =</span> <span class="st">&quot;b&quot;</span>, <span class="at">coef =</span> <span class="st">&quot;midam_height_z&quot;</span>,     <span class="at">resp =</span> <span class="st">&quot;waterrestimez&quot;</span>),</span>
-<span id="cb19-277"><a href="#cb19-277" aria-label="275"></a>  <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">0</span>, <span class="fl">0.075</span>),     <span class="at">class =</span> <span class="st">&quot;b&quot;</span>, <span class="at">coef =</span> <span class="st">&quot;slope_z&quot;</span>,            <span class="at">resp =</span> <span class="st">&quot;waterrestimez&quot;</span>),</span>
-<span id="cb19-278"><a href="#cb19-278" aria-label="276"></a>  <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">0</span>, <span class="fl">0.075</span>),     <span class="at">class =</span> <span class="st">&quot;b&quot;</span>, <span class="at">coef =</span> <span class="st">&quot;solar_z&quot;</span>,            <span class="at">resp =</span> <span class="st">&quot;waterrestimez&quot;</span>),</span>
-<span id="cb19-279"><a href="#cb19-279" aria-label="277"></a>  <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">0</span>, <span class="dv">1</span>),         <span class="at">class =</span> <span class="st">&quot;b&quot;</span>, <span class="at">coef =</span> <span class="st">&quot;lateral_connectivityNo_wetland&quot;</span>,        <span class="at">resp =</span> <span class="st">&quot;waterrestimez&quot;</span>),</span>
-<span id="cb19-280"><a href="#cb19-280" aria-label="278"></a>  <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">0</span>, <span class="dv">1</span>),         <span class="at">class =</span> <span class="st">&quot;b&quot;</span>, <span class="at">coef =</span> <span class="st">&quot;lateral_connectivityyes_not_connected&quot;</span>, <span class="at">resp =</span> <span class="st">&quot;waterrestimez&quot;</span>),</span>
-<span id="cb19-281"><a href="#cb19-281" aria-label="279"></a>  <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">0</span>, <span class="dv">1</span>),         <span class="at">class =</span> <span class="st">&quot;b&quot;</span>, <span class="at">coef =</span> <span class="st">&quot;lateral_connectivityyes_connected&quot;</span>,     <span class="at">resp =</span> <span class="st">&quot;waterrestimez&quot;</span>),</span>
-<span id="cb19-282"><a href="#cb19-282" aria-label="280"></a>  <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">0</span>, <span class="fl">0.5</span>),       <span class="at">class =</span> <span class="st">&quot;sigma&quot;</span>,                          <span class="at">resp =</span> <span class="st">&quot;waterrestimez&quot;</span>),</span>
-<span id="cb19-283"><a href="#cb19-283" aria-label="281"></a>  <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">0</span>, <span class="dv">1</span>),         <span class="at">class =</span> <span class="st">&quot;b&quot;</span>, <span class="at">coef =</span> <span class="st">&quot;Intercept&quot;</span>,          <span class="at">resp =</span> <span class="st">&quot;damheightz&quot;</span>),</span>
-<span id="cb19-284"><a href="#cb19-284" aria-label="282"></a>  <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">0</span>, <span class="fl">0.5</span>),       <span class="at">class =</span> <span class="st">&quot;sigma&quot;</span>,                          <span class="at">resp =</span> <span class="st">&quot;damheightz&quot;</span>))</span>
-<span id="cb19-285"><a href="#cb19-285" aria-label="283"></a></span>
-<span id="cb19-286"><a href="#cb19-286" aria-label="284"></a>fit_connectivity <span class="ot">&lt;-</span> <span class="fu">brm</span>(bform, <span class="at">data =</span> m6_fit, </span>
-<span id="cb19-287"><a href="#cb19-287" aria-label="285"></a>                        <span class="at">prior =</span> prio_conn,</span>
-<span id="cb19-288"><a href="#cb19-288" aria-label="286"></a>                        <span class="at">chains =</span> <span class="dv">4</span>, </span>
-<span id="cb19-289"><a href="#cb19-289" aria-label="287"></a>                        <span class="at">cores =</span> <span class="dv">10</span>, <span class="at">seed =</span> <span class="dv">42</span>,</span>
-<span id="cb19-290"><a href="#cb19-290" aria-label="288"></a>                        <span class="at">backend =</span> <span class="st">&quot;cmdstanr&quot;</span>,</span>
-<span id="cb19-291"><a href="#cb19-291" aria-label="289"></a>                        <span class="at">file =</span> <span class="fu">here</span>(<span class="st">&quot;results&quot;</span>,<span class="st">&quot;models_fit&quot;</span>,<span class="st">&quot;fitconnectivity_informative&quot;</span>),</span>
-<span id="cb19-292"><a href="#cb19-292" aria-label="290"></a>                        <span class="at">sample_prior =</span> <span class="cn">FALSE</span></span>
-<span id="cb19-293"><a href="#cb19-293" aria-label="291"></a>)</span>
-<span id="cb19-294"><a href="#cb19-294" aria-label="292"></a></span>
-<span id="cb19-295"><a href="#cb19-295" aria-label="293"></a><span class="co">#summary(fit_connectivity)</span></span>
-<span id="cb19-296"><a href="#cb19-296" aria-label="294"></a></span>
-<span id="cb19-297"><a href="#cb19-297" aria-label="295"></a><span class="in">```</span></span>
-<span id="cb19-298"><a href="#cb19-298" aria-label="296"></a></span>
-<span id="cb19-299"><a href="#cb19-299" aria-label="297"></a>Now we are going to extract the posterior draws from the model we fitted:</span>
-<span id="cb19-300"><a href="#cb19-300" aria-label="298"></a></span>
-<span id="cb19-301"><a href="#cb19-301" aria-label="299"></a><span class="in">```{r draws}</span></span>
-<span id="cb19-302"><a href="#cb19-302" aria-label="300"></a></span>
-<span id="cb19-303"><a href="#cb19-303" aria-label="301"></a>draws <span class="ot">&lt;-</span> <span class="fu">as_draws_df</span>(fit_connectivity)</span>
-<span id="cb19-304"><a href="#cb19-304" aria-label="302"></a></span>
-<span id="cb19-305"><a href="#cb19-305" aria-label="303"></a>mean_no_wetland    <span class="ot">&lt;-</span> draws<span class="sc">$</span>b_waterrestimez_lateral_connectivityNo_wetland</span>
-<span id="cb19-306"><a href="#cb19-306" aria-label="304"></a>mean_not_connected <span class="ot">&lt;-</span> draws<span class="sc">$</span>b_waterrestimez_lateral_connectivityyes_not_connected</span>
-<span id="cb19-307"><a href="#cb19-307" aria-label="305"></a>mean_connected     <span class="ot">&lt;-</span> draws<span class="sc">$</span>b_waterrestimez_lateral_connectivityyes_connected</span>
-<span id="cb19-308"><a href="#cb19-308" aria-label="306"></a></span>
-<span id="cb19-309"><a href="#cb19-309" aria-label="307"></a>effect_wrt_not_connected <span class="ot">&lt;-</span> mean_not_connected <span class="sc">-</span> mean_no_wetland</span>
-<span id="cb19-310"><a href="#cb19-310" aria-label="308"></a>effect_wrt_connected     <span class="ot">&lt;-</span> mean_connected <span class="sc">-</span> mean_no_wetland</span>
-<span id="cb19-311"><a href="#cb19-311" aria-label="309"></a></span>
-<span id="cb19-312"><a href="#cb19-312" aria-label="310"></a>s1 <span class="ot">&lt;-</span> <span class="fu">summarise_draws</span>(<span class="fu">data.frame</span>(</span>
-<span id="cb19-313"><a href="#cb19-313" aria-label="311"></a>  <span class="at">effect_wrt_not_connected =</span> effect_wrt_not_connected,</span>
-<span id="cb19-314"><a href="#cb19-314" aria-label="312"></a>  <span class="at">effect_wrt_connected     =</span> effect_wrt_connected</span>
-<span id="cb19-315"><a href="#cb19-315" aria-label="313"></a>))</span>
-<span id="cb19-316"><a href="#cb19-316" aria-label="314"></a></span>
-<span id="cb19-317"><a href="#cb19-317" aria-label="315"></a>wrt_to_doc <span class="ot">&lt;-</span> draws<span class="sc">$</span>bsp_deltaDOC_miwater_res_time_z</span>
-<span id="cb19-318"><a href="#cb19-318" aria-label="316"></a></span>
-<span id="cb19-319"><a href="#cb19-319" aria-label="317"></a>total_effect_not_connected <span class="ot">&lt;-</span> effect_wrt_not_connected <span class="sc">*</span> wrt_to_doc</span>
-<span id="cb19-320"><a href="#cb19-320" aria-label="318"></a>total_effect_connected     <span class="ot">&lt;-</span> effect_wrt_connected <span class="sc">*</span> wrt_to_doc</span>
-<span id="cb19-321"><a href="#cb19-321" aria-label="319"></a></span>
-<span id="cb19-322"><a href="#cb19-322" aria-label="320"></a>s2 <span class="ot">&lt;-</span> <span class="fu">summarise_draws</span>(<span class="fu">data.frame</span>(</span>
-<span id="cb19-323"><a href="#cb19-323" aria-label="321"></a>  <span class="at">total_effect_not_connected =</span> total_effect_not_connected,</span>
-<span id="cb19-324"><a href="#cb19-324" aria-label="322"></a>  <span class="at">total_effect_connected     =</span> total_effect_connected</span>
-<span id="cb19-325"><a href="#cb19-325" aria-label="323"></a>))</span>
-<span id="cb19-326"><a href="#cb19-326" aria-label="324"></a></span>
-<span id="cb19-327"><a href="#cb19-327" aria-label="325"></a>effects_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb19-328"><a href="#cb19-328" aria-label="326"></a>  <span class="at">not_connected =</span> total_effect_not_connected,</span>
-<span id="cb19-329"><a href="#cb19-329" aria-label="327"></a>  <span class="at">connected     =</span> total_effect_connected</span>
-<span id="cb19-330"><a href="#cb19-330" aria-label="328"></a>) <span class="sc">%&gt;%</span></span>
-<span id="cb19-331"><a href="#cb19-331" aria-label="329"></a>  <span class="fu">pivot_longer</span>(<span class="fu">everything</span>(), <span class="at">names_to =</span> <span class="st">&quot;contrast&quot;</span>, <span class="at">values_to =</span> <span class="st">&quot;effect&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb19-332"><a href="#cb19-332" aria-label="330"></a>  <span class="fu">mutate</span>(<span class="at">contrast =</span> <span class="fu">recode</span>(contrast,</span>
-<span id="cb19-333"><a href="#cb19-333" aria-label="331"></a>                           <span class="st">&quot;not_connected&quot;</span> <span class="ot">=</span> <span class="st">&quot;Yes, not connected</span><span class="sc">\n</span><span class="st">vs No wetland&quot;</span>,</span>
-<span id="cb19-334"><a href="#cb19-334" aria-label="332"></a>                           <span class="st">&quot;connected&quot;</span>      <span class="ot">=</span> <span class="st">&quot;Yes, connected</span><span class="sc">\n</span><span class="st">vs No wetland&quot;</span>))</span>
-<span id="cb19-335"><a href="#cb19-335" aria-label="333"></a><span class="in">```</span></span>
-<span id="cb19-336"><a href="#cb19-336" aria-label="334"></a></span>
-<span id="cb19-337"><a href="#cb19-337" aria-label="335"></a>Then plot the results as contrasts (Appendix S1: Figure S9):</span>
-<span id="cb19-338"><a href="#cb19-338" aria-label="336"></a></span>
-<span id="cb19-341"><a href="#cb19-341" aria-label="337"></a><span class="in">```{r}</span></span>
-<span id="cb19-342"><a href="#cb19-342" aria-label="338"></a><span class="co">#| label: fig-contrasts</span></span>
-<span id="cb19-343"><a href="#cb19-343" aria-label="339"></a><span class="co">#| fig-cap: &quot;**Appendix S1, Figure S9. Effect of lateral stream-wetland connectivity.** Left: the contrasts `effect_wrt_not_connected` and `effect_wrt_connected`, i.e. the effect of each connectivity level on water residence time relative to sites without wetland. Right: `total_effect_not_connected` and `total_effect_connected`, the total mediated effect on $\\Delta$DOC, obtained by multiplying each contrast by the WRT to $\\Delta$DOC coefficient `wrt_to_doc`. Points are posterior medians; thick and thin bars are the 66% and 95% credible intervals; the dashed line marks zero.&quot;</span></span>
-<span id="cb19-344"><a href="#cb19-344" aria-label="340"></a><span class="co">#| fig-width: 11</span></span>
-<span id="cb19-345"><a href="#cb19-345" aria-label="341"></a><span class="co">#| fig-height: 4.5</span></span>
-<span id="cb19-346"><a href="#cb19-346" aria-label="342"></a>df_s9 <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
-<span id="cb19-347"><a href="#cb19-347" aria-label="343"></a>  <span class="fu">tibble</span>(<span class="at">stage =</span> <span class="st">&quot;A&quot;</span>, <span class="at">contrast =</span> <span class="st">&quot;Wetland, not connected vs no wetland&quot;</span>, <span class="at">draw =</span> effect_wrt_not_connected),</span>
-<span id="cb19-348"><a href="#cb19-348" aria-label="344"></a>  <span class="fu">tibble</span>(<span class="at">stage =</span> <span class="st">&quot;A&quot;</span>, <span class="at">contrast =</span> <span class="st">&quot;Wetland, connected vs no wetland&quot;</span>,     <span class="at">draw =</span> effect_wrt_connected),</span>
-<span id="cb19-349"><a href="#cb19-349" aria-label="345"></a>  <span class="fu">tibble</span>(<span class="at">stage =</span> <span class="st">&quot;B&quot;</span>, <span class="at">contrast =</span> <span class="st">&quot;Wetland, not connected vs no wetland&quot;</span>, <span class="at">draw =</span> total_effect_not_connected),</span>
-<span id="cb19-350"><a href="#cb19-350" aria-label="346"></a>  <span class="fu">tibble</span>(<span class="at">stage =</span> <span class="st">&quot;B&quot;</span>, <span class="at">contrast =</span> <span class="st">&quot;Wetland, connected vs no wetland&quot;</span>,     <span class="at">draw =</span> total_effect_connected)) <span class="sc">|&gt;</span></span>
-<span id="cb19-351"><a href="#cb19-351" aria-label="347"></a>  <span class="fu">mutate</span>(<span class="at">contrast =</span> <span class="fu">factor</span>(contrast, <span class="at">levels =</span> <span class="fu">rev</span>(<span class="fu">c</span>(<span class="st">&quot;Wetland, not connected vs no wetland&quot;</span>, <span class="st">&quot;Wetland, connected vs no wetland&quot;</span>))))</span>
-<span id="cb19-352"><a href="#cb19-352" aria-label="348"></a>lab_s9 <span class="ot">&lt;-</span> <span class="fu">as_labeller</span>(<span class="fu">c</span>(<span class="at">A =</span> <span class="st">&quot;Connectivity%-&gt;%&#39;water residence time&#39;&quot;</span>, <span class="at">B =</span> <span class="st">&quot;&#39;Total effect on&#39;~Delta*&#39;DOC&#39;&quot;</span>), label_parsed)</span>
-<span id="cb19-353"><a href="#cb19-353" aria-label="349"></a>(p_s9 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(df_s9, <span class="fu">aes</span>(<span class="at">x =</span> draw, <span class="at">y =</span> contrast)) <span class="sc">+</span></span>
-<span id="cb19-354"><a href="#cb19-354" aria-label="350"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="dv">2</span>, <span class="at">colour =</span> <span class="st">&quot;grey40&quot;</span>) <span class="sc">+</span></span>
-<span id="cb19-355"><a href="#cb19-355" aria-label="351"></a>  <span class="fu">stat_halfeye</span>(<span class="at">.width =</span> <span class="fu">c</span>(.<span class="dv">66</span>, .<span class="dv">95</span>), <span class="at">fill =</span> <span class="st">&quot;steelblue&quot;</span>, <span class="at">alpha =</span> .<span class="dv">8</span>) <span class="sc">+</span></span>
-<span id="cb19-356"><a href="#cb19-356" aria-label="352"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>stage, <span class="at">scales =</span> <span class="st">&quot;free_x&quot;</span>, <span class="at">labeller =</span> lab_s9) <span class="sc">+</span></span>
-<span id="cb19-357"><a href="#cb19-357" aria-label="353"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Standardized effect&quot;</span>, <span class="at">y =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
-<span id="cb19-358"><a href="#cb19-358" aria-label="354"></a>  <span class="fu">theme_bw</span>(<span class="at">base_size =</span> <span class="dv">15</span>) <span class="sc">+</span></span>
-<span id="cb19-359"><a href="#cb19-359" aria-label="355"></a>  <span class="fu">theme</span>(<span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">&quot;black&quot;</span>), <span class="at">panel.grid.minor =</span> <span class="fu">element_blank</span>(),</span>
-<span id="cb19-360"><a href="#cb19-360" aria-label="356"></a>        <span class="at">strip.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">&quot;grey92&quot;</span>)))</span>
-<span id="cb19-361"><a href="#cb19-361" aria-label="357"></a><span class="fu">ggsave</span>(<span class="fu">here</span>(<span class="st">&quot;results&quot;</span>, <span class="st">&quot;figures&quot;</span>, <span class="st">&quot;figS9_connectivity.png&quot;</span>), p_s9, <span class="at">width =</span> <span class="dv">11</span>, <span class="at">height =</span> <span class="fl">4.5</span>, <span class="at">dpi =</span> <span class="dv">300</span>)</span>
-<span id="cb19-362"><a href="#cb19-362" aria-label="358"></a><span class="in">```</span></span>
-<span id="cb19-363"><a href="#cb19-363" aria-label="359"></a></span>
-<span id="cb19-364"><a href="#cb19-364" aria-label="360"></a>::: {.callout-note}</span>
-<span id="cb19-365"><a href="#cb19-365" aria-label="361"></a><span class="fu">## What @fig-contrasts shows</span></span>
-<span id="cb19-366"><a href="#cb19-366" aria-label="362"></a></span>
-<span id="cb19-367"><a href="#cb19-367" aria-label="363"></a>Naming each posterior quantity explicitly (standardized effect, 90% credible interval, posterior probability of being positive):</span>
-<span id="cb19-368"><a href="#cb19-368" aria-label="364"></a></span>
-<span id="cb19-369"><a href="#cb19-369" aria-label="365"></a><span class="ss">-   </span>**`effect_wrt_not_connected`** — an unconnected wetland versus no wetland, effect on water residence time: <span class="in">`r sprintf(&quot;%+.2f&quot;, mean(effect_wrt_not_connected))`</span> <span class="co">[</span><span class="ot">`r sprintf(&quot;%.2f, %.2f&quot;, quantile(effect_wrt_not_connected,.05), quantile(effect_wrt_not_connected,.95))`</span><span class="co">]</span>, P(&gt; 0) = <span class="in">`r sprintf(&quot;%.2f&quot;, mean(effect_wrt_not_connected &gt; 0))`</span></span>
-<span id="cb19-370"><a href="#cb19-370" aria-label="366"></a><span class="ss">-   </span>**`effect_wrt_connected`** — a connected wetland versus no wetland, effect on water residence time: <span class="in">`r sprintf(&quot;%+.2f&quot;, mean(effect_wrt_connected))`</span> <span class="co">[</span><span class="ot">`r sprintf(&quot;%.2f, %.2f&quot;, quantile(effect_wrt_connected,.05), quantile(effect_wrt_connected,.95))`</span><span class="co">]</span>, P(&gt; 0) = <span class="in">`r sprintf(&quot;%.2f&quot;, mean(effect_wrt_connected &gt; 0))`</span></span>
-<span id="cb19-371"><a href="#cb19-371" aria-label="367"></a><span class="ss">-   </span>**`wrt_to_doc`** — the mediating coefficient from water residence time to $\Delta$DOC: <span class="in">`r sprintf(&quot;%+.2f&quot;, mean(wrt_to_doc))`</span> <span class="co">[</span><span class="ot">`r sprintf(&quot;%.2f, %.2f&quot;, quantile(wrt_to_doc,.05), quantile(wrt_to_doc,.95))`</span><span class="co">]</span>, P(&gt; 0) = <span class="in">`r sprintf(&quot;%.2f&quot;, mean(wrt_to_doc &gt; 0))`</span></span>
-<span id="cb19-372"><a href="#cb19-372" aria-label="368"></a><span class="ss">-   </span>**`total_effect_not_connected`**: `r sprintf(&quot;%+.2f&quot;, mean(total_effect_not_connected))` [`r sprintf(&quot;%.2f, %.2f&quot;, quantile(total_effect_not_connected,.05), quantile(total_effect_not_connected,.95))`], and **`total_effect_connected`**: <span class="in">`r sprintf(&quot;%+.2f&quot;, mean(total_effect_connected))`</span> <span class="co">[</span><span class="ot">`r sprintf(&quot;%.2f, %.2f&quot;, quantile(total_effect_connected,.05), quantile(total_effect_connected,.95))`</span><span class="co">]</span></span>
-<span id="cb19-373"><a href="#cb19-373" aria-label="369"></a></span>
-<span id="cb19-374"><a href="#cb19-374" aria-label="370"></a>**Lateral stream-wetland connectivity does not detectably change $\Delta$DOC through the water-residence-time pathway.** The estimates of the remaining paths are unchanged from the main SCM (@fig-scm), so the conclusions of the manuscript are robust to adding this causal path.</span>
-<span id="cb19-375"><a href="#cb19-375" aria-label="371"></a>:::</span>
-<span id="cb19-376"><a href="#cb19-376" aria-label="372"></a></span>
-<span id="cb19-377"><a href="#cb19-377" aria-label="373"></a><span class="fu">### Conclusions:</span></span>
-<span id="cb19-378"><a href="#cb19-378" aria-label="374"></a></span>
-<span id="cb19-379"><a href="#cb19-379" aria-label="375"></a>::: callout-important</span>
-<span id="cb19-380"><a href="#cb19-380" aria-label="376"></a><span class="ss">- </span>We find null total effect of lateral connectivity on ΔDOC via the water-residence-time pathway: both 90% CIs overlap zero, with small magnitudes on the standardized scale.</span>
-<span id="cb19-381"><a href="#cb19-381" aria-label="377"></a></span>
-<span id="cb19-382"><a href="#cb19-382" aria-label="378"></a><span class="ss">- </span>We also see the WRT → ΔDOC mediating path itself is weak, with its CI touching \~0.00 at the lower bound — limiting our ability to detect a total effect even if connectivity strongly affected WRT.</span>
-<span id="cb19-383"><a href="#cb19-383" aria-label="379"></a></span>
-<span id="cb19-384"><a href="#cb19-384" aria-label="380"></a><span class="ss">- </span>We treat this as power-limited rather than strong evidence of no effect — only 13 sites (\~7%) are <span class="in">`yes_connected`</span> and 11 (\~6%) are <span class="in">`yes_not_connected`</span>, so wide intervals likely reflect limited data rather than a true null.</span>
-<span id="cb19-385"><a href="#cb19-385" aria-label="381"></a>:::</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17" data-shortcodes="false"><pre class="sourceCode numberSource markdown number-lines code-with-copy"><code class="sourceCode markdown"><span id="cb17-1"><a href="#cb17-1" aria-label="1"></a><span class="co">---</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-label="2"></a><span class="an">title:</span><span class="co"> &quot;Lateral connectivity analysis&quot;</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-label="3"></a><span class="an">author:</span><span class="co"> &quot;Leonardo Capitani&quot;</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-label="4"></a><span class="an">date:</span><span class="co"> &quot;Last compiled on `r format(Sys.time(), &#39;%d %B, %Y&#39;)`&quot;</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-label="5"></a><span class="an">knitr:</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-label="6"></a><span class="co">     opts_chunk:</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-label="7"></a><span class="co">        R.options:</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-label="8"></a><span class="co">         width: 120</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-label="9"></a><span class="an">format:</span><span class="co"> </span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-label="10"></a><span class="co">      html:</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-label="11"></a><span class="co">          toc: true</span></span>
+<span id="cb17-12"><a href="#cb17-12" aria-label="12"></a><span class="co">          code-fold: true</span></span>
+<span id="cb17-13"><a href="#cb17-13" aria-label="13"></a><span class="co">          code-tools: true</span></span>
+<span id="cb17-14"><a href="#cb17-14" aria-label="14"></a><span class="co">          code-link: true</span></span>
+<span id="cb17-15"><a href="#cb17-15" aria-label="15"></a><span class="co">          embed-resources: true</span></span>
+<span id="cb17-16"><a href="#cb17-16" aria-label="16"></a><span class="co">          code-line-numbers: true</span></span>
+<span id="cb17-17"><a href="#cb17-17" aria-label="17"></a><span class="an">html-math-method:</span><span class="co"> </span></span>
+<span id="cb17-18"><a href="#cb17-18" aria-label="18"></a><span class="co">  method: mathjax</span></span>
+<span id="cb17-19"><a href="#cb17-19" aria-label="19"></a><span class="co">  url: https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML</span></span>
+<span id="cb17-20"><a href="#cb17-20" aria-label="20"></a><span class="an">execute:</span></span>
+<span id="cb17-21"><a href="#cb17-21" aria-label="21"></a><span class="co">  echo: true</span></span>
+<span id="cb17-22"><a href="#cb17-22" aria-label="22"></a><span class="co">  message: false</span></span>
+<span id="cb17-23"><a href="#cb17-23" aria-label="23"></a><span class="co">  warning: false </span></span>
+<span id="cb17-24"><a href="#cb17-24" aria-label="24"></a><span class="co">  cache: false</span></span>
+<span id="cb17-25"><a href="#cb17-25" aria-label="25"></a><span class="co">  freeze: true  # never re-render during project render</span></span>
+<span id="cb17-26"><a href="#cb17-26" aria-label="26"></a><span class="an">editor:</span><span class="co"> visual</span></span>
+<span id="cb17-27"><a href="#cb17-27" aria-label="27"></a><span class="an">code-annotations:</span><span class="co"> select</span></span>
+<span id="cb17-28"><a href="#cb17-28" aria-label="28"></a><span class="an">editor_options:</span><span class="co"> </span></span>
+<span id="cb17-29"><a href="#cb17-29" aria-label="29"></a><span class="co">  chunk_output_type: console</span></span>
+<span id="cb17-30"><a href="#cb17-30" aria-label="30"></a><span class="an">bibliography:</span><span class="co"> ../references.bib</span></span>
+<span id="cb17-31"><a href="#cb17-31" aria-label="31"></a><span class="co">---</span></span>
+<span id="cb17-32"><a href="#cb17-32" aria-label="32"></a></span>
+<span id="cb17-33"><a href="#cb17-33" aria-label="33"></a><span class="in">```{r libraries, message=FALSE}</span></span>
+<span id="cb17-34"><a href="#cb17-34" aria-label="34"></a><span class="fu">invisible</span>(<span class="fu">Sys.setlocale</span>(<span class="st">&quot;LC_CTYPE&quot;</span>, <span class="st">&quot;en_US.UTF-8&quot;</span>))  <span class="co"># print non-ASCII (Delta, arrows) correctly</span></span>
+<span id="cb17-35"><a href="#cb17-35" aria-label="35"></a></span>
+<span id="cb17-36"><a href="#cb17-36" aria-label="36"></a><span class="co"># Load libraries</span></span>
+<span id="cb17-37"><a href="#cb17-37" aria-label="37"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb17-38"><a href="#cb17-38" aria-label="38"></a><span class="fu">library</span>(here)</span>
+<span id="cb17-39"><a href="#cb17-39" aria-label="39"></a><span class="fu">library</span>(DT)</span>
+<span id="cb17-40"><a href="#cb17-40" aria-label="40"></a><span class="fu">library</span>(ggdist)</span>
+<span id="cb17-41"><a href="#cb17-41" aria-label="41"></a><span class="fu">library</span>(scales)</span>
+<span id="cb17-42"><a href="#cb17-42" aria-label="42"></a><span class="fu">library</span>(readxl)</span>
+<span id="cb17-43"><a href="#cb17-43" aria-label="43"></a><span class="fu">library</span>(chron)<span class="co"># for time formatting</span></span>
+<span id="cb17-44"><a href="#cb17-44" aria-label="44"></a><span class="fu">library</span>(brms)</span>
+<span id="cb17-45"><a href="#cb17-45" aria-label="45"></a><span class="fu">library</span>(tidybayes)</span>
+<span id="cb17-46"><a href="#cb17-46" aria-label="46"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb17-47"><a href="#cb17-47" aria-label="47"></a><span class="fu">library</span>(stringr) </span>
+<span id="cb17-48"><a href="#cb17-48" aria-label="48"></a><span class="fu">library</span>(bayesplot)</span>
+<span id="cb17-49"><a href="#cb17-49" aria-label="49"></a><span class="fu">library</span>(dagitty)</span>
+<span id="cb17-50"><a href="#cb17-50" aria-label="50"></a><span class="in">```</span></span>
+<span id="cb17-51"><a href="#cb17-51" aria-label="51"></a></span>
+<span id="cb17-52"><a href="#cb17-52" aria-label="52"></a><span class="fu">## Introduction</span></span>
+<span id="cb17-53"><a href="#cb17-53" aria-label="53"></a></span>
+<span id="cb17-54"><a href="#cb17-54" aria-label="54"></a>This notebook will present additional analysis in regard to the following research question:</span>
+<span id="cb17-55"><a href="#cb17-55" aria-label="55"></a></span>
+<span id="cb17-56"><a href="#cb17-56" aria-label="56"></a>::: callout-tip</span>
+<span id="cb17-57"><a href="#cb17-57" aria-label="57"></a><span class="fu">## Research question:</span></span>
+<span id="cb17-58"><a href="#cb17-58" aria-label="58"></a></span>
+<span id="cb17-59"><a href="#cb17-59" aria-label="59"></a>Controlling for beaver engineering effects, to what extent does lateral stream connectivity influence dissolved organic carbon (DOC) concentration ?</span>
+<span id="cb17-60"><a href="#cb17-60" aria-label="60"></a>:::</span>
+<span id="cb17-61"><a href="#cb17-61" aria-label="61"></a></span>
+<span id="cb17-62"><a href="#cb17-62" aria-label="62"></a>::: callout-important</span>
+<span id="cb17-63"><a href="#cb17-63" aria-label="63"></a>Please refer to Kaspar Berger&#39;s Master thesis, chapter 4.12.4 and chapter 5.5 to get details about the definition of stream later connectivity.</span>
+<span id="cb17-64"><a href="#cb17-64" aria-label="64"></a></span>
+<span id="cb17-65"><a href="#cb17-65" aria-label="65"></a>In this study, we are going to use Berger&#39;s methodology to define stream lateral connectivity: <span class="in">`lateral_connectivity`</span> is a categorical vcariable with three levels.</span>
+<span id="cb17-66"><a href="#cb17-66" aria-label="66"></a></span>
+<span id="cb17-67"><a href="#cb17-67" aria-label="67"></a><span class="ss">- </span><span class="in">`No_wetland`</span>: no presence of wetland around the stream course,</span>
+<span id="cb17-68"><a href="#cb17-68" aria-label="68"></a></span>
+<span id="cb17-69"><a href="#cb17-69" aria-label="69"></a><span class="ss">- </span><span class="in">`yes_not connected`</span>: presence of wetland not directly connected to the stream (figure 1a),</span>
+<span id="cb17-70"><a href="#cb17-70" aria-label="70"></a></span>
+<span id="cb17-71"><a href="#cb17-71" aria-label="71"></a><span class="ss">- </span><span class="in">`yes_connected`</span> : presence of wetland and it is connected to the stream (figure 1b).</span>
+<span id="cb17-72"><a href="#cb17-72" aria-label="72"></a>:::</span>
+<span id="cb17-73"><a href="#cb17-73" aria-label="73"></a></span>
+<span id="cb17-74"><a href="#cb17-74" aria-label="74"></a><span class="al">![**The three levels of `lateral_connectivity`.** Two streams with contrasting lateral connectivity to an adjacent wetland: on the left a wetland present but not directly connected to the channel (`yes_not_connected`), on the right a wetland hydrologically connected to the channel (`yes_connected`). Sites with no wetland within the 50 m buffer are coded `No_wetland`. Image by Kaspar Berger.](../../images/later_connectivty_berger-01.png)</span>{#fig-latconn}</span>
+<span id="cb17-75"><a href="#cb17-75" aria-label="75"></a></span>
+<span id="cb17-76"><a href="#cb17-76" aria-label="76"></a>Please note our main results:</span>
+<span id="cb17-77"><a href="#cb17-77" aria-label="77"></a></span>
+<span id="cb17-78"><a href="#cb17-78" aria-label="78"></a><span class="al">![**The main structural causal model, for reference (manuscript Figure 1b).** Drivers of beaver-mediated DOC change: solid edges (red = negative, blue = positive) carry at least 90% posterior probability of a directional effect, dashed edges are inconclusive. Values are standardized average effects. The path this notebook extends is water residence time (`WRT`), to which `lateral_connectivity` is added as an additional parent.](../../images/Capitani_Figure_2b.png)</span>{#fig-scm}</span>
+<span id="cb17-79"><a href="#cb17-79" aria-label="79"></a></span>
+<span id="cb17-80"><a href="#cb17-80" aria-label="80"></a>We do already know that the mediating path (WRT → ΔDOC) is weak because an increase in WRT influence 1-2% the <span class="in">`deltaDOC`</span>.</span>
+<span id="cb17-81"><a href="#cb17-81" aria-label="81"></a></span>
+<span id="cb17-82"><a href="#cb17-82" aria-label="82"></a><span class="fu">## DAG</span></span>
+<span id="cb17-83"><a href="#cb17-83" aria-label="83"></a></span>
+<span id="cb17-84"><a href="#cb17-84" aria-label="84"></a>Let&#39;s define our causal diagram where predictors (<span class="in">`lateral_connectivity`</span>) and response variable (<span class="in">`deltaDOC`</span>) are connected by causal influences. Recall that WRT is the water residence time.</span>
+<span id="cb17-85"><a href="#cb17-85" aria-label="85"></a></span>
+<span id="cb17-86"><a href="#cb17-86" aria-label="86"></a>We do know that stream lateral connectivity to a wetland creates an additional storage and exchange compartment for stream water — when a wetland is hydrologically connected, water can move laterally into and out of that storage zone, increasing the time it spends in the system before continuing downstream. This mechanism is well established in the hydrology literature on stream-floodplain/wetland exchange, where connected off-channel storage areas are consistently shown to extend residence time relative to channels lacking such lateral exchange (transient storage zone theory; Bencala &amp; Walters 1983; Wohl 2021, *Rev. Geophys.*).</span>
+<span id="cb17-87"><a href="#cb17-87" aria-label="87"></a></span>
+<span id="cb17-88"><a href="#cb17-88" aria-label="88"></a>::: {.callout-note appearance=&quot;simple&quot;}</span>
+<span id="cb17-89"><a href="#cb17-89" aria-label="89"></a>**Hypothesis:**</span>
+<span id="cb17-90"><a href="#cb17-90" aria-label="90"></a></span>
+<span id="cb17-91"><a href="#cb17-91" aria-label="91"></a>We hypothesize that if a stream is connected to the adjacent wetland then the beaver pond water residence time varies with the degree of lateral connectivity between the stream and adjacent wetlands.</span>
+<span id="cb17-92"><a href="#cb17-92" aria-label="92"></a>:::</span>
+<span id="cb17-93"><a href="#cb17-93" aria-label="93"></a></span>
+<span id="cb17-94"><a href="#cb17-94" aria-label="94"></a><span class="in">```{r dag}</span></span>
+<span id="cb17-95"><a href="#cb17-95" aria-label="95"></a></span>
+<span id="cb17-96"><a href="#cb17-96" aria-label="96"></a>dag <span class="ot">&lt;-</span> <span class="fu">dagitty</span>(<span class="st">&#39;dag {</span></span>
+<span id="cb17-97"><a href="#cb17-97" aria-label="97"></a><span class="st">Max_dam_height [pos=&quot;-0.991,0.879&quot;]</span></span>
+<span id="cb17-98"><a href="#cb17-98" aria-label="98"></a><span class="st">WRT [pos=&quot;-0.510,0.684&quot;]</span></span>
+<span id="cb17-99"><a href="#cb17-99" aria-label="99"></a><span class="st">channel_gradient [pos=&quot;-0.518,0.295&quot;]</span></span>
+<span id="cb17-100"><a href="#cb17-100" aria-label="100"></a><span class="st">delta_DOC [outcome,pos=&quot;0.990,0.636&quot;]</span></span>
+<span id="cb17-101"><a href="#cb17-101" aria-label="101"></a><span class="st">lateral_connectivity [exposure,pos=&quot;-0.503,1.098&quot;]</span></span>
+<span id="cb17-102"><a href="#cb17-102" aria-label="102"></a><span class="st">macrophytes [pos=&quot;0.373,0.249&quot;]</span></span>
+<span id="cb17-103"><a href="#cb17-103" aria-label="103"></a><span class="st">number_dams [pos=&quot;-0.977,0.506&quot;]</span></span>
+<span id="cb17-104"><a href="#cb17-104" aria-label="104"></a><span class="st">phytoplankton [pos=&quot;0.323,0.736&quot;]</span></span>
+<span id="cb17-105"><a href="#cb17-105" aria-label="105"></a><span class="st">soil_litter [pos=&quot;0.288,1.289&quot;]</span></span>
+<span id="cb17-106"><a href="#cb17-106" aria-label="106"></a><span class="st">solar_radiation [pos=&quot;-0.159,-0.285&quot;]</span></span>
+<span id="cb17-107"><a href="#cb17-107" aria-label="107"></a><span class="st">upstream_DOC [pos=&quot;0.878,0.164&quot;]</span></span>
+<span id="cb17-108"><a href="#cb17-108" aria-label="108"></a><span class="st">Max_dam_height -&gt; WRT</span></span>
+<span id="cb17-109"><a href="#cb17-109" aria-label="109"></a><span class="st">WRT -&gt; macrophytes</span></span>
+<span id="cb17-110"><a href="#cb17-110" aria-label="110"></a><span class="st">WRT -&gt; phytoplankton</span></span>
+<span id="cb17-111"><a href="#cb17-111" aria-label="111"></a><span class="st">channel_gradient -&gt; WRT</span></span>
+<span id="cb17-112"><a href="#cb17-112" aria-label="112"></a><span class="st">lateral_connectivity -&gt; WRT</span></span>
+<span id="cb17-113"><a href="#cb17-113" aria-label="113"></a><span class="st">macrophytes -&gt; delta_DOC</span></span>
+<span id="cb17-114"><a href="#cb17-114" aria-label="114"></a><span class="st">number_dams -&gt; WRT</span></span>
+<span id="cb17-115"><a href="#cb17-115" aria-label="115"></a><span class="st">phytoplankton -&gt; delta_DOC</span></span>
+<span id="cb17-116"><a href="#cb17-116" aria-label="116"></a><span class="st">soil_litter -&gt; delta_DOC</span></span>
+<span id="cb17-117"><a href="#cb17-117" aria-label="117"></a><span class="st">solar_radiation -&gt; WRT</span></span>
+<span id="cb17-118"><a href="#cb17-118" aria-label="118"></a><span class="st">solar_radiation -&gt; macrophytes</span></span>
+<span id="cb17-119"><a href="#cb17-119" aria-label="119"></a><span class="st">solar_radiation -&gt; phytoplankton</span></span>
+<span id="cb17-120"><a href="#cb17-120" aria-label="120"></a><span class="st">solar_radiation -&gt; soil_litter</span></span>
+<span id="cb17-121"><a href="#cb17-121" aria-label="121"></a><span class="st">upstream_DOC -&gt; delta_DOC</span></span>
+<span id="cb17-122"><a href="#cb17-122" aria-label="122"></a><span class="st">}</span></span>
+<span id="cb17-123"><a href="#cb17-123" aria-label="123"></a></span>
+<span id="cb17-124"><a href="#cb17-124" aria-label="124"></a><span class="st">&#39;</span></span>
+<span id="cb17-125"><a href="#cb17-125" aria-label="125"></a>)</span>
+<span id="cb17-126"><a href="#cb17-126" aria-label="126"></a></span>
+<span id="cb17-127"><a href="#cb17-127" aria-label="127"></a><span class="co">#plot(dag)</span></span>
+<span id="cb17-128"><a href="#cb17-128" aria-label="128"></a><span class="in">```</span></span>
+<span id="cb17-129"><a href="#cb17-129" aria-label="129"></a></span>
+<span id="cb17-130"><a href="#cb17-130" aria-label="130"></a><span class="al">![**Extended DAG including `lateral_connectivity` (Appendix S1, Figure S8).** Identical to the main SCM except for one added causal path, from `lateral_connectivity` to water residence time (`WRT`). Because `lateral_connectivity` has no parents, no back-door path to `delta_DOC` exists and its total effect is identified without adjustment; the open front-door paths run through `WRT` and the primary producers.](../../images/DAG_lateral_conn.png)</span>{#fig-daglateral}</span>
+<span id="cb17-131"><a href="#cb17-131" aria-label="131"></a></span>
+<span id="cb17-132"><a href="#cb17-132" aria-label="132"></a>So in this DAG, there are exactly **two open front-door paths**:</span>
+<span id="cb17-133"><a href="#cb17-133" aria-label="133"></a></span>
+<span id="cb17-134"><a href="#cb17-134" aria-label="134"></a><span class="ss">1.  </span>lateral_connectivity → WRT → macrophytes → delta_DOC</span>
+<span id="cb17-135"><a href="#cb17-135" aria-label="135"></a></span>
+<span id="cb17-136"><a href="#cb17-136" aria-label="136"></a><span class="ss">2.  </span>lateral_connectivity → WRT → phytoplankton → delta_DOC</span>
+<span id="cb17-137"><a href="#cb17-137" aria-label="137"></a></span>
+<span id="cb17-138"><a href="#cb17-138" aria-label="138"></a>If our question question is: how much does connectivity influence DOC overall, then:</span>
+<span id="cb17-139"><a href="#cb17-139" aria-label="139"></a></span>
+<span id="cb17-140"><a href="#cb17-140" aria-label="140"></a>The total effect of <span class="in">`lateral_connectivity`</span> on <span class="in">`delta_DOC`</span> is the *sum of all causal influence* flowing through every open path — direct arrow (if any) plus every mediated pathway (through <span class="in">`WRT`</span>, <span class="in">`macrophytes`</span>, <span class="in">`phytoplankton`</span>, <span class="in">`soil_litter`</span>, etc.).</span>
+<span id="cb17-141"><a href="#cb17-141" aria-label="141"></a></span>
+<span id="cb17-142"><a href="#cb17-142" aria-label="142"></a><span class="in">```{r adjset_total}</span></span>
+<span id="cb17-143"><a href="#cb17-143" aria-label="143"></a><span class="co"># Step 3-4: backdoor paths and adjustment sets, for TOTAL effect</span></span>
+<span id="cb17-144"><a href="#cb17-144" aria-label="144"></a><span class="fu">adjustmentSets</span>(dag, <span class="at">exposure =</span> <span class="st">&quot;lateral_connectivity&quot;</span>, <span class="at">outcome =</span> <span class="st">&quot;delta_DOC&quot;</span>, <span class="at">effect =</span> <span class="st">&quot;total&quot;</span>)</span>
+<span id="cb17-145"><a href="#cb17-145" aria-label="145"></a><span class="co"># list the open paths (the orange front-door paths in Appendix S1: Figure S8)</span></span>
+<span id="cb17-146"><a href="#cb17-146" aria-label="146"></a><span class="fu">paths</span>(dag, <span class="st">&quot;lateral_connectivity&quot;</span>, <span class="st">&quot;delta_DOC&quot;</span>)</span>
+<span id="cb17-147"><a href="#cb17-147" aria-label="147"></a><span class="in">```</span></span>
+<span id="cb17-148"><a href="#cb17-148" aria-label="148"></a></span>
+<span id="cb17-149"><a href="#cb17-149" aria-label="149"></a>Since there&#39;s no backdoor path (nothing causes <span class="in">`lateral_connectivity`</span>), there&#39;s nothing to adjust for — you want all those mediator paths to stay open so their contribution is captured in the estimate. That&#39;s why the answer is <span class="in">`{}`</span>.</span>
+<span id="cb17-150"><a href="#cb17-150" aria-label="150"></a></span>
+<span id="cb17-151"><a href="#cb17-151" aria-label="151"></a>::: {.callout-important appearance=&quot;simple&quot;}</span>
+<span id="cb17-152"><a href="#cb17-152" aria-label="152"></a>We conclude that:</span>
+<span id="cb17-153"><a href="#cb17-153" aria-label="153"></a></span>
+<span id="cb17-154"><a href="#cb17-154" aria-label="154"></a>**No open biasing paths.**</span>
+<span id="cb17-155"><a href="#cb17-155" aria-label="155"></a></span>
+<span id="cb17-156"><a href="#cb17-156" aria-label="156"></a>No adjustment is necessary to estimate the total effect of lateral_connectivity on delta_DOC.</span>
+<span id="cb17-157"><a href="#cb17-157" aria-label="157"></a>:::</span>
+<span id="cb17-158"><a href="#cb17-158" aria-label="158"></a></span>
+<span id="cb17-159"><a href="#cb17-159" aria-label="159"></a>That means the *total* effect of <span class="in">`WRT`</span> on <span class="in">`delta_DOC`</span> is also identified with an empty adjustment set — we can regress <span class="in">`delta_DOC`</span> directly on <span class="in">`WRT`</span> alone, skipping <span class="in">`macrophytes`</span> and <span class="in">`phytoplankton`</span> entirely, and still get an unbiased estimate of WRT&#39;s total downstream effect.</span>
+<span id="cb17-160"><a href="#cb17-160" aria-label="160"></a></span>
+<span id="cb17-161"><a href="#cb17-161" aria-label="161"></a><span class="fu">## Load data</span></span>
+<span id="cb17-162"><a href="#cb17-162" aria-label="162"></a></span>
+<span id="cb17-163"><a href="#cb17-163" aria-label="163"></a>We are going to load the data sent by Kaspar Berger (<span class="co">[</span><span class="ot">bergersumis\@gmail.com</span><span class="co">](mailto:bergersumis@gmail.com)</span>).</span>
+<span id="cb17-164"><a href="#cb17-164" aria-label="164"></a></span>
+<span id="cb17-165"><a href="#cb17-165" aria-label="165"></a><span class="in">```{r load_processed_data_frame}</span></span>
+<span id="cb17-166"><a href="#cb17-166" aria-label="166"></a>l <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">here</span>(<span class="st">&quot;data&quot;</span>,<span class="st">&quot;processed&quot;</span>,<span class="st">&quot;later_connectivity_berger.csv&quot;</span>))</span>
+<span id="cb17-167"><a href="#cb17-167" aria-label="167"></a></span>
+<span id="cb17-168"><a href="#cb17-168" aria-label="168"></a><span class="co"># Standardize category labels to match your established naming scheme</span></span>
+<span id="cb17-169"><a href="#cb17-169" aria-label="169"></a>l<span class="sc">$</span>lateral_connectivity <span class="ot">&lt;-</span> <span class="fu">recode</span>(l<span class="sc">$</span>lateral_connectivity,</span>
+<span id="cb17-170"><a href="#cb17-170" aria-label="170"></a>                                 <span class="st">&quot;No&quot;</span> <span class="ot">=</span> <span class="st">&quot;No_wetland&quot;</span>,</span>
+<span id="cb17-171"><a href="#cb17-171" aria-label="171"></a>                                 <span class="st">&quot;Yes_not_connected&quot;</span> <span class="ot">=</span> <span class="st">&quot;yes_not_connected&quot;</span>,</span>
+<span id="cb17-172"><a href="#cb17-172" aria-label="172"></a>                                 <span class="st">&quot;Yes_connected&quot;</span> <span class="ot">=</span> <span class="st">&quot;yes_connected&quot;</span>)</span>
+<span id="cb17-173"><a href="#cb17-173" aria-label="173"></a></span>
+<span id="cb17-174"><a href="#cb17-174" aria-label="174"></a><span class="co"># Resolve the two real conflicts: both AEG01_1 and AEG01_2 are confirmed</span></span>
+<span id="cb17-175"><a href="#cb17-175" aria-label="175"></a><span class="co"># &quot;yes_not_connected&quot; — overwrite all instances, then dedup</span></span>
+<span id="cb17-176"><a href="#cb17-176" aria-label="176"></a>l<span class="sc">$</span>lateral_connectivity[l<span class="sc">$</span>site <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;AEG01_1&quot;</span>, <span class="st">&quot;AEG01_2&quot;</span>)] <span class="ot">&lt;-</span> <span class="st">&quot;yes_not_connected&quot;</span></span>
+<span id="cb17-177"><a href="#cb17-177" aria-label="177"></a></span>
+<span id="cb17-178"><a href="#cb17-178" aria-label="178"></a><span class="co"># Now every duplicate (the 2 conflicts + the 3 exact dupes: TG02, MUE03, TG02_17)</span></span>
+<span id="cb17-179"><a href="#cb17-179" aria-label="179"></a><span class="co"># collapses to identical rows, so unique() removes all of them cleanly</span></span>
+<span id="cb17-180"><a href="#cb17-180" aria-label="180"></a>l_clean <span class="ot">&lt;-</span> <span class="fu">unique</span>(l)</span>
+<span id="cb17-181"><a href="#cb17-181" aria-label="181"></a></span>
+<span id="cb17-182"><a href="#cb17-182" aria-label="182"></a><span class="co"># dataframe that we do not remove NAs observations </span></span>
+<span id="cb17-183"><a href="#cb17-183" aria-label="183"></a>m6 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">here</span>(<span class="st">&quot;data&quot;</span>,<span class="st">&quot;processed&quot;</span>,<span class="st">&quot;m6.csv&quot;</span>)) <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">season =</span> <span class="fu">as.factor</span>(season)) </span>
+<span id="cb17-184"><a href="#cb17-184" aria-label="184"></a></span>
+<span id="cb17-185"><a href="#cb17-185" aria-label="185"></a><span class="in">```</span></span>
+<span id="cb17-186"><a href="#cb17-186" aria-label="186"></a></span>
+<span id="cb17-187"><a href="#cb17-187" aria-label="187"></a>Add the <span class="in">`later connectivity`</span> variable to the original data frame:</span>
+<span id="cb17-188"><a href="#cb17-188" aria-label="188"></a></span>
+<span id="cb17-189"><a href="#cb17-189" aria-label="189"></a><span class="in">```{r merge_later_conn}</span></span>
+<span id="cb17-190"><a href="#cb17-190" aria-label="190"></a><span class="co"># lateral_connectivity lives in a separate table `l`, keyed by site —</span></span>
+<span id="cb17-191"><a href="#cb17-191" aria-label="191"></a><span class="co"># merge it into your main data before fitting</span></span>
+<span id="cb17-192"><a href="#cb17-192" aria-label="192"></a><span class="co"># Re-merge and confirm the row count is now exactly right</span></span>
+<span id="cb17-193"><a href="#cb17-193" aria-label="193"></a>m6_merged <span class="ot">&lt;-</span> <span class="fu">merge</span>(m6, l_clean, <span class="at">by =</span> <span class="st">&quot;site&quot;</span>, <span class="at">all.x =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb17-194"><a href="#cb17-194" aria-label="194"></a></span>
+<span id="cb17-195"><a href="#cb17-195" aria-label="195"></a>na_sites <span class="ot">&lt;-</span> <span class="fu">sort</span>(<span class="fu">unique</span>(m6_merged<span class="sc">$</span>site[<span class="fu">is.na</span>(m6_merged<span class="sc">$</span>lateral_connectivity)]))</span>
+<span id="cb17-196"><a href="#cb17-196" aria-label="196"></a></span>
+<span id="cb17-197"><a href="#cb17-197" aria-label="197"></a><span class="co"># Filter to summer observations only (one row per site), then build the same table</span></span>
+<span id="cb17-198"><a href="#cb17-198" aria-label="198"></a>m6_summer <span class="ot">&lt;-</span> m6_merged[m6_merged<span class="sc">$</span>season <span class="sc">==</span> <span class="st">&quot;summer&quot;</span>, ]   <span class="co"># adjust value if your coding differs (e.g. &quot;Summer&quot;, &quot;S&quot;)</span></span>
+<span id="cb17-199"><a href="#cb17-199" aria-label="199"></a></span>
+<span id="cb17-200"><a href="#cb17-200" aria-label="200"></a>tab_summer <span class="ot">&lt;-</span> <span class="fu">table</span>(m6_summer<span class="sc">$</span>lateral_connectivity, <span class="at">useNA =</span> <span class="st">&quot;always&quot;</span>)</span>
+<span id="cb17-201"><a href="#cb17-201" aria-label="201"></a>pct_summer <span class="ot">&lt;-</span> <span class="fu">round</span>(<span class="fu">prop.table</span>(tab_summer) <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>)</span>
+<span id="cb17-202"><a href="#cb17-202" aria-label="202"></a></span>
+<span id="cb17-203"><a href="#cb17-203" aria-label="203"></a>result_summer <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb17-204"><a href="#cb17-204" aria-label="204"></a>  <span class="at">category =</span> <span class="fu">names</span>(tab_summer),</span>
+<span id="cb17-205"><a href="#cb17-205" aria-label="205"></a>  <span class="at">n        =</span> <span class="fu">as.vector</span>(tab_summer),</span>
+<span id="cb17-206"><a href="#cb17-206" aria-label="206"></a>  <span class="at">pct      =</span> <span class="fu">paste0</span>(<span class="fu">as.vector</span>(pct_summer), <span class="st">&quot;%&quot;</span>)</span>
+<span id="cb17-207"><a href="#cb17-207" aria-label="207"></a>)</span>
+<span id="cb17-208"><a href="#cb17-208" aria-label="208"></a></span>
+<span id="cb17-209"><a href="#cb17-209" aria-label="209"></a>result_summer</span>
+<span id="cb17-210"><a href="#cb17-210" aria-label="210"></a><span class="in">```</span></span>
+<span id="cb17-211"><a href="#cb17-211" aria-label="211"></a></span>
+<span id="cb17-214"><a href="#cb17-214" aria-label="212"></a><span class="in">```{r}</span></span>
+<span id="cb17-215"><a href="#cb17-215" aria-label="213"></a><span class="co">#| label: na-sites-list</span></span>
+<span id="cb17-216"><a href="#cb17-216" aria-label="214"></a><span class="co">#| echo: false</span></span>
+<span id="cb17-217"><a href="#cb17-217" aria-label="215"></a><span class="co">#| output: asis</span></span>
+<span id="cb17-218"><a href="#cb17-218" aria-label="216"></a></span>
+<span id="cb17-219"><a href="#cb17-219" aria-label="217"></a>na_sites <span class="ot">&lt;-</span> <span class="fu">sort</span>(<span class="fu">unique</span>(m6_merged<span class="sc">$</span>site[<span class="fu">is.na</span>(m6_merged<span class="sc">$</span>lateral_connectivity)]))</span>
+<span id="cb17-220"><a href="#cb17-220" aria-label="218"></a></span>
+<span id="cb17-221"><a href="#cb17-221" aria-label="219"></a><span class="fu">cat</span>(<span class="st">&quot;::: {.callout-warning title=</span><span class="sc">\&quot;</span><span class="st">Sites missing `lateral_connectivity` classification</span><span class="sc">\&quot;</span><span class="st">}</span><span class="sc">\n\n</span><span class="st">&quot;</span>)</span>
+<span id="cb17-222"><a href="#cb17-222" aria-label="220"></a><span class="fu">cat</span>(<span class="st">&quot;**&quot;</span>, <span class="fu">length</span>(na_sites), <span class="st">&quot; sites** (&quot;</span>, <span class="fu">length</span>(na_sites) <span class="sc">*</span> <span class="dv">2</span>,</span>
+<span id="cb17-223"><a href="#cb17-223" aria-label="221"></a>    <span class="st">&quot; rows across both seasons) lack a connectivity category:</span><span class="sc">\n\n</span><span class="st">&quot;</span>, <span class="at">sep =</span> <span class="st">&quot;&quot;</span>)</span>
+<span id="cb17-224"><a href="#cb17-224" aria-label="222"></a><span class="fu">cat</span>(<span class="fu">paste0</span>(<span class="st">&quot;`&quot;</span>, na_sites, <span class="st">&quot;`&quot;</span>, <span class="at">collapse =</span> <span class="st">&quot;, &quot;</span>))</span>
+<span id="cb17-225"><a href="#cb17-225" aria-label="223"></a><span class="fu">cat</span>(<span class="st">&quot;</span><span class="sc">\n\n</span><span class="st">:::</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb17-226"><a href="#cb17-226" aria-label="224"></a><span class="in">```</span></span>
+<span id="cb17-227"><a href="#cb17-227" aria-label="225"></a></span>
+<span id="cb17-228"><a href="#cb17-228" aria-label="226"></a><span class="fu">### Drop NA rows:</span></span>
+<span id="cb17-229"><a href="#cb17-229" aria-label="227"></a></span>
+<span id="cb17-230"><a href="#cb17-230" aria-label="228"></a><span class="in">```{r drop_nas}</span></span>
+<span id="cb17-231"><a href="#cb17-231" aria-label="229"></a></span>
+<span id="cb17-232"><a href="#cb17-232" aria-label="230"></a>m6_fit <span class="ot">&lt;-</span> m6_merged[<span class="sc">!</span><span class="fu">is.na</span>(m6_merged<span class="sc">$</span>lateral_connectivity), ]</span>
+<span id="cb17-233"><a href="#cb17-233" aria-label="231"></a></span>
+<span id="cb17-234"><a href="#cb17-234" aria-label="232"></a><span class="fu">nrow</span>(m6_fit)   <span class="co"># should be 362 - 44 = 318</span></span>
+<span id="cb17-235"><a href="#cb17-235" aria-label="233"></a></span>
+<span id="cb17-236"><a href="#cb17-236" aria-label="234"></a><span class="co"># set factor levels with No_wetland as reference</span></span>
+<span id="cb17-237"><a href="#cb17-237" aria-label="235"></a>m6_fit<span class="sc">$</span>lateral_connectivity <span class="ot">&lt;-</span> <span class="fu">factor</span>(</span>
+<span id="cb17-238"><a href="#cb17-238" aria-label="236"></a>  m6_fit<span class="sc">$</span>lateral_connectivity,</span>
+<span id="cb17-239"><a href="#cb17-239" aria-label="237"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;No_wetland&quot;</span>, <span class="st">&quot;yes_not_connected&quot;</span>, <span class="st">&quot;yes_connected&quot;</span>)</span>
+<span id="cb17-240"><a href="#cb17-240" aria-label="238"></a>)</span>
+<span id="cb17-241"><a href="#cb17-241" aria-label="239"></a></span>
+<span id="cb17-242"><a href="#cb17-242" aria-label="240"></a><span class="fu">table</span>(m6_fit<span class="sc">$</span>lateral_connectivity)  <span class="co"># confirm no NAs remain, counts look right</span></span>
+<span id="cb17-243"><a href="#cb17-243" aria-label="241"></a><span class="in">```</span></span>
+<span id="cb17-244"><a href="#cb17-244" aria-label="242"></a></span>
+<span id="cb17-245"><a href="#cb17-245" aria-label="243"></a><span class="fu">### Model formula</span></span>
+<span id="cb17-246"><a href="#cb17-246" aria-label="244"></a></span>
+<span id="cb17-247"><a href="#cb17-247" aria-label="245"></a>This is the 2-equation parsimonious version we settled on — <span class="in">`lateral_connectivity`</span> enters only the <span class="in">`water_res_time_z`</span> equation (its sole causal pathway per the DAG), and <span class="in">`delta_DOC`</span> regresses on the mediator <span class="in">`WRT`</span> alone (no backdoor adjustment needed, since the total effect is unconfounded):</span>
+<span id="cb17-248"><a href="#cb17-248" aria-label="246"></a></span>
+<span id="cb17-249"><a href="#cb17-249" aria-label="247"></a><span class="in">```{r fit_model , message=FALSE, }</span></span>
+<span id="cb17-250"><a href="#cb17-250" aria-label="248"></a></span>
+<span id="cb17-251"><a href="#cb17-251" aria-label="249"></a>bform <span class="ot">&lt;-</span> </span>
+<span id="cb17-252"><a href="#cb17-252" aria-label="250"></a>  <span class="fu">bf</span>(delta_DOC <span class="sc">|</span> <span class="fu">mi</span>(<span class="fl">0.283</span>) <span class="sc">~</span> <span class="dv">0</span> <span class="sc">+</span> Intercept <span class="sc">+</span> </span>
+<span id="cb17-253"><a href="#cb17-253" aria-label="251"></a>       <span class="fu">mi</span>(water_res_time_z) <span class="sc">+</span></span>
+<span id="cb17-254"><a href="#cb17-254" aria-label="252"></a>       (<span class="dv">0</span> <span class="sc">+</span> Intercept <span class="sc">|</span> site),</span>
+<span id="cb17-255"><a href="#cb17-255" aria-label="253"></a>     <span class="at">family =</span> <span class="fu">student</span>()) <span class="sc">+</span> </span>
+<span id="cb17-256"><a href="#cb17-256" aria-label="254"></a>  </span>
+<span id="cb17-257"><a href="#cb17-257" aria-label="255"></a>  <span class="fu">bf</span>(water_res_time_z <span class="sc">|</span> <span class="fu">mi</span>()  <span class="sc">~</span> <span class="dv">0</span> <span class="sc">+</span> n_dams_z <span class="sc">+</span> <span class="fu">mi</span>(dam_height_z) <span class="sc">+</span> slope_z <span class="sc">+</span> </span>
+<span id="cb17-258"><a href="#cb17-258" aria-label="256"></a>       lateral_connectivity <span class="sc">+</span> solar_z,</span>
+<span id="cb17-259"><a href="#cb17-259" aria-label="257"></a>     <span class="at">family =</span> <span class="fu">gaussian</span>()) <span class="sc">+</span></span>
+<span id="cb17-260"><a href="#cb17-260" aria-label="258"></a>  </span>
+<span id="cb17-261"><a href="#cb17-261" aria-label="259"></a>  <span class="fu">bf</span>(dam_height_z <span class="sc">|</span> <span class="fu">mi</span>()  <span class="sc">~</span> <span class="dv">0</span> <span class="sc">+</span> Intercept, <span class="at">family =</span> <span class="fu">gaussian</span>()) <span class="sc">+</span></span>
+<span id="cb17-262"><a href="#cb17-262" aria-label="260"></a>  </span>
+<span id="cb17-263"><a href="#cb17-263" aria-label="261"></a>  <span class="fu">set_rescor</span>(<span class="cn">FALSE</span>)</span>
+<span id="cb17-264"><a href="#cb17-264" aria-label="262"></a></span>
+<span id="cb17-265"><a href="#cb17-265" aria-label="263"></a><span class="co">#detach(&quot;package:rethinking&quot;, unload = TRUE)</span></span>
+<span id="cb17-266"><a href="#cb17-266" aria-label="264"></a></span>
+<span id="cb17-267"><a href="#cb17-267" aria-label="265"></a><span class="co"># Informative priors: shared parameters carry the same priors as in the main SCM (notebook.qmd);</span></span>
+<span id="cb17-268"><a href="#cb17-268" aria-label="266"></a><span class="co"># the three connectivity-level coefficients get weakly-informative normal(0, 1) priors (WRT is z-scored).</span></span>
+<span id="cb17-269"><a href="#cb17-269" aria-label="267"></a>prio_conn <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb17-270"><a href="#cb17-270" aria-label="268"></a>  <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">0</span>, <span class="fl">2.5</span>),       <span class="at">class =</span> <span class="st">&quot;b&quot;</span>, <span class="at">coef =</span> <span class="st">&quot;Intercept&quot;</span>,          <span class="at">resp =</span> <span class="st">&quot;deltaDOC&quot;</span>),</span>
+<span id="cb17-271"><a href="#cb17-271" aria-label="269"></a>  <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">0</span>, <span class="fl">0.1</span>),       <span class="at">class =</span> <span class="st">&quot;b&quot;</span>, <span class="at">coef =</span> <span class="st">&quot;miwater_res_time_z&quot;</span>, <span class="at">resp =</span> <span class="st">&quot;deltaDOC&quot;</span>),</span>
+<span id="cb17-272"><a href="#cb17-272" aria-label="270"></a>  <span class="fu">prior</span>(<span class="fu">student_t</span>(<span class="dv">3</span>, <span class="dv">0</span>, <span class="fl">2.5</span>), <span class="at">class =</span> <span class="st">&quot;sigma&quot;</span>,                          <span class="at">resp =</span> <span class="st">&quot;deltaDOC&quot;</span>),</span>
+<span id="cb17-273"><a href="#cb17-273" aria-label="271"></a>  <span class="fu">prior</span>(<span class="fu">gamma</span>(<span class="dv">2</span>, <span class="fl">0.1</span>),        <span class="at">class =</span> <span class="st">&quot;nu&quot;</span>,                             <span class="at">resp =</span> <span class="st">&quot;deltaDOC&quot;</span>),</span>
+<span id="cb17-274"><a href="#cb17-274" aria-label="272"></a>  <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">0</span>, <span class="dv">2</span>),         <span class="at">class =</span> <span class="st">&quot;sd&quot;</span>, <span class="at">coef =</span> <span class="st">&quot;Intercept&quot;</span>, <span class="at">group =</span> <span class="st">&quot;site&quot;</span>, <span class="at">resp =</span> <span class="st">&quot;deltaDOC&quot;</span>),</span>
+<span id="cb17-275"><a href="#cb17-275" aria-label="273"></a>  <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="fl">0.15</span>, <span class="fl">0.075</span>),  <span class="at">class =</span> <span class="st">&quot;b&quot;</span>, <span class="at">coef =</span> <span class="st">&quot;n_dams_z&quot;</span>,           <span class="at">resp =</span> <span class="st">&quot;waterrestimez&quot;</span>),</span>
+<span id="cb17-276"><a href="#cb17-276" aria-label="274"></a>  <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="fl">0.15</span>, <span class="fl">0.075</span>),  <span class="at">class =</span> <span class="st">&quot;b&quot;</span>, <span class="at">coef =</span> <span class="st">&quot;midam_height_z&quot;</span>,     <span class="at">resp =</span> <span class="st">&quot;waterrestimez&quot;</span>),</span>
+<span id="cb17-277"><a href="#cb17-277" aria-label="275"></a>  <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">0</span>, <span class="fl">0.075</span>),     <span class="at">class =</span> <span class="st">&quot;b&quot;</span>, <span class="at">coef =</span> <span class="st">&quot;slope_z&quot;</span>,            <span class="at">resp =</span> <span class="st">&quot;waterrestimez&quot;</span>),</span>
+<span id="cb17-278"><a href="#cb17-278" aria-label="276"></a>  <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">0</span>, <span class="fl">0.075</span>),     <span class="at">class =</span> <span class="st">&quot;b&quot;</span>, <span class="at">coef =</span> <span class="st">&quot;solar_z&quot;</span>,            <span class="at">resp =</span> <span class="st">&quot;waterrestimez&quot;</span>),</span>
+<span id="cb17-279"><a href="#cb17-279" aria-label="277"></a>  <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">0</span>, <span class="dv">1</span>),         <span class="at">class =</span> <span class="st">&quot;b&quot;</span>, <span class="at">coef =</span> <span class="st">&quot;lateral_connectivityNo_wetland&quot;</span>,        <span class="at">resp =</span> <span class="st">&quot;waterrestimez&quot;</span>),</span>
+<span id="cb17-280"><a href="#cb17-280" aria-label="278"></a>  <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">0</span>, <span class="dv">1</span>),         <span class="at">class =</span> <span class="st">&quot;b&quot;</span>, <span class="at">coef =</span> <span class="st">&quot;lateral_connectivityyes_not_connected&quot;</span>, <span class="at">resp =</span> <span class="st">&quot;waterrestimez&quot;</span>),</span>
+<span id="cb17-281"><a href="#cb17-281" aria-label="279"></a>  <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">0</span>, <span class="dv">1</span>),         <span class="at">class =</span> <span class="st">&quot;b&quot;</span>, <span class="at">coef =</span> <span class="st">&quot;lateral_connectivityyes_connected&quot;</span>,     <span class="at">resp =</span> <span class="st">&quot;waterrestimez&quot;</span>),</span>
+<span id="cb17-282"><a href="#cb17-282" aria-label="280"></a>  <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">0</span>, <span class="fl">0.5</span>),       <span class="at">class =</span> <span class="st">&quot;sigma&quot;</span>,                          <span class="at">resp =</span> <span class="st">&quot;waterrestimez&quot;</span>),</span>
+<span id="cb17-283"><a href="#cb17-283" aria-label="281"></a>  <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">0</span>, <span class="dv">1</span>),         <span class="at">class =</span> <span class="st">&quot;b&quot;</span>, <span class="at">coef =</span> <span class="st">&quot;Intercept&quot;</span>,          <span class="at">resp =</span> <span class="st">&quot;damheightz&quot;</span>),</span>
+<span id="cb17-284"><a href="#cb17-284" aria-label="282"></a>  <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">0</span>, <span class="fl">0.5</span>),       <span class="at">class =</span> <span class="st">&quot;sigma&quot;</span>,                          <span class="at">resp =</span> <span class="st">&quot;damheightz&quot;</span>))</span>
+<span id="cb17-285"><a href="#cb17-285" aria-label="283"></a></span>
+<span id="cb17-286"><a href="#cb17-286" aria-label="284"></a>fit_connectivity <span class="ot">&lt;-</span> <span class="fu">brm</span>(bform, <span class="at">data =</span> m6_fit, </span>
+<span id="cb17-287"><a href="#cb17-287" aria-label="285"></a>                        <span class="at">prior =</span> prio_conn,</span>
+<span id="cb17-288"><a href="#cb17-288" aria-label="286"></a>                        <span class="at">chains =</span> <span class="dv">4</span>, </span>
+<span id="cb17-289"><a href="#cb17-289" aria-label="287"></a>                        <span class="at">cores =</span> <span class="dv">10</span>, <span class="at">seed =</span> <span class="dv">42</span>,</span>
+<span id="cb17-290"><a href="#cb17-290" aria-label="288"></a>                        <span class="at">backend =</span> <span class="st">&quot;cmdstanr&quot;</span>,</span>
+<span id="cb17-291"><a href="#cb17-291" aria-label="289"></a>                        <span class="at">file =</span> <span class="fu">here</span>(<span class="st">&quot;results&quot;</span>,<span class="st">&quot;models_fit&quot;</span>,<span class="st">&quot;fitconnectivity_informative&quot;</span>),</span>
+<span id="cb17-292"><a href="#cb17-292" aria-label="290"></a>                        <span class="at">sample_prior =</span> <span class="cn">FALSE</span></span>
+<span id="cb17-293"><a href="#cb17-293" aria-label="291"></a>)</span>
+<span id="cb17-294"><a href="#cb17-294" aria-label="292"></a></span>
+<span id="cb17-295"><a href="#cb17-295" aria-label="293"></a><span class="co">#summary(fit_connectivity)</span></span>
+<span id="cb17-296"><a href="#cb17-296" aria-label="294"></a></span>
+<span id="cb17-297"><a href="#cb17-297" aria-label="295"></a><span class="in">```</span></span>
+<span id="cb17-298"><a href="#cb17-298" aria-label="296"></a></span>
+<span id="cb17-299"><a href="#cb17-299" aria-label="297"></a>Now we are going to extract the posterior draws from the model we fitted:</span>
+<span id="cb17-300"><a href="#cb17-300" aria-label="298"></a></span>
+<span id="cb17-301"><a href="#cb17-301" aria-label="299"></a><span class="in">```{r draws}</span></span>
+<span id="cb17-302"><a href="#cb17-302" aria-label="300"></a></span>
+<span id="cb17-303"><a href="#cb17-303" aria-label="301"></a>draws <span class="ot">&lt;-</span> <span class="fu">as_draws_df</span>(fit_connectivity)</span>
+<span id="cb17-304"><a href="#cb17-304" aria-label="302"></a></span>
+<span id="cb17-305"><a href="#cb17-305" aria-label="303"></a>mean_no_wetland    <span class="ot">&lt;-</span> draws<span class="sc">$</span>b_waterrestimez_lateral_connectivityNo_wetland</span>
+<span id="cb17-306"><a href="#cb17-306" aria-label="304"></a>mean_not_connected <span class="ot">&lt;-</span> draws<span class="sc">$</span>b_waterrestimez_lateral_connectivityyes_not_connected</span>
+<span id="cb17-307"><a href="#cb17-307" aria-label="305"></a>mean_connected     <span class="ot">&lt;-</span> draws<span class="sc">$</span>b_waterrestimez_lateral_connectivityyes_connected</span>
+<span id="cb17-308"><a href="#cb17-308" aria-label="306"></a></span>
+<span id="cb17-309"><a href="#cb17-309" aria-label="307"></a>effect_wrt_not_connected <span class="ot">&lt;-</span> mean_not_connected <span class="sc">-</span> mean_no_wetland</span>
+<span id="cb17-310"><a href="#cb17-310" aria-label="308"></a>effect_wrt_connected     <span class="ot">&lt;-</span> mean_connected <span class="sc">-</span> mean_no_wetland</span>
+<span id="cb17-311"><a href="#cb17-311" aria-label="309"></a></span>
+<span id="cb17-312"><a href="#cb17-312" aria-label="310"></a>s1 <span class="ot">&lt;-</span> <span class="fu">summarise_draws</span>(<span class="fu">data.frame</span>(</span>
+<span id="cb17-313"><a href="#cb17-313" aria-label="311"></a>  <span class="at">effect_wrt_not_connected =</span> effect_wrt_not_connected,</span>
+<span id="cb17-314"><a href="#cb17-314" aria-label="312"></a>  <span class="at">effect_wrt_connected     =</span> effect_wrt_connected</span>
+<span id="cb17-315"><a href="#cb17-315" aria-label="313"></a>))</span>
+<span id="cb17-316"><a href="#cb17-316" aria-label="314"></a></span>
+<span id="cb17-317"><a href="#cb17-317" aria-label="315"></a>wrt_to_doc <span class="ot">&lt;-</span> draws<span class="sc">$</span>bsp_deltaDOC_miwater_res_time_z</span>
+<span id="cb17-318"><a href="#cb17-318" aria-label="316"></a></span>
+<span id="cb17-319"><a href="#cb17-319" aria-label="317"></a>total_effect_not_connected <span class="ot">&lt;-</span> effect_wrt_not_connected <span class="sc">*</span> wrt_to_doc</span>
+<span id="cb17-320"><a href="#cb17-320" aria-label="318"></a>total_effect_connected     <span class="ot">&lt;-</span> effect_wrt_connected <span class="sc">*</span> wrt_to_doc</span>
+<span id="cb17-321"><a href="#cb17-321" aria-label="319"></a></span>
+<span id="cb17-322"><a href="#cb17-322" aria-label="320"></a>s2 <span class="ot">&lt;-</span> <span class="fu">summarise_draws</span>(<span class="fu">data.frame</span>(</span>
+<span id="cb17-323"><a href="#cb17-323" aria-label="321"></a>  <span class="at">total_effect_not_connected =</span> total_effect_not_connected,</span>
+<span id="cb17-324"><a href="#cb17-324" aria-label="322"></a>  <span class="at">total_effect_connected     =</span> total_effect_connected</span>
+<span id="cb17-325"><a href="#cb17-325" aria-label="323"></a>))</span>
+<span id="cb17-326"><a href="#cb17-326" aria-label="324"></a></span>
+<span id="cb17-327"><a href="#cb17-327" aria-label="325"></a>effects_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb17-328"><a href="#cb17-328" aria-label="326"></a>  <span class="at">not_connected =</span> total_effect_not_connected,</span>
+<span id="cb17-329"><a href="#cb17-329" aria-label="327"></a>  <span class="at">connected     =</span> total_effect_connected</span>
+<span id="cb17-330"><a href="#cb17-330" aria-label="328"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb17-331"><a href="#cb17-331" aria-label="329"></a>  <span class="fu">pivot_longer</span>(<span class="fu">everything</span>(), <span class="at">names_to =</span> <span class="st">&quot;contrast&quot;</span>, <span class="at">values_to =</span> <span class="st">&quot;effect&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb17-332"><a href="#cb17-332" aria-label="330"></a>  <span class="fu">mutate</span>(<span class="at">contrast =</span> <span class="fu">recode</span>(contrast,</span>
+<span id="cb17-333"><a href="#cb17-333" aria-label="331"></a>                           <span class="st">&quot;not_connected&quot;</span> <span class="ot">=</span> <span class="st">&quot;Yes, not connected</span><span class="sc">\n</span><span class="st">vs No wetland&quot;</span>,</span>
+<span id="cb17-334"><a href="#cb17-334" aria-label="332"></a>                           <span class="st">&quot;connected&quot;</span>      <span class="ot">=</span> <span class="st">&quot;Yes, connected</span><span class="sc">\n</span><span class="st">vs No wetland&quot;</span>))</span>
+<span id="cb17-335"><a href="#cb17-335" aria-label="333"></a><span class="in">```</span></span>
+<span id="cb17-336"><a href="#cb17-336" aria-label="334"></a></span>
+<span id="cb17-337"><a href="#cb17-337" aria-label="335"></a>Then plot the results as contrasts (Appendix S1: Figure S9):</span>
+<span id="cb17-338"><a href="#cb17-338" aria-label="336"></a></span>
+<span id="cb17-341"><a href="#cb17-341" aria-label="337"></a><span class="in">```{r}</span></span>
+<span id="cb17-342"><a href="#cb17-342" aria-label="338"></a><span class="co">#| label: fig-contrasts</span></span>
+<span id="cb17-343"><a href="#cb17-343" aria-label="339"></a><span class="co">#| fig-cap: &quot;**Appendix S1, Figure S9. Effect of lateral stream-wetland connectivity.** Left: the contrasts `effect_wrt_not_connected` and `effect_wrt_connected`, i.e. the effect of each connectivity level on water residence time relative to sites without wetland. Right: `total_effect_not_connected` and `total_effect_connected`, the total mediated effect on $\\Delta$DOC, obtained by multiplying each contrast by the WRT to $\\Delta$DOC coefficient `wrt_to_doc`. Points are posterior medians; thick and thin bars are the 66% and 95% credible intervals; the dashed line marks zero.&quot;</span></span>
+<span id="cb17-344"><a href="#cb17-344" aria-label="340"></a><span class="co">#| fig-width: 11</span></span>
+<span id="cb17-345"><a href="#cb17-345" aria-label="341"></a><span class="co">#| fig-height: 4.5</span></span>
+<span id="cb17-346"><a href="#cb17-346" aria-label="342"></a>df_s9 <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
+<span id="cb17-347"><a href="#cb17-347" aria-label="343"></a>  <span class="fu">tibble</span>(<span class="at">stage =</span> <span class="st">&quot;A&quot;</span>, <span class="at">contrast =</span> <span class="st">&quot;Wetland, not connected vs no wetland&quot;</span>, <span class="at">draw =</span> effect_wrt_not_connected),</span>
+<span id="cb17-348"><a href="#cb17-348" aria-label="344"></a>  <span class="fu">tibble</span>(<span class="at">stage =</span> <span class="st">&quot;A&quot;</span>, <span class="at">contrast =</span> <span class="st">&quot;Wetland, connected vs no wetland&quot;</span>,     <span class="at">draw =</span> effect_wrt_connected),</span>
+<span id="cb17-349"><a href="#cb17-349" aria-label="345"></a>  <span class="fu">tibble</span>(<span class="at">stage =</span> <span class="st">&quot;B&quot;</span>, <span class="at">contrast =</span> <span class="st">&quot;Wetland, not connected vs no wetland&quot;</span>, <span class="at">draw =</span> total_effect_not_connected),</span>
+<span id="cb17-350"><a href="#cb17-350" aria-label="346"></a>  <span class="fu">tibble</span>(<span class="at">stage =</span> <span class="st">&quot;B&quot;</span>, <span class="at">contrast =</span> <span class="st">&quot;Wetland, connected vs no wetland&quot;</span>,     <span class="at">draw =</span> total_effect_connected)) <span class="sc">|&gt;</span></span>
+<span id="cb17-351"><a href="#cb17-351" aria-label="347"></a>  <span class="fu">mutate</span>(<span class="at">contrast =</span> <span class="fu">factor</span>(contrast, <span class="at">levels =</span> <span class="fu">rev</span>(<span class="fu">c</span>(<span class="st">&quot;Wetland, not connected vs no wetland&quot;</span>, <span class="st">&quot;Wetland, connected vs no wetland&quot;</span>))))</span>
+<span id="cb17-352"><a href="#cb17-352" aria-label="348"></a>lab_s9 <span class="ot">&lt;-</span> <span class="fu">as_labeller</span>(<span class="fu">c</span>(<span class="at">A =</span> <span class="st">&quot;Connectivity%-&gt;%&#39;water residence time&#39;&quot;</span>, <span class="at">B =</span> <span class="st">&quot;&#39;Total effect on&#39;~Delta*&#39;DOC&#39;&quot;</span>), label_parsed)</span>
+<span id="cb17-353"><a href="#cb17-353" aria-label="349"></a>(p_s9 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(df_s9, <span class="fu">aes</span>(<span class="at">x =</span> draw, <span class="at">y =</span> contrast)) <span class="sc">+</span></span>
+<span id="cb17-354"><a href="#cb17-354" aria-label="350"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="dv">2</span>, <span class="at">colour =</span> <span class="st">&quot;grey40&quot;</span>) <span class="sc">+</span></span>
+<span id="cb17-355"><a href="#cb17-355" aria-label="351"></a>  <span class="fu">stat_halfeye</span>(<span class="at">.width =</span> <span class="fu">c</span>(.<span class="dv">66</span>, .<span class="dv">95</span>), <span class="at">fill =</span> <span class="st">&quot;steelblue&quot;</span>, <span class="at">alpha =</span> .<span class="dv">8</span>) <span class="sc">+</span></span>
+<span id="cb17-356"><a href="#cb17-356" aria-label="352"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>stage, <span class="at">scales =</span> <span class="st">&quot;free_x&quot;</span>, <span class="at">labeller =</span> lab_s9) <span class="sc">+</span></span>
+<span id="cb17-357"><a href="#cb17-357" aria-label="353"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Standardized effect&quot;</span>, <span class="at">y =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb17-358"><a href="#cb17-358" aria-label="354"></a>  <span class="fu">theme_bw</span>(<span class="at">base_size =</span> <span class="dv">15</span>) <span class="sc">+</span></span>
+<span id="cb17-359"><a href="#cb17-359" aria-label="355"></a>  <span class="fu">theme</span>(<span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">&quot;black&quot;</span>), <span class="at">panel.grid.minor =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb17-360"><a href="#cb17-360" aria-label="356"></a>        <span class="at">strip.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">&quot;grey92&quot;</span>)))</span>
+<span id="cb17-361"><a href="#cb17-361" aria-label="357"></a><span class="fu">ggsave</span>(<span class="fu">here</span>(<span class="st">&quot;overleaf&quot;</span>, <span class="st">&quot;supplementary&quot;</span>, <span class="st">&quot;figures&quot;</span>, <span class="st">&quot;media&quot;</span>, <span class="st">&quot;figS9_connectivity.png&quot;</span>), p_s9, <span class="at">width =</span> <span class="dv">11</span>, <span class="at">height =</span> <span class="fl">4.5</span>, <span class="at">dpi =</span> <span class="dv">300</span>)</span>
+<span id="cb17-362"><a href="#cb17-362" aria-label="358"></a><span class="in">```</span></span>
+<span id="cb17-363"><a href="#cb17-363" aria-label="359"></a></span>
+<span id="cb17-364"><a href="#cb17-364" aria-label="360"></a>::: {.callout-note}</span>
+<span id="cb17-365"><a href="#cb17-365" aria-label="361"></a><span class="fu">## What @fig-contrasts shows</span></span>
+<span id="cb17-366"><a href="#cb17-366" aria-label="362"></a></span>
+<span id="cb17-367"><a href="#cb17-367" aria-label="363"></a>Naming each posterior quantity explicitly (standardized effect, 90% credible interval, posterior probability of being positive):</span>
+<span id="cb17-368"><a href="#cb17-368" aria-label="364"></a></span>
+<span id="cb17-369"><a href="#cb17-369" aria-label="365"></a><span class="ss">-   </span>**`effect_wrt_not_connected`** — an unconnected wetland versus no wetland, effect on water residence time: <span class="in">`r sprintf(&quot;%+.2f&quot;, mean(effect_wrt_not_connected))`</span> <span class="co">[</span><span class="ot">`r sprintf(&quot;%.2f, %.2f&quot;, quantile(effect_wrt_not_connected,.05), quantile(effect_wrt_not_connected,.95))`</span><span class="co">]</span>, P(&gt; 0) = <span class="in">`r sprintf(&quot;%.2f&quot;, mean(effect_wrt_not_connected &gt; 0))`</span></span>
+<span id="cb17-370"><a href="#cb17-370" aria-label="366"></a><span class="ss">-   </span>**`effect_wrt_connected`** — a connected wetland versus no wetland, effect on water residence time: <span class="in">`r sprintf(&quot;%+.2f&quot;, mean(effect_wrt_connected))`</span> <span class="co">[</span><span class="ot">`r sprintf(&quot;%.2f, %.2f&quot;, quantile(effect_wrt_connected,.05), quantile(effect_wrt_connected,.95))`</span><span class="co">]</span>, P(&gt; 0) = <span class="in">`r sprintf(&quot;%.2f&quot;, mean(effect_wrt_connected &gt; 0))`</span></span>
+<span id="cb17-371"><a href="#cb17-371" aria-label="367"></a><span class="ss">-   </span>**`wrt_to_doc`** — the mediating coefficient from water residence time to $\Delta$DOC: <span class="in">`r sprintf(&quot;%+.2f&quot;, mean(wrt_to_doc))`</span> <span class="co">[</span><span class="ot">`r sprintf(&quot;%.2f, %.2f&quot;, quantile(wrt_to_doc,.05), quantile(wrt_to_doc,.95))`</span><span class="co">]</span>, P(&gt; 0) = <span class="in">`r sprintf(&quot;%.2f&quot;, mean(wrt_to_doc &gt; 0))`</span></span>
+<span id="cb17-372"><a href="#cb17-372" aria-label="368"></a><span class="ss">-   </span>**`total_effect_not_connected`**: `r sprintf(&quot;%+.2f&quot;, mean(total_effect_not_connected))` [`r sprintf(&quot;%.2f, %.2f&quot;, quantile(total_effect_not_connected,.05), quantile(total_effect_not_connected,.95))`], and **`total_effect_connected`**: <span class="in">`r sprintf(&quot;%+.2f&quot;, mean(total_effect_connected))`</span> <span class="co">[</span><span class="ot">`r sprintf(&quot;%.2f, %.2f&quot;, quantile(total_effect_connected,.05), quantile(total_effect_connected,.95))`</span><span class="co">]</span></span>
+<span id="cb17-373"><a href="#cb17-373" aria-label="369"></a></span>
+<span id="cb17-374"><a href="#cb17-374" aria-label="370"></a>**Lateral stream-wetland connectivity does not detectably change $\Delta$DOC through the water-residence-time pathway.** The estimates of the remaining paths are unchanged from the main SCM (@fig-scm), so the conclusions of the manuscript are robust to adding this causal path.</span>
+<span id="cb17-375"><a href="#cb17-375" aria-label="371"></a>:::</span>
+<span id="cb17-376"><a href="#cb17-376" aria-label="372"></a></span>
+<span id="cb17-377"><a href="#cb17-377" aria-label="373"></a><span class="fu">### Conclusions:</span></span>
+<span id="cb17-378"><a href="#cb17-378" aria-label="374"></a></span>
+<span id="cb17-379"><a href="#cb17-379" aria-label="375"></a>::: callout-important</span>
+<span id="cb17-380"><a href="#cb17-380" aria-label="376"></a><span class="ss">- </span>We find null total effect of lateral connectivity on ΔDOC via the water-residence-time pathway: both 90% CIs overlap zero, with small magnitudes on the standardized scale.</span>
+<span id="cb17-381"><a href="#cb17-381" aria-label="377"></a></span>
+<span id="cb17-382"><a href="#cb17-382" aria-label="378"></a><span class="ss">- </span>We also see the WRT → ΔDOC mediating path itself is weak, with its CI touching \~0.00 at the lower bound — limiting our ability to detect a total effect even if connectivity strongly affected WRT.</span>
+<span id="cb17-383"><a href="#cb17-383" aria-label="379"></a></span>
+<span id="cb17-384"><a href="#cb17-384" aria-label="380"></a><span class="ss">- </span>We treat this as power-limited rather than strong evidence of no effect — only 13 sites (\~7%) are <span class="in">`yes_connected`</span> and 11 (\~6%) are <span class="in">`yes_not_connected`</span>, so wide intervals likely reflect limited data rather than a true null.</span>
+<span id="cb17-385"><a href="#cb17-385" aria-label="381"></a>:::</span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

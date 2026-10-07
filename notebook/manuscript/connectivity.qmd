@@ -354,7 +354,7 @@ lab_s9 <- as_labeller(c(A = "Connectivity%->%'water residence time'", B = "'Tota
   theme_bw(base_size = 15) +
   theme(axis.text = element_text(color = "black"), panel.grid.minor = element_blank(),
         strip.background = element_rect(fill = "grey92")))
-ggsave(here("results", "figures", "figS9_connectivity.png"), p_s9, width = 11, height = 4.5, dpi = 300)
+ggsave(here("overleaf", "supplementary", "figures", "media", "figS9_connectivity.png"), p_s9, width = 11, height = 4.5, dpi = 300)
 ```
 
 ::: {.callout-note}
