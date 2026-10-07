@@ -67,13 +67,13 @@ measurements; all other producer values are `NA` and are imputed in the models.
 | `water_res_time` | Water residence time = `water_volume` / (3.6 × `discharge`) (**hours**) |
 | `solar` | Solar radiation of the reach (Wh m⁻²) |
 | `catchment_area_km`, `area_m6_revier`, `area_m2_revier` | Catchment area (km²) and pond-related areas |
-| `Cover_litter`, `plankton_abun`, `macrophy_abun` | Litter cover, phytoplankton abundance and macrophyte abundance, measured at 16 summer ponds |
+| `plankton_abun` | Phytoplankton abundance (count of particles ≈10 µm–1 cm, from 50 L of pond water concentrated to 2 L through a 10 µm mesh and counted with a dark-field imaging microscope); 16 summer ponds, `NA` elsewhere |
+| `macrophy_abun` | Macrophyte abundance (count of individual plants in the beaver pond); 16 summer ponds, `NA` elsewhere |
+| `Cover_litter` | Soil litter cover (all dead plant material, including twigs < 7 cm circumference), estimated in a 1 × 5 m plot 0.5 m from the pond edge (% cover, 0–100 %); 16 summer ponds, `NA` elsewhere |
 | `*_z` | The same variable standardised (mean 0, SD 1 over the analysed rows): `DOC_input_z`, `dam_height_z`, `slope_z`, `discharge_z`, `water_volume_z`, `water_res_time_z`, `solar_z`, `dam_persistence_z`, `n_dams_z`, `plankton_abun_z`, `cover_litter_z`, `macrophy_abun_z`. The models use the `_z` columns |
 
 > **Units note.** Discharge is in L s⁻¹ and volume in m³, so the residence time is
-> volume / (3.6 × discharge) in hours. An earlier version of this file stored volume / discharge,
-> which is 3.6 times too large. Because the models only use the standardised column
-> `water_res_time_z`, correcting it changed no result beyond Monte Carlo noise.
+> volume / (3.6 × discharge) in hours.
 
 ### `m12.csv` — concentration dataset (318 rows)
 
