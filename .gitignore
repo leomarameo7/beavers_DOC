@@ -26,3 +26,6 @@ overleaf/**/*.bbl
 overleaf/**/*.blg
 overleaf/**/*.synctex.gz
 .DS_Store
+
+# built PDFs (Overleaf rebuilds them)
+overleaf/**/*.pdf

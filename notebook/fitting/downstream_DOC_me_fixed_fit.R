@@ -4,7 +4,7 @@
 # the prior on the inheritance slope is tightened from Normal(1, 0.3) to Normal(1, 0.001), which
 # pins it at 1 for practical purposes while keeping the mi() imputation of upstream DOC (an
 # offset() term cannot carry missing/measurement-error data, so this is the standard way to fix
-# an mi() coefficient in brms). Sourced by analysis_plan.qmd, section 4.
+# an mi() coefficient in brms). Read by analysis_plan.qmd, section 4.
 suppressMessages({library(brms); library(dplyr); library(here)})
 m6 <- read.csv(here("data/processed/m6.csv")) |> mutate(across(c(season, site), as.factor))
 s_up <- sd(m6$DOC_input, na.rm = TRUE)

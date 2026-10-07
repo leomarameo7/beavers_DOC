@@ -1,7 +1,7 @@
 # Pathway decomposition of the local modification predicted by the downstream-DOC
 # SCM (b1_downstream): for every sampling, season and posterior draw, how much of
 # (predicted downstream DOC - upstream DOC) comes from each modelled pathway.
-# Sourced by analysis_plan.qmd; summaries cached in results/pathway_decomposition.rds.
+# Read by analysis_plan.qmd (section 10); summaries cached in results/pathway_decomposition.rds.
 suppressMessages({library(brms); library(dplyr); library(tidyr); library(here); library(posterior)})
 fit <- readRDS(here("results", "models_fit", "b1_downstream.rds"))
 dat <- fit$data

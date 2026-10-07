@@ -10,7 +10,7 @@
 #   DAG 3 -- season is a common cause of the producers and of downstream DOC, left unblocked in
 #            DAG 0.
 # Plus prior sensitivity: every informative prior's sd halved and doubled, on DAG 0's structure.
-# Sourced by analysis_plan.qmd, section 9. Cached in results/dag_sensitivity_me.rds.
+# Read by analysis_plan.qmd, section 9. Cached in results/dag_sensitivity_me.rds.
 suppressMessages({library(brms); library(dplyr); library(loo); library(here)})
 m6 <- read.csv(here("data/processed/m6.csv")) |> mutate(across(c(season, site), as.factor))
 

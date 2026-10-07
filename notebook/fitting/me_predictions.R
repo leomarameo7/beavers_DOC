@@ -1,4 +1,4 @@
-# Everything scm_outcome_choice.qmd needs from the two extended models
+# Everything analysis_plan.qmd needs from the two extended models
 # (delta_SCM_me, downstream_DOC_me): comparison draws, predictions, LOO for each
 # model's own outcome and for dDOC, derived dDOC. Cached in results/me_predictions.rds.
 suppressMessages({library(brms); library(dplyr); library(loo); library(here); library(posterior)})

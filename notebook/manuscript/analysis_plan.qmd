@@ -194,7 +194,7 @@ sw <- d |> summarise(n = n(), winter_enrich = mean(dw > 0), summer_enrich = mean
 
 **Manuscript placement: main text, Figure 4 (new, standalone — promoted from panel (b) of Figure 2, given the added causal links from upstream DOC to the primary producers and upstream DOC's own measurement error; Figure 2 keeps only its direction panel).**
 
-The chunk below draws the structural causal model as it will appear in the manuscript, using the model comparison in `notebook/correspondence/scm_outcome_choice.qmd`. The layout is fixed by hand (node positions and edge routing); the numbers are the posterior mean effects of model `downstream_DOC_me` (`notebook/fitting/me_refits.R`) — the same downstream-DOC SCM as before, refit with a latent (measurement-error-corrected) upstream DOC and two additional links, upstream DOC → macrophytes and upstream DOC → phytoplankton, testing whether the incoming DOC also shapes the local response indirectly through the producers. Each edge's line type encodes the posterior probability of its direction; the two new links are drawn in dark red.
+The chunk below draws the structural causal model as it will appear in the manuscript. The layout is fixed by hand (node positions and edge routing); the numbers are the posterior mean effects of model `downstream_DOC_me` (`notebook/fitting/me_refits.R`) — the same downstream-DOC SCM as before, refit with a latent (measurement-error-corrected) upstream DOC and two additional links, upstream DOC → macrophytes and upstream DOC → phytoplankton, testing whether the incoming DOC also shapes the local response indirectly through the producers. Each edge's line type encodes the posterior probability of its direction; the two new links are drawn in dark red.
 
 ```{r dag-draw-fn}
 #| echo: false
@@ -254,7 +254,7 @@ pq2
 -   **Implication.** A beaver-engineered stream inherits its DOC and then adds to it; the addition is decided by light and primary producers, not by the size of the engineering, and a richer inflow itself feeds the macrophytes a little further. The producer effects are prior-informed (16 summer streams; section 9) and should be presented as such.
 :::
 
-**Parameterization.** The structural causal model is reported with **downstream DOC as the outcome**: upstream DOC enters as a latent true concentration (its reading carries a 0.2 mg L$^{-1}$ instrument error) with a freely estimated inheritance slope, and $\Delta\text{DOC}_s$ is computed from the posterior afterwards as $\text{DOC}_{down,s} - \text{DOC}_{up,s}$, so upstream DOC is never both a predictor and part of the outcome. This reading replaces the older wording of Q2, which described the upstream-DOC path as upstream DOC *causing greater retention*; downstream DOC instead **inherits** the upstream state (slope `r sprintf("%.2f", gme(tO,"bsp_DOCout_miDOC_input")$mean)` mg per mg), and the hydrological/biological pathways are local modifications around that inherited background, not retention of it. Two causal links complete the picture: upstream DOC also feeds the primary producers directly, tested by adding upstream DOC → macrophytes and upstream DOC → phytoplankton to the DAG (supported for macrophytes, not for phytoplankton, above). This model (`downstream_DOC_me`, fit in `notebook/fitting/me_refits.R`, compared against the ΔDOC parameterization in `notebook/correspondence/scm_outcome_choice.qmd`) is the $\Delta$DOC model in a different parameterization: every mediator effect agrees to the second decimal, and the upstream-DOC path is re-read as an inheritance slope of **`r sprintf("%.2f", gme(tO,"bsp_DOCout_miDOC_input")$mean)` [`r sprintf("%.2f", gme(tO,"bsp_DOCout_miDOC_input")$lo)`, `r sprintf("%.2f", gme(tO,"bsp_DOCout_miDOC_input")$hi)`]** — downstream DOC inherits `r sprintf("%.0f", 100*gme(tO,"bsp_DOCout_miDOC_input")$mean)`% of the upstream concentration, mg per mg. Figure 4 (@fig-q2) replaces the former panel (b) of Figure 2; the Methods gain one sentence stating the parameterization, the inheritance slope, and the two added producer links.
+**Parameterization.** The structural causal model is reported with **downstream DOC as the outcome**: upstream DOC enters as a latent true concentration (its reading carries a 0.2 mg L$^{-1}$ instrument error) with a freely estimated inheritance slope, and $\Delta\text{DOC}_s$ is computed from the posterior afterwards as $\text{DOC}_{down,s} - \text{DOC}_{up,s}$, so upstream DOC is never both a predictor and part of the outcome. This reading replaces the older wording of Q2, which described the upstream-DOC path as upstream DOC *causing greater retention*; downstream DOC instead **inherits** the upstream state (slope `r sprintf("%.2f", gme(tO,"bsp_DOCout_miDOC_input")$mean)` mg per mg), and the hydrological/biological pathways are local modifications around that inherited background, not retention of it. Two causal links complete the picture: upstream DOC also feeds the primary producers directly, tested by adding upstream DOC → macrophytes and upstream DOC → phytoplankton to the DAG (supported for macrophytes, not for phytoplankton, above). This model (`downstream_DOC_me`, fit in `notebook/fitting/me_refits.R`, compared against the ΔDOC parameterization `delta_SCM_me`) is the $\Delta$DOC model in a different parameterization: every mediator effect agrees to the second decimal, and the upstream-DOC path is re-read as an inheritance slope of **`r sprintf("%.2f", gme(tO,"bsp_DOCout_miDOC_input")$mean)` [`r sprintf("%.2f", gme(tO,"bsp_DOCout_miDOC_input")$lo)`, `r sprintf("%.2f", gme(tO,"bsp_DOCout_miDOC_input")$hi)`]** — downstream DOC inherits `r sprintf("%.0f", 100*gme(tO,"bsp_DOCout_miDOC_input")$mean)`% of the upstream concentration, mg per mg. Figure 4 (@fig-q2) replaces the former panel (b) of Figure 2; the Methods gain one sentence stating the parameterization, the inheritance slope, and the two added producer links.
 
 **Robustness check: does fixing the inheritance slope at 1 change anything else?** `downstream_DOC_me` estimates the slope freely (prior Normal(1, 0.3), posterior `r sprintf("%.2f", gme(tO,"bsp_DOCout_miDOC_input")$mean)`). A second fit, `downstream_DOC_me_fixed` (`notebook/fitting/downstream_DOC_me_fixed_fit.R`), pins it at 1 (prior Normal(1, 0.001), the standard way to fix an `mi()` coefficient in brms) and is otherwise identical, including the two upstream → producer links and the upstream measurement error.
 
@@ -299,7 +299,7 @@ if (file.exists(fx_path)) {
 
 The analysis uses the **158 streams with both a winter and a summer sampling**.
 
-$R_s$, $B$ and $G$ are computed from posterior draws of each stream's concentrations (Bayesian measurement-error model, `notebook/concentrations_fit.qmd`; the model belongs in the Methods), so no derived quantity is ever formed from raw values and the uncertainty is carried through (`r nrow(readRDS(here("results","concentrations_thin.rds"))$S)` posterior draws per stream).
+$R_s$, $B$ and $G$ are computed from posterior draws of each stream's concentrations (Bayesian measurement-error model, `notebook/manuscript/concentrations_fit.qmd`; the model belongs in the Methods), so no derived quantity is ever formed from raw values and the uncertainty is carried through (`r nrow(readRDS(here("results","concentrations_thin.rds"))$S)` posterior draws per stream).
 
 ```{r q3-compute}
 # LR holds one matrix per quantity: rows = 4000 posterior draws, columns = 158 streams
@@ -591,7 +591,7 @@ $$
 \Delta\text{DOC}^{(d)}_i = \mu^{(d)}_i - \text{DOC}_{up,i}
 $$ {#eq-derived-plan}
 
-with $\mu_i$ the SCM's expected downstream DOC. Details of the derivation in `notebook/correspondence/scm_outcome_choice.qmd`.
+with $\mu_i$ the SCM's expected downstream DOC.
 
 **Manuscript placement: Appendix S1 (Figure S13), with one sentence in the Methods and one in the Discussion.**
 
@@ -756,7 +756,7 @@ if (have_sens) {
     labs(x = "Standardized effect on downstream DOC", y = NULL) + theme_bw(base_size = 12) + theme(panel.grid.minor = element_blank())
   p_cmp <- pa + pb + plot_layout(widths = c(1, 1.6)) + plot_annotation(tag_levels = "a")
   ggsave(here("overleaf", "supplementary", "figures", "media", "figS11_dag_compare.png"), p_cmp, width = 9, height = 5, dpi = 300, bg = "white"); p_cmp
-} else cat("DAG fits not yet available (notebook/R/dag_sensitivity.R).")
+} else cat("DAG fits not yet available (notebook/fitting/dag_sensitivity_me.R).")
 ```
 
 ```{r dag-new-paths}
@@ -1009,7 +1009,7 @@ if (have_dec) {
     theme_bw(base_size = 11) + theme(panel.grid.minor = element_blank())
   fig_dec <- (pa + pb) / pc + plot_layout(heights = c(1.2, 1)) + plot_annotation(tag_levels = "a")
   fig_dec
-} else cat("Decomposition not yet computed (notebook/R/pathway_decomposition.R).")
+} else cat("Decomposition not yet computed (notebook/fitting/pathway_decomposition.R).")
 ```
 
 ```{r fig-decomp-season}
@@ -1132,7 +1132,7 @@ kable(tribble(
 
 ```{r session}
 #| echo: false
-cat("Data: data/processed/m12.csv | concentration posteriors: notebook/concentrations_fit.qmd -> results/concentrations.rds (thinned copy concentrations_thin.rds is tracked)\n")
+cat("Data: data/processed/m12.csv | concentration posteriors: notebook/manuscript/concentrations_fit.qmd -> results/concentrations.rds (thinned copy concentrations_thin.rds is tracked)\n")
 sessionInfo()$R.version$version.string
 ```
 

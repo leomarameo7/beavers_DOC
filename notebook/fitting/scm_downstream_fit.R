@@ -1,7 +1,9 @@
 suppressMessages({library(brms);library(dplyr);library(here)})
 m6 <- read.csv(here("data","processed","m6.csv")) |> mutate(across(c(season, site), as.factor))
-# Same SCM as b1, but the outcome is downstream DOC and upstream DOC enters on its raw
-# mg/L scale with a free inheritance slope (imputation of missing values only, as in b1).
+# Plain downstream-DOC SCM (no measurement error on upstream DOC, no upstream -> producer links):
+# the outcome is downstream DOC and upstream DOC enters on its raw mg/L scale with a free
+# inheritance slope (imputation of missing values only). Its fit (models_fit/b1_downstream.rds)
+# is the input of pathway_decomposition.R.
 bform_down <-
   bf(DOC_out | mi(0.2) ~ 0 + Intercept + mi(DOC_input) + mi(macrophy_abun_z) + mi(plankton_abun_z) +
        mi(cover_litter_z) + mi(water_res_time_z) + (0 + Intercept | site), family = student()) +

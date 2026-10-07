@@ -1,9 +1,9 @@
 # Hold-out test of the two extended SCM parameterizations (Q2_delta =
 # delta_SCM_me, Q2_downstream = downstream_DOC_me): refit both on 80% of the
-# streams (same split as the original scm_holdout.R, seed 42) and predict at
+# streams (80/20 split by stream, seed 42) and predict at
 # the other 20%, which neither model has seen -- no site effect, mediators
 # mostly unmeasured there too. Complements the leave-one-out test already in
-# results/me_predictions.rds. Sourced by scm_outcome_choice.qmd.
+# results/me_predictions.rds. Read by analysis_plan.qmd (section 8).
 suppressMessages({library(brms); library(dplyr); library(here); library(posterior)})
 m6 <- read.csv(here("data/processed/m6.csv")) |> mutate(across(c(season, site), as.factor))
 set.seed(42)
@@ -67,7 +67,7 @@ fd <- fit_one(f_delta, pr_delta, "delta_SCM_me_train")
 cat("fitting downstream_DOC_me on", nrow(train), "training rows\n")
 fo <- fit_one(f_down, pr_down, "downstream_DOC_me_train")
 
-# unmeasured-at-a-new-stream covariates set to their standardized mean (0), as in scm_holdout.R
+# unmeasured-at-a-new-stream covariates set to their standardized mean (0)
 zero_na <- function(d) d |> mutate(across(c(macrophy_abun_z, plankton_abun_z, cover_litter_z, water_res_time_z, solar_z, dam_height_z), ~ ifelse(is.na(.x), 0, .x)))
 nd_test  <- zero_na(test)
 nd_train <- zero_na(train |> filter(!is.na(DOC_out), !is.na(DOC_input)))
