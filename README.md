@@ -70,7 +70,7 @@ measurements; all other producer values are `NA` and are imputed in the models.
 | `water_res_time` | Water residence time = `water_volume` / (3.6 × `discharge`) (**hours**) |
 | `solar` | Solar radiation of the reach (Wh m⁻²) |
 | `catchment_area_km` | Catchment area of the stream (km²), from the raw floodplain/catchment extraction (`catchArea`, m², divided by 10⁶). Not used by any model |
-| `area_m6_revier`, `area_m2_revier` | Ponded (beaver-engineered) area in m². `area_m6_revier` / 10⁶ is `A_beaver_km2`; `area_m2_revier` is an alternative pond area that is mostly `NA` (328 of 360 rows) and is not used |
+| `area_m6_revier` | Ponded (beaver-engineered) area in m². `area_m6_revier` / 10⁶ is `A_beaver_km2` |
 | `plankton_abun` | Phytoplankton abundance (count of particles ≈10 µm–1 cm, from 50 L of pond water concentrated to 2 L through a 10 µm mesh and counted with a dark-field imaging microscope); 16 summer ponds, `NA` elsewhere |
 | `macrophy_abun` | Macrophyte abundance (count of individual plants in the beaver pond); 16 summer ponds, `NA` elsewhere |
 | `Cover_litter` | Soil litter cover (all dead plant material, including twigs < 7 cm circumference), estimated in a 1 × 5 m plot 0.5 m from the pond edge (% cover, 0–100 %); 16 summer ponds, `NA` elsewhere |
