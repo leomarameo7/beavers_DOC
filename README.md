@@ -1,77 +1,170 @@
 # Pathways and magnitude of beaver-mediated DOC change in streams
 
 Code and data for the manuscript **"Beaver engineering creates intense, context-dependent dissolved organic carbon control points in streams"**
-(Capitani L. *et al.*, in preparation for *Scientific Reports*).
+(Capitani L. *et al.*, in preparation).
 Contact: Leonardo Capitani (leocapi07@gmail.com), WSL & Eawag, Switzerland.
 
-## Research question
+## Research questions
 
-Beaver dams turn flowing streams into ponds. Does this beaver-engineering change the
-concentration of **dissolved organic carbon (DOC)** in streams — and if so, by how much, in which
-direction, and through which mechanisms?
-
-Using a nationwide dataset of beaver-affected stream reaches in Switzerland (one winter and one summer sampling
-upstream and downstream of beaver dam complexes) we ask:
+Beaver dams turn flowing streams into ponds. We quantify how this beaver engineering changes
+**dissolved organic carbon (DOC)** in Swiss streams sampled upstream and downstream of beaver
+ponds in winter and summer (180 streams; 158 with both seasons complete are used for the
+seasonal analyses), and ask:
 
 1. **Direction** – Is the change in DOC across a beaver complex (ΔDOC = downstream − upstream)
-   negligible, positive (beaver ponds as a DOC *source*) or negative (DOC *sink*)? Measurement-error
-   model on raw upstream/downstream DOC, by season → *Figure 1a*
-2. **Pathways** – Through which causal paths (hydrology: water residence time, discharge, dam number
-   and height; biology: macrophytes, plankton, litter cover; solar radiation, slope, DOC input) does
-   beaver-engineering influence ΔDOC? → Structural causal model (DAG) + Bayesian multivariate
-   regression, *Figure 1b*
-3. **Magnitude and seasonal modification** – How large is the local DOC change relative to the
-   inherited upstream contrast, and does beaver-engineering reinforce, dampen or reverse that
-   contrast between seasons? → *Figure 2*
+   negligible, positive (DOC source) or negative (DOC sink)? Measurement-error model on raw
+   upstream/downstream DOC, by season → main text Figure 2.
+2. **Drivers** – Through which causal paths (hydrology: dams, dam height, channel gradient, water
+   residence time; biology: phytoplankton, macrophytes, litter cover; solar radiation; incoming DOC)
+   does beaver engineering change DOC? Structural causal model (SCM) fitted as linked Bayesian
+   regressions with downstream DOC as the outcome → Figure 3.
+3. **Magnitude** – How large is the local change relative to the seasonal DOC contrast the stream
+   already inherits from upstream, and does it reinforce, dampen or reverse that contrast?
+   → Figure 4.
 
-> **This section predates the manuscript's current (September 2026) revision** and is kept here for
-> orientation only; the questions, variable names and figure numbering above may no longer match the
-> submission. [`notebook/manuscript/analysis_plan.qmd`](notebook/manuscript/analysis_plan.qmd) is the
-> current, authoritative statement of the research questions, variables and figures — read that
-> first, and update this section to match before the next submission.
+[`notebook/manuscript/analysis_plan.qmd`](notebook/manuscript/analysis_plan.qmd) states the questions,
+variables and figures in full and is the document to read first.
 
 ## Repository structure
 
-The `notebook/` folder is split by what each file is for — see
-[`notebook/README.md`](notebook/README.md) for the full breakdown. In short:
-
 | Path | Content |
 |---|---|
-| `notebook/manuscript/` | The documents that generate the figures and numbers currently used in the manuscript: `analysis_plan.qmd` (main text + most of Appendix S1 — the document to read first), `concentrations_fit.qmd` (measurement-error model behind Figures 1b and 3), `connectivity.qmd` (alternative SCM, Appendix S1 Figures S5–S6). |
-| `notebook/fitting/` | R scripts that fit the `brms` models and run the cross-validation, hold-out and sensitivity analyses the documents above read; each caches its output under `results/`. |
-| `notebook/correspondence/` | Analysis documents written for a specific co-author question or to evaluate an option (`scm_outcome_choice.qmd`, `scm_rebuild.qmd`) — not part of the manuscript. |
-| `notebook/legacy/` | The original, pre-revision reviewer notebook (`notebook.qmd`). Mixed status: its amplification-factor (*M*) section is superseded, but some of its Appendix S1 figures are still current — see `notebook/README.md`. |
-| `data/processed/m6.csv` | Site × month dataset used for the structural causal model (ΔDOC and standardized predictors) |
-| `data/processed/m12.csv` | Dataset used by the (now superseded) amplification-factor model in `notebook/legacy/notebook.qmd` |
-| `data/processed/later_connectivity_berger.csv` | Site-level lateral stream–wetland connectivity classification (K. Berger) |
-| `results/figures/` | Figures produced by the notebooks |
-| `results/models_fit/` | Fitted `brms` models. **Not tracked by git** (size); they are regenerated by the scripts in `notebook/fitting/` |
-| `images/` | Illustrations used in figures (DAG, beaver artwork) |
-| `notebook/references.bib`, `notebook/ecology-letters.csl`, `notebook/custom.css` | Bibliography, citation style and styling shared by the documents in `notebook/manuscript/` and `notebook/correspondence/` |
-| `overleaf/` | LaTeX source of the manuscript (`main.tex`, Springer Nature / Scientific Reports template) and of Appendix S1 (`supplementary/appendix_S1.tex`); the repo is imported into Overleaf — see `overleaf/README.md` |
+| `data/processed/` | The analysis data (described below) |
+| `data/elevation/` | Swiss elevation raster used as the map background of Figure 1 |
+| `notebook/manuscript/` | Quarto documents that generate the manuscript's figures and numbers: `analysis_plan.qmd` (main text + most of the SI; read first), `concentrations_fit.qmd` (per-stream concentration model that Figures 3 and 4 build on), `connectivity.qmd` (alternative SCM with lateral connectivity), `appendix_s1_figures.qmd` (SI figures of the main SCM) |
+| `notebook/fitting/` | R scripts that fit the `brms` models and run cross-validation, hold-out and sensitivity analyses; they cache output under `results/` |
+| `notebook/correspondence/` | Documents written for a specific co-author question (not part of the manuscript) |
+| `notebook/legacy/` | The original reviewer notebook; still the source of main-text Figure 2, see `notebook/README.md` |
+| `results/` | Cached posterior summaries (`*.rds`, tracked) and figures (`results/figures/`) |
+| `results/models_fit/` | Fitted `brms` models. **Not tracked by git** (size); regenerated by `notebook/fitting/` and by rendering the documents |
+| `images/` | Illustrations and DAGs used in figures |
+| `overleaf/` | LaTeX source of the manuscript (`main.tex`) and the Supporting Information (`supplementary/supporting_information.tex`), with the final figure files in `figures/media/` and `supplementary/figures/media/`; the repo is imported into Overleaf, see `overleaf/README.md` |
+
+## Data
+
+All files are in `data/processed/`. DOC is in mg C L⁻¹.
+
+### `m6.csv` — analysis dataset of the structural causal model (360 rows)
+
+One row per sampling (stream × season): 179 streams, upstream and downstream of the beaver complex
+(rows are paired by `site` and `beaver_territory`). 16 summer rows also carry the primary-producer
+measurements; all other producer values are `NA` and are imputed in the models.
+
+| Column(s) | Meaning (unit) |
+|---|---|
+| `site`, `beaver_territory`, `season` (`winter`/`summer`), `date`, `time` | Stream identifier, beaver territory, season and sampling time |
+| `x_upstream`, `y_upstream`, `x_downstream`, `y_downstream` | Longitude/latitude of the upstream and downstream sampling points (WGS84) |
+| `DOC_input`, `DOC_out`, `delta_DOC` | Upstream DOC, downstream DOC, and ΔDOC = `DOC_out` − `DOC_input` (mg L⁻¹) |
+| `n_dams`, `dam_height`, `dam_persistence` | Dams upstream of the downstream point (count), maximum dam height (m), years of beaver occupation |
+| `slope` | Channel gradient (%) from the DEM and the river line |
+| `water_volume` | Pond water volume (m³) from imagery + DEM |
+| `discharge` | Stream discharge at sampling from the PREVAH hydrological model (**L s⁻¹**) |
+| `water_res_time` | Water residence time = `water_volume` / (3.6 × `discharge`) (**hours**) |
+| `solar` | Solar radiation of the reach (Wh m⁻²) |
+| `catchment_area_km`, `area_m6_revier`, `area_m2_revier` | Catchment area (km²) and pond-related areas used for footprint contrasts |
+| `Cover_litter`, `plankton_abun`, `macrophy_abun` | Litter cover, phytoplankton abundance and macrophyte abundance, measured at 16 summer ponds |
+| `*_z` | The same variable standardised (mean 0, SD 1 over the analysed rows): `DOC_input_z`, `dam_height_z`, `slope_z`, `discharge_z`, `water_volume_z`, `water_res_time_z`, `solar_z`, `dam_persistence_z`, `n_dams_z`, `plankton_abun_z`, `cover_litter_z`, `macrophy_abun_z`. The models use the `_z` columns |
+
+> **Units note (7 Oct 2026).** Discharge is in L s⁻¹ and volume in m³, so the residence time is
+> volume / (3.6 × discharge) in hours (an earlier version of this file stored volume / discharge,
+> which is 3.6 times too large). Because the models only use the standardised column
+> `water_res_time_z`, this changed no result beyond Monte Carlo noise (all SCM coefficients moved
+> by ≤ 0.004).
+
+### `m12.csv` — concentration dataset (318 rows)
+
+Site × season data for the direction and magnitude analyses (158 streams with both seasons):
+`site`, `beaver_territory`, `date`, `time`, `season`, `DOC_input`, `DOC_out`, `delta_DOC`,
+`A_floodplain_km2` and `A_beaver_km2` (floodplain and ponded areas, km²), and the derived
+area contrasts `D_beaver_km2`, `D_catchment_km2`. Used by `analysis_plan.qmd`,
+`concentrations_fit.qmd` and the legacy notebook.
+
+### Other files
+
+- `later_connectivity_berger.csv` — `site`, `lateral_connectivity` (stream–wetland connectivity class: no wetland / wetland not connected / wetland connected; classification by K. Berger). Used by `connectivity.qmd`.
+- `producer_sites_coordinates.csv` — `site`, `latitude`, `longitude` of the 16 producer-measurement sites (Figure 1a).
 
 ## How to reproduce the results
 
-1. **Software**: R ≥ 4.3, [Quarto](https://quarto.org), and [CmdStan](https://mc-stan.org/cmdstanr/)
+1. **Software**: R ≥ 4.3, [Quarto](https://quarto.org) and [CmdStan](https://mc-stan.org/cmdstanr/)
    (`cmdstanr::install_cmdstan()`).
 2. **R packages**:
    ```r
-   install.packages(c("brms","cmdstanr","tidyverse","tidybayes","ggdist","bayesplot",
-     "dagitty","here","readxl","patchwork","ggpubr","ggh4x","ggpmisc","scales",
-     "RColorBrewer","NatParksPalettes","ggokabeito","chron","modelr"))
+   install.packages(c("brms","cmdstanr","posterior","loo","tidyverse","tidybayes","ggdist","bayesplot",
+     "dagitty","sensemakr","here","patchwork","ggpubr","ggh4x","ggpmisc","scales","knitr","DT",
+     "RColorBrewer","NatParksPalettes","ggokabeito","modelr","terra","tidyterra","png","chron","readxl"))
    ```
-3. **Run**: from a terminal, at the repository root:
+   (`cmdstanr` is installed from <https://mc-stan.org/r-packages/>; the first `quarto render` of each
+   document reports any package still missing).
+3. **Fit the models** (optional: the cached summaries in `results/*.rds` are tracked, but the fitted
+   models in `results/models_fit/` are not, and several documents refit a model if its file is
+   missing). From the repository root, in this order:
    ```bash
-   quarto render notebook/manuscript/analysis_plan.qmd
+   Rscript notebook/fitting/me_refits.R              # the two main SCMs (delta_SCM_me, downstream_DOC_me)
+   Rscript notebook/fitting/scm_downstream_fit.R     # plain downstream-DOC SCM
+   Rscript notebook/fitting/scm_downstream_fixed_fit.R
+   Rscript notebook/fitting/downstream_DOC_me_fixed_fit.R
+   Rscript notebook/fitting/dag_sensitivity.R
+   Rscript notebook/fitting/dag_sensitivity_me.R     # DAG and prior sensitivity (SI)
+   Rscript notebook/fitting/derived_ddoc_by_dag.R
+   Rscript notebook/fitting/me_predictions.R
+   Rscript notebook/fitting/scm_predictive_checks.R
+   Rscript notebook/fitting/pathway_decomposition.R
+   Rscript notebook/fitting/me_holdout.R
+   Rscript notebook/fitting/scm_holdout.R
    ```
-   This is the current main analysis; render `notebook/manuscript/concentrations_fit.qmd` and
-   `notebook/manuscript/connectivity.qmd` for the documents it depends on / complements. Model
-   fitting uses `seed = 7` and 4 chains; fits and derived results are cached under `results/`
-   by the scripts in `notebook/fitting/` (first run of a script that isn't cached yet can take tens
-   of minutes; later runs, and rendering the `.qmd` documents, reuse the cache).
-4. **Output**: an `.html` file next to the source `.qmd`, plus figures in `results/figures/`.
-   `notebook/manuscript/analysis_plan.qmd`'s own figure/table inventory (near the end of the
-   document) lists every figure by manuscript number.
+   Fits use `seed = 7` and 4 chains; the SCM refits take minutes each (tens of minutes in total on
+   10 cores). `concentrations_fit.qmd` fits the concentration model (`results/concentrations.rds`,
+   not tracked; a thinned copy is).
+4. **Render the documents** (each writes an `.html` next to its source and the figures below):
+   ```bash
+   quarto render notebook/manuscript/concentrations_fit.qmd
+   quarto render notebook/manuscript/analysis_plan.qmd
+   quarto render notebook/manuscript/connectivity.qmd
+   quarto render notebook/manuscript/appendix_s1_figures.qmd
+   ```
+5. **Copy the figures into `overleaf/`** (steps in the tables below marked *copy*) and compile
+   `overleaf/main.tex` and `overleaf/supplementary/supporting_information.tex` (Overleaf, or `tectonic`
+   locally).
+
+### Main-text figures
+
+Numbering is the order in the compiled manuscript.
+
+| Figure | File in `overleaf/figures/media/` | Produced by | Source file (then *copy*) |
+|---|---|---|---|
+| 1. Map of sites and schematic of the derived variables | `figure1_v2.png` | `analysis_plan.qmd` (section 11, methods figure) | `results/figures/plan/fig_map_schematic.png` |
+| 2. Direction of ΔDOC (posterior predictive, by season) | `Figure_2a.png` | `notebook/legacy/notebook.qmd` (Q1 chunk; also embedded in `analysis_plan.qmd`) | `results/figures/Figure_2a.png` |
+| 3. Structural causal model of downstream DOC | `figure4_v1.png` | `analysis_plan.qmd` (section 4, SCM chunk; uses `me_refits.R` output) | `images/Figure_1b_downstream.png` |
+| 4. Relative response *R<sub>s</sub>* and seasonal gain *G* | `figure3_v2.png` | `analysis_plan.qmd` (section 5; uses `concentrations_fit.qmd` output) | `results/figures/plan/fig_R.png` |
+
+### Supporting-information figures and tables
+
+Numbering is the order in `supporting_information.tex`; the file names keep an earlier numbering.
+Files in `overleaf/supplementary/figures/media/`.
+
+| SI figure | File | Produced by | Source file (then *copy*) |
+|---|---|---|---|
+| S1 Stream-level ΔDOC under the main SCM | `figS7_site_level.png` | `appendix_s1_figures.qmd` | written directly to `overleaf/` |
+| S2 Hypothesised DAG (Table S1) | `figS1_dag_hypotheses.png` | drawn by hand (no script) | — |
+| S3 Priors | `figS2_priors.png` | `appendix_s1_figures.qmd` | written directly |
+| S4 Posterior parameter distributions | `figS5_posteriors.png` | `appendix_s1_figures.qmd` | written directly |
+| S5 Residuals | `figS3_residuals.png` | `appendix_s1_figures.qmd` | written directly |
+| S6 Posterior predictive check | `figS4_ppc.png` | `appendix_s1_figures.qmd` | written directly |
+| S7 Implied conditional independencies | `figS10_dag_tests.png` | `analysis_plan.qmd` (section 9) | `results/figures/plan/fig_dag_tests.png` |
+| S8 Alternative DAGs, LOO and mediator effects | `figS11_dag_compare.png` | `analysis_plan.qmd` (section 9; `dag_sensitivity_me.R`) | `results/figures/plan/fig_dag_compare.png` |
+| S9 Extended DAG with lateral connectivity | `figS8_dag_connectivity_alt.png` | drawn by hand (no script) | — |
+| S10 Connectivity effects | `figS9_connectivity.png` | `connectivity.qmd` | `results/figures/figS9_connectivity.png` |
+| S11 Unmeasured-confounding robustness | `figS12_sensemakr.png` | `analysis_plan.qmd` (section 9) | `results/figures/plan/fig_sensemakr.png` |
+| S12 Negative controls / implied nulls | `figS13_negative_controls.png` | `analysis_plan.qmd` (section 9) | `results/figures/plan/fig_negative_controls.png` |
+| S13 Prior sensitivity | `figS14_prior_sens.png` | `analysis_plan.qmd` (section 9; `dag_sensitivity_me.R`) | `results/figures/plan/fig_prior_sens.png` |
+| S14 Spatial autocorrelation of residuals | `figS15_spatial_resid.png` | `analysis_plan.qmd` (section 9) | `results/figures/plan/fig_spatial_resid.png` |
+
+Table S1 (hypotheses) is written by hand in the `.tex`; Table S2 (causal knowledge analysis) is built
+in `analysis_plan.qmd` (`tbl-cka`). Additional analyses described in the SI text but not shown as
+figures (hold-out validation, intensity of beaver engineering, pathway decomposition) are in
+`analysis_plan.qmd` and its `results/figures/plan/` outputs (`fig_holdout.png`, `fig_intensity.png`,
+`fig_decomp.png`, `fig_decomp_season.png`).
 
 ## License
 
